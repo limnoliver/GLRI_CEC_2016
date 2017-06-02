@@ -68,15 +68,17 @@ for(i in 1:length(neonics)){
   names(dfNeonic)[dim(dfNeonic)[2]] <- paste0("R_",neonics[i])
   }
   
-for(i in 1:length(neonics)){
+
 
 c(unique(siteNames))
 
-## NEED TO MERGE THE SITE INFO WITH THE NEONIC DATA
+## Merge tracking data with neonic results
+dfNeonic$Sample <- toupper(dfNeonic$Sample)
+dfTracking$Neonics <- toupper(dfTracking$Neonics)
 df <- merge(dfNeonic,dfTracking,by.x = "Sample", by.y = "Neonics",all=TRUE)
 
+as.numeric(dfSites$USGS.station.number) %in% dfNeonic$USGS.Site.ID
 
-boxplot(df$Imidacloprid~df$
 
 grep("Maumee",unique(c(dfNeonic$Site,dfSites$Site.name)))
 
