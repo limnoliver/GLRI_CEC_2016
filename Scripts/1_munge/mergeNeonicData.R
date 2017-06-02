@@ -21,7 +21,7 @@ file.tracking <- "tracking.rds"
 file.MDL <- "neonicMDLs.csv"
 
 dfNeonic <- read.csv(file.path(raw.path,file.neonic),stringsAsFactors = FALSE)
-dfSites <- read_excel(file.path(raw.path,file.sites))
+dfSites <- as.data.frame(read_excel(file.path(raw.path,file.sites)))
 dfTracking <- readRDS(file.path(cached.path,cached.read,file.tracking))
 dfMDL <- read.csv(file.path(raw.path,file.MDL),stringsAsFactors = FALSE)
 
@@ -31,13 +31,15 @@ dfSites$State <- substr(dfSites$Site.name,nchar(dfSites$Site.name)-1,nchar(dfSit
 dfSites$timeZone <- timeZone[dfSites$State]
 
 #remove rows without sample information
-dfNeonic <- dfNeonic[grep("WS",dfNeonic$Sample),]
+dfNeonic <- dfNeonic[grep("WS",dfNeonic$Sample,ignore.case = TRUE),]
 
 #Reconcile differences in site names to make them unique
 dfNeonic$Site <- sub(" at "," @ ",dfNeonic$Site)
 dfNeonic$Site[grep("Saginaw",dfNeonic$Site)] <- "Saginaw R @ Saginaw, MI" 
 dfNeonic$Site[grep("Cuyahoga",dfNeonic$Site)] <- "Cuyahoga R @ Saginaw, MI" 
 unique(dfNeonic$Site)
+
+dfSites[which(dfSites$USGS.station.number == "04157005"),"USGS.station.number"] <- "04157000"
 
 # #Make Neonic site names consistent with sites file
 # siteNames <- character()
@@ -77,10 +79,24 @@ dfNeonic$Sample <- toupper(dfNeonic$Sample)
 dfTracking$Neonics <- toupper(dfTracking$Neonics)
 df <- merge(dfNeonic,dfTracking,by.x = "Sample", by.y = "Neonics",all=TRUE)
 
+#Merge watershed characteristics with Neonic data
 as.numeric(dfSites$USGS.station.number) %in% dfNeonic$USGS.Site.ID
+dfSiteInfo <- as.data.frame(dfNeonic$Sample)
+for(i in 4:dim(dfSites)[2]){
+  variable <- names(dfSites)[i]
+  values <- dfSites[,variable]
+  names(values) <- paste0("ID",dfSites$USGS.station.number)
+  siteIDs <- ifelse(!is.na(dfNeonic$USGS.Site.ID), paste0("ID0",dfNeonic$USGS.Site.ID),NA)
+  dfSiteInfo <- cbind(dfSiteInfo,values[siteIDs])
+}
+names(dfSiteInfo) <- c("Sample",names(dfSites)[-(1:3)])
+dfNeonic <- merge(dfNeonic,dfSiteInfo,by="Sample",all=TRUE)
+  
 
+plot(dfNeonic$Imidacloprid~dfNeonic$Ag..crops)
+plot(dfNeonic$Clothianidin~dfNeonic$Ag..crops,log="y")
 
-grep("Maumee",unique(c(dfNeonic$Site,dfSites$Site.name)))
+summary(lm(dfNeonic$Imidacloprid~dfNeonic$Ag..crops+dfNeonic$Urban))
 
 
 dfNeonic$pdate <- paste(dfNeonic$Date, dfNeonic$Time)
