@@ -96,7 +96,11 @@ dfNeonic <- merge(dfNeonic,dfSiteInfo,by="Sample",all=TRUE)
 plot(dfNeonic$Imidacloprid~dfNeonic$Ag..crops)
 plot(dfNeonic$Clothianidin~dfNeonic$Ag..crops,log="y")
 
-summary(lm(dfNeonic$Imidacloprid~dfNeonic$Ag..crops+dfNeonic$Urban))
+library(smwrQW))
+sinDate <-fourier(as.POSIXct(dfNeonic$Date,format="%m/%d/%Y"))[,1]
+cosDate <-fourier(as.POSIXct(dfNeonic$Date,format="%m/%d/%Y"))[,2]
+
+summary(lm(dfNeonic$Thiamethoxam ~dfNeonic$Ag..crops+sinDate+cosDate))
 
 
 dfNeonic$pdate <- paste(dfNeonic$Date, dfNeonic$Time)
