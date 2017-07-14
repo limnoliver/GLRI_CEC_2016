@@ -1,3 +1,5 @@
+#Merge Neonic concentration data with land characteristics data and sample tracking info
+
 library(readxl)
 #library(data.table)
 library(dplyr)
@@ -29,6 +31,7 @@ dfMDL <- read.csv(file.path(raw.path,file.MDL),stringsAsFactors = FALSE)
 names(dfSites) <- make.names(names(dfSites))
 dfSites$State <- substr(dfSites$Site.name,nchar(dfSites$Site.name)-1,nchar(dfSites$Site.name))
 dfSites$timeZone <- timeZone[dfSites$State]
+dfSites$shortName <- c("Bad","Manitowoc","IHC","St. Joe","Grand","Saginaw","Rouge","Maumee","Cuyahoga","Genesee")
 
 #remove rows without sample information
 dfNeonic <- dfNeonic[grep("WS",dfNeonic$Sample,ignore.case = TRUE),]
@@ -40,6 +43,7 @@ dfNeonic$Site[grep("Cuyahoga",dfNeonic$Site)] <- "Cuyahoga R @ Saginaw, MI"
 unique(dfNeonic$Site)
 
 dfSites[which(dfSites$USGS.station.number == "04157005"),"USGS.station.number"] <- "04157000"
+
 
 # #Make Neonic site names consistent with sites file
 # siteNames <- character()
@@ -68,41 +72,53 @@ for(i in 1:length(neonics)){
   dfNeonic[estRows,neonics[i]] <- -dfNeonic[estRows,neonics[i]]
   dfNeonic[estRows,"remarkCol"] <- "estimated"                 
   names(dfNeonic)[dim(dfNeonic)[2]] <- paste0("R_",neonics[i])
-  }
-  
+}
 
 
-c(unique(siteNames))
 
 ## Merge tracking data with neonic results
+dfTracking <- as.data.frame(dfTracking)
 dfNeonic$Sample <- toupper(dfNeonic$Sample)
 dfTracking$Neonics <- toupper(dfTracking$Neonics)
+#dfTracking2 <- as.data.frame(dfTracking[grep("WS",dfTracking$Neonics),])
+#dfNeonic[which(dfNeonic$Sample=="WS3788" & dfNeonic$State == "WI"),"Sample"]
+
+
+#
+
 df <- merge(dfNeonic,dfTracking,by.x = "Sample", by.y = "Neonics",all=TRUE)
+df <- df[!is.na(df$Clothianidin),]
 
 #Merge watershed characteristics with Neonic data
-as.numeric(dfSites$USGS.station.number) %in% dfNeonic$USGS.Site.ID
-dfSiteInfo <- as.data.frame(dfNeonic$Sample)
+as.numeric(dfSites$USGS.station.number) %in% df$USGS.Site.ID
+
+#Populate Neonic file with land use characteristics and other site info
+dfSiteInfo <- as.data.frame(df[,c("Sample")],stringsAsFactors = FALSE)
 for(i in 4:dim(dfSites)[2]){
   variable <- names(dfSites)[i]
   values <- dfSites[,variable]
   names(values) <- paste0("ID",dfSites$USGS.station.number)
   siteIDs <- ifelse(!is.na(dfNeonic$USGS.Site.ID), paste0("ID0",dfNeonic$USGS.Site.ID),NA)
-  dfSiteInfo <- cbind(dfSiteInfo,values[siteIDs])
+  dfSiteInfo <- cbind.data.frame(dfSiteInfo,values[siteIDs],stringsAsFactors=FALSE)
 }
 names(dfSiteInfo) <- c("Sample",names(dfSites)[-(1:3)])
+
+#dfNeonic <- merge(dfNeonic,dfSiteInfo,by="Sample",all=TRUE)
+
 dfNeonic <- merge(dfNeonic,dfSiteInfo,by="Sample",all=TRUE)
+
+
+#Convert dates and times to POSIXct in GMT
+dfNeonic$timeZone <- ifelse(is.na(dfNeonic$timeZone),"EST5EDT",dfNeonic$timeZone)
+uniqueTimeZones <- unique(timeZone)
+listState <- list()
+for(i in 1:length(uniqueTimeZones)){
+  dfState <- subset(dfNeonic,timeZone==uniqueTimeZones[i])
+  dfState$pdate <- as.POSIXct(paste(dfState$Date, dfState$Time),format='%m/%d/%Y %H:%M',tz=uniqueTimeZones[i])
+  dfState$pdate <- as.POSIXct(format(as.POSIXct(dfState$pdate),tz="GMT",usetz=TRUE),tz="GMT")
+  listState[[i]] <- dfState
+}
+dfNeonic <- rbind(listState[[1]],listState[[2]])
+
+saveRDS(dfNeonic,file=file.path(cached.path,cached.save,"NeonicConcLandChar.rds"))
   
-
-plot(dfNeonic$Imidacloprid~dfNeonic$Ag..crops)
-plot(dfNeonic$Clothianidin~dfNeonic$Ag..crops,log="y")
-
-library(smwrQW))
-sinDate <-fourier(as.POSIXct(dfNeonic$Date,format="%m/%d/%Y"))[,1]
-cosDate <-fourier(as.POSIXct(dfNeonic$Date,format="%m/%d/%Y"))[,2]
-
-summary(lm(dfNeonic$Thiamethoxam ~dfNeonic$Ag..crops+sinDate+cosDate))
-
-
-dfNeonic$pdate <- paste(dfNeonic$Date, dfNeonic$Time)
-as.POSIXct(dfNeonic$pdate,format='%m/%d/%Y %H:%M',tz=timeZone)
-

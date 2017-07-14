@@ -1,6 +1,6 @@
 # Need to deal with times with no colon
 
-
+library(httr)
 library(googlesheets)
 library(dplyr)
 
@@ -10,6 +10,8 @@ cached.save <- "0_download"
 
 getGoogleData <- function(cached.path, cached.save){
   
+
+  set_config(config(ssl_verifypeer = 0L))
   token <- gs_auth(cache = FALSE)
   my_sheets <- gs_ls()
   
