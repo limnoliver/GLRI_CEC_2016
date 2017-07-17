@@ -22,15 +22,49 @@ names(dfSites) <- make.names(names(dfSites))
 dfNeonic$USGS.Site.ID <- ifelse(!is.na(dfNeonic$USGS.Site.ID), paste0("0",dfNeonic$USGS.Site.ID),NA)
 
 sites <- dfSites$USGS.station.number
+begin <- "2015-10-01"
+end <- "2016-10-01"
+timeSteps <- as.numeric((difftime(as.POSIXct(end),as.POSIXct(begin),units="days")+2)*96)
+datesVector <- as.POSIXct(begin,tz="UTC") + 5*60*60 + seq(from = 1, to = timeSteps)*15*60
+dfDates <- data.frame(dateTime=datesVector)
+listQ <- list()
+
+#Separate out each site, and add flow data for each
 for(i in 1:length(sites)){
- site <- sites[i]
-  i <- 1
-  dfQ <- readNWISuv(dfSites[i,"USGS.station.number",],"00060", "2015-10-01","2016-09-30")
-  dfDMQ <- readNWISdv(dfSites[i,"USGS.station.number",],"00060", "2015-10-01","2016-09-30")
-  unique(dfDMQ$X_00060_00003_cd)
+  site <- sites[i]
+  subdfNeonic <- subset(dfNeonic,USGS.Site.ID==site)
+  dfQ <- readNWISuv(dfSites[i,"USGS.station.number",],"00060", begin,end)
+  dfDMQ <- readNWISdv(dfSites[i,"USGS.station.number",],"00060", begin,end)
+  dfQ1 <- right_join(dfQ,dfDates,by = "dateTime")
+  dfQ1$Date <- as.Date(dfQ1$dateTime)
+  dfQ2 <- left_join(dfQ1,dfDMQ,by="Date")
+  dfQ2$Q <- ifelse(!is.na(dfQ2$X_00060_00000),dfQ2$X_00060_00000,dfQ2$X_00060_00003)
+  subdfNeonic <- TSstats(df=dfQ2,date="dateTime", varnames="Q",dates = subdfNeonic, starttime = "pdate",
+                  times=6,units="hrs",stats.return = c("mean","max","min","difference"),
+                  subdatesvar = "USGS.Site.ID",subdatesvalue = site,out.varname = "Q")
+  subdfNeonic <- TSstats(df=dfQ2,date="dateTime", varnames="Q",dates = subdfNeonic, starttime = "pdate",
+                         times=0,units="hrs",stats.return = c("nearprev"),
+                         subdatesvar = "USGS.Site.ID",subdatesvalue = site,out.varname = "Q")
+  subdfNeonic <- TSstats(df=dfQ2,date="dateTime", varnames="Q",dates = subdfNeonic, starttime = "pdate",
+                         times=1,units="hrs",stats.return = c("mean"),
+                         subdatesvar = "USGS.Site.ID",subdatesvalue = site,out.varname = "Q")
   
+  listQ[[i]] <- subdfNeonic
+}
+
+#Combine individual site data frames back into one with all flow data included
+dfNeonic2 <- listQ[[1]]
+for(i in 2:length(sites)){
+  dfNeonic2 <- cbind(dfNeonic2,listQ[[i]])
+}
+                     
+
+plot(test2$Q~test2$dateTime,lty=1,pch=".")
+plot(test2$X_00060_00003~test2$dateTime,lty=1,pch=".")
+
+dateValues <- as.data.frame(table(as.Date(dfQ$dateTime)))
+unique(dfDMQ$X_00060_00003_cd)
+
+
 
 varnames <- "X_00060_00000"
-test <- TSstats(df=dfQ,date="dateTime", varnames=varnames,dates = dfNeonic, starttime = "pdate",
-        times=6,units="hrs",stats.return = c("mean","max","min","nearprev","difference"),
-        subdatesvar = "USGS.Site.ID",subdatesvalue = site,out.varname = "Q_")

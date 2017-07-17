@@ -93,19 +93,10 @@ df <- df[!is.na(df$Clothianidin),]
 as.numeric(dfSites$USGS.station.number) %in% df$USGS.Site.ID
 
 #Populate Neonic file with land use characteristics and other site info
-dfSiteInfo <- as.data.frame(df[,c("Sample")],stringsAsFactors = FALSE)
-for(i in 4:dim(dfSites)[2]){
-  variable <- names(dfSites)[i]
-  values <- dfSites[,variable]
-  names(values) <- paste0("ID",dfSites$USGS.station.number)
-  siteIDs <- ifelse(!is.na(dfNeonic$USGS.Site.ID), paste0("ID0",dfNeonic$USGS.Site.ID),NA)
-  dfSiteInfo <- cbind.data.frame(dfSiteInfo,values[siteIDs],stringsAsFactors=FALSE)
-}
-names(dfSiteInfo) <- c("Sample",names(dfSites)[-(1:3)])
-
-#dfNeonic <- merge(dfNeonic,dfSiteInfo,by="Sample",all=TRUE)
-
-dfNeonic <- merge(dfNeonic,dfSiteInfo,by="Sample",all=TRUE)
+dfNeonicSiteIDs <- ifelse(!is.na(dfNeonic$USGS.Site.ID), paste0("0",dfNeonic$USGS.Site.ID),NA)
+siteRows <- match(dfNeonicSiteIDs,dfSites$USGS.station.number)
+dfSiteInfo <- dfSites[siteRows,]
+dfNeonic <- cbind(dfNeonic,dfSiteInfo)
 
 
 #Convert dates and times to POSIXct in GMT
