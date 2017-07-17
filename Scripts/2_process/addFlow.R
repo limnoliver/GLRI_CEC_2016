@@ -32,13 +32,14 @@ listQ <- list()
 #Separate out each site, and add flow data for each
 for(i in 1:length(sites)){
   site <- sites[i]
-  subdfNeonic <- subset(dfNeonic,USGS.Site.ID==site)
   dfQ <- readNWISuv(dfSites[i,"USGS.station.number",],"00060", begin,end)
   dfDMQ <- readNWISdv(dfSites[i,"USGS.station.number",],"00060", begin,end)
   dfQ1 <- right_join(dfQ,dfDates,by = "dateTime")
   dfQ1$Date <- as.Date(dfQ1$dateTime)
   dfQ2 <- left_join(dfQ1,dfDMQ,by="Date")
   dfQ2$Q <- ifelse(!is.na(dfQ2$X_00060_00000),dfQ2$X_00060_00000,dfQ2$X_00060_00003)
+  if(site == "04157005") site <- "04157000"
+  subdfNeonic <- subset(dfNeonic,USGS.Site.ID==site)
   subdfNeonic <- TSstats(df=dfQ2,date="dateTime", varnames="Q",dates = subdfNeonic, starttime = "pdate",
                   times=6,units="hrs",stats.return = c("mean","max","min","difference"),
                   subdatesvar = "USGS.Site.ID",subdatesvalue = site,out.varname = "Q")
