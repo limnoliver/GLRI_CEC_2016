@@ -115,7 +115,7 @@ listState <- list()
 for(i in 1:length(uniqueTimeZones)){
   dfState <- subset(dfNeonic,timeZone==uniqueTimeZones[i])
   dfState$pdate <- as.POSIXct(paste(dfState$Date, dfState$Time),format='%m/%d/%Y %H:%M',tz=uniqueTimeZones[i])
-  dfState$pdate <- as.POSIXct(format(as.POSIXct(dfState$pdate),tz="GMT",usetz=TRUE),tz="GMT")
+  dfState$pdate <- as.POSIXct(format(as.POSIXct(dfState$pdate),tz="UTC",usetz=TRUE),tz="UTC")
   listState[[i]] <- dfState
 }
 dfNeonic <- rbind(listState[[1]],listState[[2]])
