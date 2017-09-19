@@ -41,6 +41,10 @@ targets:
   NWIS:
     command: >-
       get_NWIS("10_load_data/raw/GLRISPSites2016.rds")
+
+  pCodeInfo:
+    command: >-
+      get_pCode("10_load_data/raw/NWQLPesticideInfo.rds")
                       
   flow:
     command: get_flow(sites)

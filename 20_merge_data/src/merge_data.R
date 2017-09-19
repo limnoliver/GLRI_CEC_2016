@@ -1,5 +1,6 @@
 library(dplyr)
 library(USGSHydroTools)
+library(tidyr)
 
 merged_neonic_flow <- function(neonic, flow, sites){
 
@@ -38,8 +39,38 @@ merged_neonic_flow <- function(neonic, flow, sites){
   return(dfNeonic2)
 }
 
-merged_NWIS <- function(tracking, NWIS, neonic_flow){
+merged_NWIS <- function(tracking, NWIS, neonic_flow, pCodeInfo){
   
-  browser()
+  just_neonic_data <- neonic_flow %>%
+    select(Sample, site = USGS.station.number, pdate, 
+           Acetamiprid, 
+           Clothianidin,
+           Dinotefuran,
+           Imidacloprid,
+           Thiacloprid,
+           Thiamethoxam) %>%
+    gather(chemical, value, -Sample, -site, -pdate)
   
+  just_neonic_remarks <- neonic_flow %>%
+    select(Sample, site = USGS.station.number, pdate, 
+           R_Acetamiprid, 
+           R_Clothianidin,
+           R_Dinotefuran,
+           R_Imidacloprid,
+           R_Thiacloprid,
+           R_Thiamethoxam
+    ) %>%
+    gather(chemical_rk, remark_cd, -Sample, -site, -pdate) %>%
+    mutate(chemical = gsub("R_","",chemical_rk)) %>%
+    select(-chemical_rk)
+
+  just_neonic <- left_join(just_neonic_data, 
+                           just_neonic_remarks, by=c("Sample","site","pdate","chemical"))
+  
+  just_NWIS <- select(NWIS, site=SiteID, Sample = NWISRecordNumber, pdate, pCode, value) %>%
+    left_join(select(pCodeInfo, pCode=parameter_cd, chemical=casrn), by="pCode") 
+  
+  nwis_neonic <- bind_rows(just_neonic, just_NWIS)
+  
+  return(nwis_neonic)
 }

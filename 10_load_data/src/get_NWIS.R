@@ -38,3 +38,10 @@ get_NWIS <- function(site.file){
   return(df_sub)
   
 }
+
+get_pCode <- function(pest.file){
+  dfPest <- readRDS(file=pest.file)
+  dfPest$USGS.Parameter.code <- as.character(dfPest$USGS.Parameter.code)
+  pCodeInfo <- readNWISpCode(dfPest$USGS.Parameter.code)
+  return(pCodeInfo)
+}

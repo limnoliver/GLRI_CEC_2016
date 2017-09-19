@@ -6,6 +6,7 @@ include:
 packages:
   - dplyr
   - USGSHydroTools
+  - tidyr
   
 sources:
   - 20_merge_data/src/merge_data.R
@@ -19,4 +20,4 @@ targets:
     command: merged_neonic_flow(neonic, flow, sites)
 
   neonic_NWIS: 
-    command: merged_NWIS(tracking, NWIS, neonic_flow)
+    command: merged_NWIS(tracking, NWIS, neonic_flow, pCodeInfo)
