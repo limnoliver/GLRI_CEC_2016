@@ -1,0 +1,46 @@
+target_default: 10_load_data
+
+packages:
+  - readxl
+  - dplyr
+  - httr
+  - googlesheets
+  - yaml
+  - dataRetrieval
+  - tidyr
+  
+## All R files that are used must be listed here:
+sources:
+  - 10_load_data/src/get_neonic_data.R
+  - 10_load_data/src/get_NWIS.R
+  - 10_load_data/src/get_tracking.R
+  - 10_load_data/src/get_flow.R
+
+targets:
+  10_load_data:
+    depends: 
+      - sites
+      - tracking
+      - neonic
+      - NWIS
+      - flow
+      
+  sites:
+    command: get_sites("10_load_data/raw/GLRISiteCharacteristicsNeonicsForR.xlsx")
+  
+  tracking:
+    command: get_tracking_data('10_load_data/cfg/tracking_config.yaml')
+
+  neonic:
+    command: >-
+      get_neonic_data("10_load_data/raw/GLRI_Neonic_to_NWIS_011317.csv", 
+                      "10_load_data/raw/neonicMDLs.csv",
+                      sites,
+                      tracking)
+    
+  NWIS:
+    command: >-
+      get_NWIS("10_load_data/raw/GLRISPSites2016.rds")
+                      
+  flow:
+    command: get_flow(sites)

@@ -1,0 +1,22 @@
+target_default: 20_merge_data
+
+include:
+  - 10_load_data.yml
+
+packages:
+  - dplyr
+  - USGSHydroTools
+  
+sources:
+  - 20_merge_data/src/merge_data.R
+  
+targets:
+  20_merge_data:
+    depends: 
+      - neonic_flow
+      
+  neonic_flow: 
+    command: merged_neonic_flow(neonic, flow, sites)
+
+  neonic_NWIS: 
+    command: merged_NWIS(tracking, NWIS, neonic_flow)

@@ -1,0 +1,11 @@
+target_default: all
+
+packages:
+  - remake
+  
+include:
+  - 20_merge_data.yml
+
+targets:
+  all:
+    depends: neonic_NWIS
