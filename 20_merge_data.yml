@@ -8,6 +8,8 @@ packages:
   - USGSHydroTools
   - tidyr
   - readr
+  - dataRetrieval
+  - openxlsx
   
 sources:
   - 20_merge_data/src/merge_data.R
@@ -24,13 +26,16 @@ targets:
     command: merged_NWIS(tracking, NWIS, neonic_flow, pCodeInfo)
     
   special_cas:
-    command: special_cas()
+    command: get_special_cas()
 
-  data/chem_data.csv: 
-    command: create_chemData('data/chem_data.csv',neonic_NWIS, special_cas)
+  chem_data: 
+    command: create_chemData(neonic_NWIS, special_cas)
     
-  data/chem_info.csv:
-    command: create_tox_chemInfo('data/chem_data.csv', special_cas, pCodeInfo)
+  chem_info:
+    command: create_tox_chemInfo(chem_data, special_cas, pCodeInfo)
 
-  data/site_info.csv:
-    command: create_tox_siteInfo('data/site_info.csv', sites)
+  site_info:
+    command: create_tox_siteInfo(sites)
+    
+  data/neonic.xlsx:
+    command: create_toxExcel(chem_data, chem_info, site_info,'data/neonic.xlsx')

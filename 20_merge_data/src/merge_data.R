@@ -1,9 +1,9 @@
 library(dplyr)
 library(USGSHydroTools)
 library(tidyr)
-library(readxl)
 library(readr)
 library(dataRetrieval)
+library(openxlsx)
 
 merged_neonic_flow <- function(neonic, flow, sites){
 
@@ -78,7 +78,7 @@ merged_NWIS <- function(tracking, NWIS, neonic_flow, pCodeInfo){
   return(nwis_neonic)
 }
 
-special_cas <- function(){
+get_special_cas <- function(){
   special_cas <- data.frame(casrn = c("135410-20-7",
                                     "210880-92-5",
                                     "165252-70-0",
@@ -91,9 +91,10 @@ special_cas <- function(){
                                   "Imidacloprid",
                                   "Thiacloprid",
                                   "Thiamethoxam") ,stringsAsFactors = FALSE)
+  return(special_cas)
 }
 
-create_chemData <- function(file_path,neonic_NWIS, special_cas){
+create_chemData <- function(neonic_NWIS, special_cas){
 
   chem_data <- neonic_NWIS %>%
     select(SiteID = site,
@@ -109,16 +110,14 @@ create_chemData <- function(file_path,neonic_NWIS, special_cas){
   
   chem_data <- select(chem_data, -casrn)
 
-  write.csv(chem_data, file = file_path, row.names = FALSE)
+  return(chem_data)
   
   
 }
 
 
-create_tox_chemInfo <- function(file_path, special_cas, pCodeInfo){
-  
-  chem_data <- read_csv(file_path)
-  
+create_tox_chemInfo <- function(chem_data, special_cas, pCodeInfo){
+
   chem_info <- select(chem_data, CAS) %>%
     distinct() %>%
     left_join(select(pCodeInfo, CAS = casrn,
@@ -130,10 +129,10 @@ create_tox_chemInfo <- function(file_path, special_cas, pCodeInfo){
   chem_info <- select(chem_info, -CAS.y) %>%
     mutate(Class = "Neonic")
 
-  write.csv(chem_info, file = file_path, row.names = FALSE)
+  return(chem_info)
 }
 
-create_tox_siteInfo <- function(file_path, sites){
+create_tox_siteInfo <- function(sites){
 
   siteInfo <- sites %>%
     select(SiteID = USGS.station.number,
@@ -147,7 +146,16 @@ create_tox_siteInfo <- function(file_path, sites){
                      dec_lon = dec_long_va), by="SiteID") %>%
     mutate(site_grouping = "All")
   
-  write.csv(siteInfo, file = file_path, row.names = FALSE)
+  return(siteInfo)
   
 }
   
+create_toxExcel <- function(chem_data, chem_info, site_info, file_out){
+  
+
+  list_of_datasets <- list("Data" = chem_data, 
+                           "Chemicals" = chem_info,
+                           "Sites" = site_info)
+  write.xlsx(list_of_datasets, file = file_out, append=TRUE)
+
+}

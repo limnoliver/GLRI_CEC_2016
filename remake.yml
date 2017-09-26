@@ -8,4 +8,4 @@ include:
 
 targets:
   all:
-    depends: data/site_info.csv
+    depends: data/neonic.xlsx
