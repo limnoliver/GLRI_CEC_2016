@@ -1,0 +1,13 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*/raw/*
+*/doc/*
+!*/doc/README.md
+*/log/*
+!*/log/README.md
+*/out/*
+!*/out/README.md
+.httr-oauth
+data
