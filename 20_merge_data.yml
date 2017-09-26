@@ -7,6 +7,7 @@ packages:
   - dplyr
   - USGSHydroTools
   - tidyr
+  - readr
   
 sources:
   - 20_merge_data/src/merge_data.R
@@ -21,3 +22,15 @@ targets:
 
   neonic_NWIS: 
     command: merged_NWIS(tracking, NWIS, neonic_flow, pCodeInfo)
+    
+  special_cas:
+    command: special_cas()
+
+  data/chem_data.csv: 
+    command: create_chemData('data/chem_data.csv',neonic_NWIS, special_cas)
+    
+  data/chem_info.csv:
+    command: create_tox_chemInfo('data/chem_data.csv', special_cas, pCodeInfo)
+
+  data/site_info.csv:
+    command: create_tox_siteInfo('data/site_info.csv', sites)
