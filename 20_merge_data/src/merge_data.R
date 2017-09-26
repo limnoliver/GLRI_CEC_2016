@@ -90,7 +90,8 @@ get_special_cas <- function(){
                                   "Dinotefuran",
                                   "Imidacloprid",
                                   "Thiacloprid",
-                                  "Thiamethoxam") ,stringsAsFactors = FALSE)
+                                  "Thiamethoxam") ,
+                          Class = "Neonic",stringsAsFactors = FALSE)
   return(special_cas)
 }
 
@@ -104,7 +105,7 @@ create_chemData <- function(neonic_NWIS, special_cas){
     filter(!is.na(Value),
            !is.na(CAS)) %>%
     left_join(special_cas, by="CAS") %>%
-    mutate(Value = Value*1000) #ng -> ug
+    mutate(Value = Value/1000) #ng -> ug
   
   chem_data$CAS[!is.na(chem_data$casrn)] <- chem_data$casrn[!is.na(chem_data$casrn)]
   
@@ -116,7 +117,7 @@ create_chemData <- function(neonic_NWIS, special_cas){
 }
 
 
-create_tox_chemInfo <- function(chem_data, special_cas, pCodeInfo){
+create_tox_chemInfo <- function(chem_data, special_cas, pCodeInfo, classes){
 
   chem_info <- select(chem_data, CAS) %>%
     distinct() %>%
@@ -127,8 +128,12 @@ create_tox_chemInfo <- function(chem_data, special_cas, pCodeInfo){
   chem_info$`Chemical Name`[!is.na(chem_info$CAS.y)] <- chem_info$CAS.y[!is.na(chem_info$CAS.y)]
   
   chem_info <- select(chem_info, -CAS.y) %>%
-    mutate(Class = "Neonic")
+    left_join(select(classes, CAS, class1 = Class))
 
+  chem_info$Class[is.na(chem_info$Class)] <- chem_info$class1[is.na(chem_info$Class)]
+  
+  chem_info <- select(chem_info, -class1)
+  
   return(chem_info)
 }
 

@@ -1,5 +1,13 @@
 library(readxl)
 library(dplyr)
+library(readr)
+
+get_classes <- function(file_classes){
+  
+  classes <- data.frame(read_csv(file_classes))
+  
+  return(classes)
+}
 
 get_sites <- function(file.sites){
   dfSites <- as.data.frame(read_excel(file.sites))

@@ -8,6 +8,7 @@ packages:
   - yaml
   - dataRetrieval
   - tidyr
+  - readr
   
 ## All R files that are used must be listed here:
 sources:
@@ -24,6 +25,7 @@ targets:
       - neonic
       - NWIS
       - flow
+      - classes
       
   sites:
     command: get_sites("10_load_data/raw/GLRISiteCharacteristicsNeonicsForR.xlsx")
@@ -48,3 +50,6 @@ targets:
                       
   flow:
     command: get_flow(sites)
+  
+  classes: 
+    command: get_classes("10_load_data/raw/chemical_classes.csv")

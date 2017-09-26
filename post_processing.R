@@ -1,7 +1,12 @@
 library(remake)
 library(toxEval)
 
+install_missing_packages()
+
 make()
+diagram()
+
+tracking <- make("tracking")
 
 chem_data <- make("chem_data")
 chem_info <- make("chem_info")
@@ -23,3 +28,5 @@ chemPlot <- plot_tox_boxplots(chemicalSummary,
                               category = "Chemical",
                               plot_ND = FALSE)
 chemPlot
+
+explore_endpoints()
