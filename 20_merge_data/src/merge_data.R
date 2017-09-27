@@ -42,20 +42,21 @@ merged_neonic_flow <- function(neonic, flow, sites){
   return(dfNeonic2)
 }
 
-merged_NWIS <- function(tracking, NWIS, neonic_flow, pCodeInfo){
-  
-  just_neonic_data <- neonic_flow %>%
-    select(Sample, site = USGS.station.number, pdate, 
+merged_NWIS <- function(tracking, NWIS, neonic, pCodeInfo){
+
+  just_neonic_data <- neonic %>%
+    select(Sample, site = USGS.Site.ID, pdate, 
            Acetamiprid, 
            Clothianidin,
            Dinotefuran,
            Imidacloprid,
            Thiacloprid,
            Thiamethoxam) %>%
-    gather(chemical, value, -Sample, -site, -pdate)
+    gather(chemical, value, -Sample, -site, -pdate) %>%
+    mutate(site = zeroPad(site,8))
   
-  just_neonic_remarks <- neonic_flow %>%
-    select(Sample, site = USGS.station.number, pdate, 
+  just_neonic_remarks <- neonic %>%
+    select(Sample, site = USGS.Site.ID, pdate, 
            R_Acetamiprid, 
            R_Clothianidin,
            R_Dinotefuran,
@@ -65,7 +66,8 @@ merged_NWIS <- function(tracking, NWIS, neonic_flow, pCodeInfo){
     ) %>%
     gather(chemical_rk, remark_cd, -Sample, -site, -pdate) %>%
     mutate(chemical = gsub("R_","",chemical_rk)) %>%
-    select(-chemical_rk)
+    select(-chemical_rk)%>%
+    mutate(site = zeroPad(site,8))
 
   just_neonic <- left_join(just_neonic_data, 
                            just_neonic_remarks, by=c("Sample","site","pdate","chemical"))
@@ -140,16 +142,19 @@ create_tox_chemInfo <- function(chem_data, special_cas, pCodeInfo, classes){
 create_tox_siteInfo <- function(sites){
 
   siteInfo <- sites %>%
-    select(SiteID = USGS.station.number,
-           `Short Name` = shortName)
-  
-  USGS_site <- readNWISsite(siteInfo$SiteID)
-  
-  siteInfo <- siteInfo %>%
-    left_join(select(USGS_site, SiteID = site_no, 
-                     dec_lat = dec_lat_va,
-                     dec_lon = dec_long_va), by="SiteID") %>%
+    select(SiteID = site_no,
+           `Short Name` = shortName,
+           dec_lat = dec_lat_va,
+           dec_lon = dec_long_va,
+           map_nm,
+           station_nm)%>%
     mutate(site_grouping = "All")
+  
+  siteInfo$`Short Name`[is.na(siteInfo$`Short Name`)] <- siteInfo$map_nm[is.na(siteInfo$`Short Name`)]
+  siteInfo <- select(siteInfo, -map_nm)
+  
+  siteInfo$`Short Name`[is.na(siteInfo$`Short Name`)] <- siteInfo$station_nm[is.na(siteInfo$`Short Name`)]
+  siteInfo <- select(siteInfo, -station_nm)
   
   return(siteInfo)
   

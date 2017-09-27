@@ -1,9 +1,9 @@
 library(dplyr)
 library(dataRetrieval)
 
-get_flow <- function(sites){
+get_flow <- function(tracking){
   
-  sitesIDS <- sites$USGS.station.number
+  sitesIDS <- zeroPad(unique(tracking$SiteID),padTo = 8)
   begin <- "2015-10-01"
   end <- "2016-10-01"
   timeSteps <- as.numeric((difftime(as.POSIXct(end),as.POSIXct(begin),units="days")+2)*96)

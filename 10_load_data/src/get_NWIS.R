@@ -5,12 +5,10 @@ library(dplyr)
 # This should include both schedule 4433 (wastewater indicators)
 # and 2437 pesticides
 
-get_NWIS <- function(site.file){
-  
-  dfSites <- readRDS(file = site.file)
+get_NWIS <- function(tracking){
 
   ## define sites for data retrieval ##
-  sites <- dfSites$USGS.station.number #Use all sites in list for now
+  sites <- zeroPad(unique(tracking$SiteID),8) #Use all sites in list for now
 
   df <- readWQPdata(siteNumbers = paste0("USGS-",sites), 
                       startDate = '2015-10-01',

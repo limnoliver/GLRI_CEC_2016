@@ -9,7 +9,7 @@ get_classes <- function(file_classes){
   return(classes)
 }
 
-get_sites <- function(file.sites){
+get_sites <- function(tracking,file.sites){
   dfSites <- as.data.frame(read_excel(file.sites))
   timeZone <- c("CST6CDT","CST6CDT","CST6CDT","EST5EDT","EST5EDT","EST5EDT","EST5EDT")
   States <- c("MN", "WI", "IN", "MI", "OH", "NY")
@@ -21,6 +21,10 @@ get_sites <- function(file.sites){
   dfSites$shortName <- c("Bad","Manitowoc","IHC","St. Joe","Grand","Saginaw","Rouge","Maumee","Cuyahoga","Genesee")
   
   dfSites[which(dfSites$USGS.station.number == "04157005"),"USGS.station.number"] <- "04157000"
+  
+  from_NWIS <- readNWISsite(zeroPad(unique(tracking$SiteID),padTo = 8))
+  
+  dfSites <- left_join(from_NWIS, dfSites, by=c("site_no"="USGS.station.number"))
   
   return(dfSites)
 }

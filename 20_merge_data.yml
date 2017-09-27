@@ -17,13 +17,10 @@ sources:
 targets:
   20_merge_data:
     depends: 
-      - neonic_flow
-      
-  neonic_flow: 
-    command: merged_neonic_flow(neonic, flow, sites)
+      - data/neonic.xlsx
 
   neonic_NWIS: 
-    command: merged_NWIS(tracking, NWIS, neonic_flow, pCodeInfo)
+    command: merged_NWIS(tracking, NWIS, neonic, pCodeInfo)
     
   special_cas:
     command: get_special_cas()
