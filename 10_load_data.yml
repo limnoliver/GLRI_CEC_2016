@@ -42,7 +42,7 @@ targets:
     command: get_NWIS(tracking)
 
   pCodeInfo:
-    command: get_pCode("10_load_data/raw/NWQLPesticideInfo.rds")
+    command: get_pCode(NWIS)
 
   classes: 
     command: get_classes("10_load_data/raw/chemical_classes.csv")

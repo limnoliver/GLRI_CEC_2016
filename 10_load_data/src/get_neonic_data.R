@@ -38,8 +38,6 @@ get_neonic_data <- function(file.neonic,
   
   dfMDL <- read.csv(file.MDL,stringsAsFactors = FALSE)
   
-  
-  
   #remove rows without sample information
   dfNeonic <- dfNeonic[grep("WS",dfNeonic$Sample,ignore.case = TRUE),]
   
@@ -48,8 +46,6 @@ get_neonic_data <- function(file.neonic,
   dfNeonic$Site[grep("Saginaw",dfNeonic$Site)] <- "Saginaw R @ Saginaw, MI" 
   dfNeonic$Site[grep("Cuyahoga",dfNeonic$Site)] <- "Cuyahoga R @ Saginaw, MI" 
 
-  
-  
   neonics <- names(dfNeonic)[11:16]
   
   # set NA values to MDL and create remark columns with "<" and estimated values
@@ -69,32 +65,12 @@ get_neonic_data <- function(file.neonic,
   dfTracking <- as.data.frame(dfTracking)
   dfNeonic$Sample <- toupper(dfNeonic$Sample)
   dfTracking$Neonics <- toupper(dfTracking$Neonics)
+  
+  df <- dfNeonic %>%
+    mutate(Date = as.Date(Date)) %>%
+    left_join(select(dfTracking, -Site),
+                  by = c("Sample"="Neonics")) %>%
+    select(-Date.x, -Time.y, -Time.x, -Date.y) 
 
-  df <- merge(dfNeonic,dfTracking,by.x = "Sample", by.y = "Neonics",all=TRUE)
-  df <- df[!is.na(df$Clothianidin),]
-  
-  #Populate Neonic file with land use characteristics and other site info
-  dfNeonicSiteIDs <- ifelse(!is.na(dfNeonic$USGS.Site.ID), paste0("0",dfNeonic$USGS.Site.ID),NA)
-  siteRows <- match(dfNeonicSiteIDs,dfSites$USGS.station.number)
-  dfSiteInfo <- dfSites[siteRows,]
-  dfNeonic <- cbind(dfNeonic,dfSiteInfo)
-  
-  timeZone <- c("CST6CDT","CST6CDT","CST6CDT","EST5EDT","EST5EDT","EST5EDT","EST5EDT")
-  States <- c("MN", "WI", "IN", "MI", "OH", "NY")
-  names(timeZone) <- States
-  
-  #Convert dates and times to POSIXct in GMT
-  dfNeonic$timeZone <- ifelse(is.na(dfNeonic$timeZone),"EST5EDT",dfNeonic$timeZone)
-  uniqueTimeZones <- unique(timeZone)
-  listState <- list()
-  for(i in 1:length(uniqueTimeZones)){
-    dfState <- subset(dfNeonic,timeZone==uniqueTimeZones[i])
-    dfState$pdate <- as.POSIXct(paste(dfState$Date, dfState$Time),format='%m/%d/%Y %H:%M',tz=uniqueTimeZones[i])
-    dfState$pdate <- as.POSIXct(format(as.POSIXct(dfState$pdate),tz="UTC",usetz=TRUE),tz="UTC")
-    listState[[i]] <- dfState
-  }
-  
-  dfNeonic <- rbind(listState[[1]],listState[[2]])
-  
-  return(dfNeonic)
+  return(df)
 }
