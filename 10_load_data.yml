@@ -45,4 +45,4 @@ targets:
     command: get_pCode(NWIS)
 
   classes: 
-    command: get_classes("10_load_data/raw/chemical_classes.csv")
+    command: get_classes("10_load_data/chemical_classes.csv")
