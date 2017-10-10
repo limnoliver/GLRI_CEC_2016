@@ -8,7 +8,7 @@ knitr::opts_chunk$set(echo = TRUE,
                       warning = FALSE,
                       message = FALSE,
                       fig.height = 7,
-                      fig.width = 9)
+                      fig.width = 12)
 ```
 
 ## Biological influence
@@ -38,7 +38,7 @@ classPlot
 
 Could also or chemicals:
 
-```{r chemPlot}
+```{r chemPlot, fig.height=16}
 
 chemPlot <- plot_tox_boxplots(chemicalSummary, 
                                category = "Chemical")
