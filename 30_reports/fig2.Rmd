@@ -15,24 +15,13 @@ knitr::opts_chunk$set(echo = TRUE,
 
 Number of individual chemicals with at least one sample that resulted in an exposure activity ratio > 10-3 for each site.
 
+This is a bit different than vignette #2 because there are different number of samples for different chemicals at the same site.
 
-
-```{r }
+```{r nChems}
 library(toxEval)
 library(dplyr)
 library(ggplot2)
 
-ACClong <- get_ACC(chem_info$CAS)
-ACClong <- remove_flags(ACClong)
-
-cleaned_ep <- clean_endPoint_info(endPointInfo)
-filtered_ep <- filter_groups(cleaned_ep)
-
-chemicalSummary <- get_chemical_summary(ACClong,
-                                        filtered_ep,
-                                        chem_data, 
-                                        site_info, 
-                                        chem_info)
 threshold <- 10^-3
 
 graphData <- chemicalSummary %>%

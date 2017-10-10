@@ -18,8 +18,7 @@ targets:
   
   fig2.md:
     depends: 
-      - chem_info
-      - chem_data
+      - chemicalSummary
       - site_info
       - data/neonic.xlsx
     knitr: 

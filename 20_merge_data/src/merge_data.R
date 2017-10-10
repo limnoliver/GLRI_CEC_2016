@@ -3,6 +3,7 @@ library(tidyr)
 library(readr)
 library(dataRetrieval)
 library(openxlsx)
+library(toxEval)
 
 merged_NWIS <- function(tracking, NWIS, neonic, pCodeInfo){
 
@@ -131,4 +132,19 @@ create_toxExcel <- function(chem_data, chem_info, site_info, file_out){
                            "Sites" = site_info)
   write.xlsx(list_of_datasets, file = file_out, append=TRUE)
 
+}
+
+get_chem_sum <- function(chem_info, chem_data, site_info){
+  ACClong <- get_ACC(chem_info$CAS)
+  ACClong <- remove_flags(ACClong)
+  
+  cleaned_ep <- clean_endPoint_info(endPointInfo)
+  filtered_ep <- filter_groups(cleaned_ep)
+  
+  chemicalSummary <- get_chemical_summary(ACClong,
+                                          filtered_ep,
+                                          chem_data, 
+                                          site_info, 
+                                          chem_info)
+  return(chemicalSummary)
 }
