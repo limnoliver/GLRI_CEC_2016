@@ -20,7 +20,7 @@ targets:
       - data/neonic.xlsx
 
   neonic_NWIS: 
-    command: merged_NWIS(tracking, NWIS, neonic, pCodeInfo)
+    command: merged_NWIS(tracking, NWIS, neonic, pCodeInfo, schedule_pCodes)
     
   special_cas:
     command: get_special_cas()
@@ -35,4 +35,4 @@ targets:
     command: create_tox_siteInfo(sites)
     
   data/neonic.xlsx:
-    command: create_toxExcel(chem_data, chem_info, site_info,'data/neonic.xlsx')
+    command: create_toxExcel(chem_data, chem_info, site_info,target_name)

@@ -15,6 +15,7 @@ sources:
   - 10_load_data/src/get_neonic_data.R
   - 10_load_data/src/get_NWIS.R
   - 10_load_data/src/get_tracking.R
+  - 10_load_data/src/get_schedules.R
 
 targets:
   10_load_data:
@@ -24,6 +25,8 @@ targets:
       - neonic
       - NWIS
       - classes
+      - schedules
+      - schedule_pCodes
       
   tracking:
     command: get_tracking_data('10_load_data/cfg/tracking_config.yaml')
@@ -46,3 +49,9 @@ targets:
 
   classes: 
     command: get_classes("10_load_data/chemical_classes.csv")
+    
+  schedules:
+    command: c(I("4433"),I("2437"))
+    
+  schedule_pCodes:
+    command: get_schedules(schedules)

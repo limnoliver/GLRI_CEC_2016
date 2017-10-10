@@ -1,0 +1,34 @@
+target_default: 30_reports
+
+include:
+  - 20_merge_data.yml
+  
+packages:
+  - knitr
+  - rmarkdown
+  - toxEval
+  
+sources:
+  - 30_reports/src/render.R
+  
+targets:
+  30_reports:
+    depends: fig2.html
+  
+  fig2.md:
+    depends: 
+      - chem_info
+      - chem_data
+      - site_info
+      - data/neonic.xlsx
+    knitr: 
+      input: 30_reports/fig2.Rmd
+      chdir: true
+      auto_figure_prefix: true
+    cleanup_level: purge
+    
+  reports/fig2.html:
+    depends: fig2.md
+    command: render_html("30_reports/fig2.md", target_name)
+    cleanup_level: purge
+  

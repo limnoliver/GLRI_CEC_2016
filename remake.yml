@@ -4,8 +4,8 @@ packages:
   - remake
   
 include:
-  - 20_merge_data.yml
+  - 30_reports.yml
 
 targets:
   all:
-    depends: data/neonic.xlsx
+    depends: reports/fig2.html
