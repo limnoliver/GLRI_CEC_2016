@@ -34,6 +34,7 @@ targets:
     depends: 
       - chemicalSummary
       - site_info
+      - reports/fig2.html
     knitr: 
       input: 30_reports/fig3.Rmd
     cleanup_level: purge

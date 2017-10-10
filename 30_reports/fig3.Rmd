@@ -11,7 +11,9 @@ knitr::opts_chunk$set(echo = TRUE,
                       fig.width = 12)
 ```
 
-## Biological influence
+## EAR boxplots
+
+### Biological influence
 
 Boxplots of the maximum summation of exposure activity ratios for each site by individual intended target families computed using individual water samples collected from 57 Great Lakes Tributaries from 2010-2013. Boxplots include only those sites that had detections for chemicals that influence the intended target families in ToxCast assays. Chemicals that influence the intended target family transferase were not detected. None of the monitored chemicals influence endpoints from the intended target families phosphatase, esterase, hydrolase, lyase, methyltransferase, and miscellaneous protein (all not included in this figure). [Boxes, 25th to 75th percentiles; dark line, median; whiskers, 1.5 x the interquartile range (IQR); circles, values outside 1.5 x the IQR. n, number of sites with detections of chemicals that have activity for endpoints in designated intended target families.]
 
@@ -27,7 +29,7 @@ bioPlot
 
 ```
 
-Could also do chemical classes:
+### Chemical classes:
 
 ```{r classPlot}
 classPlot <- plot_tox_boxplots(chemicalSummary, 
@@ -36,12 +38,21 @@ classPlot
 
 ```
 
-Could also or chemicals:
+### Chemicals:
 
 ```{r chemPlot, fig.height=16}
 
 chemPlot <- plot_tox_boxplots(chemicalSummary, 
                                category = "Chemical")
 chemPlot
+
+```
+
+## Heat Map
+
+```{r heat, fig.height=15}
+ plot_tox_heatmap(chemicalSummary,
+              site_info,
+              category = "Chemical")
 
 ```
