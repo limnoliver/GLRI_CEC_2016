@@ -13,7 +13,8 @@ sources:
   
 targets:
   30_reports:
-    depends: fig2.html
+    depends:
+      - reports/fig2.html
   
   fig2.md:
     depends: 
@@ -23,12 +24,9 @@ targets:
       - data/neonic.xlsx
     knitr: 
       input: 30_reports/fig2.Rmd
-      chdir: true
-      auto_figure_prefix: true
     cleanup_level: purge
     
   reports/fig2.html:
-    depends: fig2.md
-    command: render_html("30_reports/fig2.md", target_name)
+    command: render_html("fig2.md", target_name)
     cleanup_level: purge
   

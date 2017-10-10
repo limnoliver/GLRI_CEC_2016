@@ -1,10 +1,11 @@
 render_html <- function(filename_md, output_file) {
   
   dir.create(dirname(output_file), showWarnings = FALSE, recursive = TRUE)
-  
-  rmarkdown::render(filename_md, 
+
+  outfile <- rmarkdown::render(input = filename_md, 
                     output_file = basename(output_file),
                     output_dir = dirname(output_file),
                     output_format = "html_document", 
-                    quiet=TRUE)
+                    quiet=TRUE, run_pandoc = TRUE)
+  
 }
