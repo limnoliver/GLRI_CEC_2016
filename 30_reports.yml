@@ -15,6 +15,7 @@ targets:
   30_reports:
     depends:
       - reports/fig2.html
+      - reports/fig3.html
   
   fig2.md:
     depends: 
@@ -27,5 +28,17 @@ targets:
     
   reports/fig2.html:
     command: render_html("fig2.md", target_name)
+    cleanup_level: purge
+    
+  fig3.md:
+    depends: 
+      - chemicalSummary
+      - site_info
+    knitr: 
+      input: 30_reports/fig3.Rmd
+    cleanup_level: purge
+    
+  reports/fig3.html:
+    command: render_html("fig3.md", target_name)
     cleanup_level: purge
   
