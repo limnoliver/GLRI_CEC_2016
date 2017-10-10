@@ -21,7 +21,8 @@ get_sites <- function(tracking,file.sites){
   dfSites$shortName <- c("Bad","Manitowoc","IHC","St. Joe","Grand","Saginaw","Rouge","Maumee","Cuyahoga","Genesee")
   
   dfSites[which(dfSites$USGS.station.number == "04157005"),"USGS.station.number"] <- "04157000"
-  
+  tracking$SiteID[which(tracking$SiteID == "04157005")] <- "04157000"
+
   from_NWIS <- readNWISsite(zeroPad(unique(tracking$SiteID),padTo = 8))
   
   dfSites <- left_join(from_NWIS, dfSites, by=c("site_no"="USGS.station.number"))

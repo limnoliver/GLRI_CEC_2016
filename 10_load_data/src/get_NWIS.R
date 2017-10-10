@@ -32,6 +32,8 @@ get_NWIS <- function(tracking){
            NWISRecordNumber = sapply(strsplit(ActivityIdentifier,"\\."), function(x) x[3])) %>%
     select(-ActivityIdentifier, -FullsiteID)
   
+  #Saginaw!!!
+  df_sub$SiteID[df_sub$SiteID == "04157005"] <- "04157000"
 
   return(df_sub)
   

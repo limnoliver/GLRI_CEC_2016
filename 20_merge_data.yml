@@ -5,7 +5,6 @@ include:
 
 packages:
   - dplyr
-  - USGSHydroTools
   - tidyr
   - readr
   - dataRetrieval
@@ -20,7 +19,7 @@ targets:
       - data/neonic.xlsx
 
   neonic_NWIS: 
-    command: merged_NWIS(tracking, NWIS, neonic, pCodeInfo, schedule_pCodes)
+    command: merged_NWIS(tracking, NWIS, neonic, pCodeInfo)
     
   special_cas:
     command: get_special_cas()
