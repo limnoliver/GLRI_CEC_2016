@@ -8,4 +8,4 @@ include:
 
 targets:
   all:
-    depends: reports/fig3.html
+    depends: reports/fig4.html
