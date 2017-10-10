@@ -11,3 +11,7 @@
 !*/out/README.md
 .httr-oauth
 data
+figure
+reports
+*.md
+.remake
