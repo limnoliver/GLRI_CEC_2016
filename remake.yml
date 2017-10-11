@@ -1,0 +1,16 @@
+target_default: all
+
+packages:
+  - remake
+  
+include:
+  - 30_reports.yml
+
+targets:
+  all:
+    depends: 
+      - reports/siteTables.xlsx
+      - reports/fig3.html
+      - reports/fig2.html
+      - data/neonic.xlsx
+      

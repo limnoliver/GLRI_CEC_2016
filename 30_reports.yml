@@ -1,0 +1,52 @@
+target_default: 30_reports
+
+include:
+  - 20_merge_data.yml
+  
+packages:
+  - knitr
+  - rmarkdown
+  - toxEval
+  - openxlsx
+  - dplyr
+  - tidyr
+  
+sources:
+  - 30_reports/src/render.R
+  - 30_reports/src/create_tables.R
+  
+targets:
+  30_reports:
+    depends:
+      - reports/fig2.html
+      - reports/fig3.html
+      - reports/fig4.html
+  
+  fig2.md:
+    depends: 
+      - chemicalSummary
+      - site_info
+    knitr: 
+      input: 30_reports/fig2.Rmd
+    cleanup_level: purge
+    
+  reports/fig2.html:
+    command: render_html("fig2.md", target_name)
+    cleanup_level: purge
+    
+  fig3.md:
+    depends: 
+      - chemicalSummary
+      - site_info
+    knitr: 
+      input: 30_reports/fig3.Rmd
+    cleanup_level: purge
+    
+  reports/fig3.html:
+    command: render_html("fig3.md", target_name)
+    cleanup_level: purge
+    
+  reports/siteTables.xlsx:
+    command: get_siteTables(chemicalSummary, chem_info, site_info, AOP, target_name)
+    
+  

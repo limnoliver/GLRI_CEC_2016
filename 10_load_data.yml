@@ -1,0 +1,61 @@
+target_default: 10_load_data
+
+packages:
+  - readxl
+  - dplyr
+  - httr
+  - googlesheets
+  - yaml
+  - dataRetrieval
+  - tidyr
+  - readr
+  - toxEval
+  
+## All R files that are used must be listed here:
+sources:
+  - 10_load_data/src/get_neonic_data.R
+  - 10_load_data/src/get_NWIS.R
+  - 10_load_data/src/get_tracking.R
+  - 10_load_data/src/get_schedules.R
+
+targets:
+  10_load_data:
+    depends: 
+      - sites
+      - tracking
+      - neonic
+      - NWIS
+      - classes
+      - schedules
+      - schedule_pCodes
+      
+  tracking:
+    command: get_tracking_data('10_load_data/cfg/tracking_config.yaml')
+
+  sites:
+    command: get_sites(tracking,"10_load_data/raw/GLRISiteCharacteristicsNeonicsForR.xlsx")
+  
+  AOP:
+    command: get_AOPs()
+  
+  neonic:
+    command: >-
+      get_neonic_data("10_load_data/raw/GLRI_Neonic_to_NWIS_011317.csv", 
+                      "10_load_data/raw/neonicMDLs.csv",
+                      sites,
+                      tracking)
+    
+  NWIS:
+    command: get_NWIS(tracking)
+
+  pCodeInfo:
+    command: get_pCode(NWIS)
+
+  classes: 
+    command: get_classes("10_load_data/chemical_classes.csv")
+    
+  schedules:
+    command: c(I("4433"),I("2437"))
+    
+  schedule_pCodes:
+    command: get_schedules(schedules)

@@ -3,19 +3,19 @@
 library(httr)
 library(googlesheets)
 library(dplyr)
+library(yaml)
 
-cached.path <- "cached_data"
-cached.save <- "0_download"
 # Make sure Bison Connect is your default, and log out for good measure any personal gmail
 
-getGoogleData <- function(cached.path, cached.save){
+get_tracking_data <- function(get_tracking.config = "10_load_data/cfg/tracking_config.yaml"){
   
-
+  config.args <- yaml.load_file(get_tracking.config)
+  
   set_config(config(ssl_verifypeer = 0L))
   token <- gs_auth(cache = FALSE)
   my_sheets <- gs_ls()
   
-  glpfTitle <- gs_title("Sample_Tracking2016")
+  glpfTitle <- gs_title(config.args$fetch.args[["gs_title"]])
   # 
   timeZone <- c("CST6CDT","CST6CDT","CST6CDT","EST5EDT","EST5EDT","EST5EDT","EST5EDT")
   States <- c("MN", "WI", "IN", "MI", "OH", "NY")
@@ -52,9 +52,7 @@ getGoogleData <- function(cached.path, cached.save){
     }
   }
   
-    saveRDS(df, file.path(cached.path,cached.save,"tracking.rds"))
+  return(df)
   
 }
 
-
-getGoogleData(cached.path, cached.save)

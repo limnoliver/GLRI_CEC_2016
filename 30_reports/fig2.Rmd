@@ -1,0 +1,79 @@
+
+
+```{r setup, include=FALSE}
+library(knitr)
+library(rmarkdown)
+options(continue=" ")
+options(width=60)
+knitr::opts_chunk$set(echo = TRUE,
+                      warning = FALSE,
+                      message = FALSE,
+                      fig.height = 7,
+                      fig.width = 9)
+```
+
+## Number of Chemicals with hits
+
+Number of individual chemicals with at least one sample that resulted in an exposure activity ratio > 10-3 for each site.
+
+This is a bit different than vignette #2 because there are different number of samples for different chemicals at the same site.
+
+```{r nChems}
+library(toxEval)
+library(dplyr)
+library(ggplot2)
+
+threshold <- 10^-3
+
+graphData <- chemicalSummary %>%
+  group_by(site, date, chnm) %>% 
+  summarize(sumEAR = sum(EAR)) %>%
+  group_by(site, chnm) %>%
+  summarize(maxEAR = max(sumEAR),
+            count = n()) %>%
+  group_by(site) %>%
+  summarize(nChem = sum(maxEAR > threshold),
+            count = max(count)) %>%
+  data.frame() %>%
+  left_join(select(site_info, site=SiteID, `Short Name`),  by = "site") 
+
+countPlot <- ggplot(graphData, aes(x=`Short Name`))+
+  geom_bar(aes(y=nChem),
+           stat = "identity",
+           fill = "steelblue") +
+  geom_text(aes(y=-1, label =  count), size = 2.5) +
+  theme_bw() +
+  xlab("") +
+  ylab("Number of Chemicals\n with EARmax > 0.001") +
+  theme(axis.text.x = element_text( angle = 90,vjust=0.5,hjust = 1))
+
+countPlot
+
+```
+
+## Site Counts"
+
+```{r siteCounts}
+tableData <- chemicalSummary %>%
+  group_by(site, date, chnm) %>% 
+  summarize(sumEAR = sum(EAR)) %>%
+  group_by(site, chnm) %>%
+  summarize(meanEAR = max(sumEAR)) %>%
+  group_by(chnm) %>%
+  summarize(nSites = sum(meanEAR > 10^-3)) %>%
+  data.frame() %>%
+  arrange(desc(nSites)) %>%
+  filter(nSites > 1)
+
+tableData$chnm <- factor(tableData$chnm, levels = tableData$chnm)
+
+chemPlot <- ggplot(tableData)+
+  geom_bar(aes(x=chnm, y=nSites),stat = "identity",fill = "steelblue") +
+  theme_bw() +
+  xlab("") +
+  ylab("Number of Sites\n with EARmax > 0.001") +
+  theme(axis.text.x = element_text( angle = 90,vjust=0.5,hjust = 1)) 
+
+chemPlot
+
+```

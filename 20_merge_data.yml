@@ -1,0 +1,41 @@
+target_default: 20_merge_data
+
+include:
+  - 10_load_data.yml
+
+packages:
+  - dplyr
+  - tidyr
+  - readr
+  - dataRetrieval
+  - openxlsx
+  
+sources:
+  - 20_merge_data/src/merge_data.R
+  
+targets:
+  20_merge_data:
+    depends: 
+      - data/neonic.xlsx
+      - chemicalSummary
+
+  neonic_NWIS: 
+    command: merged_NWIS(tracking, NWIS, neonic, pCodeInfo)
+    
+  special_cas:
+    command: get_special_cas()
+
+  chem_data: 
+    command: create_chemData(neonic_NWIS, special_cas)
+    
+  chem_info:
+    command: create_tox_chemInfo(chem_data, special_cas, pCodeInfo, classes)
+
+  site_info:
+    command: create_tox_siteInfo(sites)
+    
+  data/neonic.xlsx:
+    command: create_toxExcel(chem_data, chem_info, site_info,target_name)
+
+  chemicalSummary:
+    command: get_chem_sum(chem_info, chem_data, site_info)
