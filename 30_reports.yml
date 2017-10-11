@@ -20,7 +20,7 @@ targets:
     depends:
       - reports/fig2.html
       - reports/fig3.html
-      - reports/fig4.html
+      - reports/siteTables.xlsx
   
   fig2.md:
     depends: 
