@@ -9,6 +9,7 @@ packages:
   - dataRetrieval
   - tidyr
   - readr
+  - toxEval
   
 ## All R files that are used must be listed here:
 sources:
@@ -33,6 +34,9 @@ targets:
 
   sites:
     command: get_sites(tracking,"10_load_data/raw/GLRISiteCharacteristicsNeonicsForR.xlsx")
+  
+  AOP:
+    command: get_AOPs()
   
   neonic:
     command: >-

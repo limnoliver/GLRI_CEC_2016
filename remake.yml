@@ -8,4 +8,9 @@ include:
 
 targets:
   all:
-    depends: reports/fig4.html
+    depends: 
+      - reports/siteTables.xlsx
+      - reports/fig3.html
+      - reports/fig2.html
+      - data/neonic.xlsx
+      
