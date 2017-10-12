@@ -5,7 +5,7 @@ library(dataRetrieval)
 library(openxlsx)
 library(toxEval)
 
-merged_NWIS <- function(tracking, NWIS, neonic, pCodeInfo){
+merged_NWIS <- function(tracking, NWIS, neonic, pCodeInfo, schedule_pCodes){
 
   just_neonic_data <- neonic %>%
     select( site = USGS.Site.ID, pdate, NWISRecordNumber,
@@ -37,8 +37,11 @@ merged_NWIS <- function(tracking, NWIS, neonic, pCodeInfo){
 
   just_NWIS <- select(NWIS, site=SiteID, NWISRecordNumber, pdate, pCode, value) %>%
     left_join(select(pCodeInfo, pCode=parameter_cd, chemical=casrn), by="pCode") %>%
+    filter(pCode %in% schedule_pCodes$`Parameter Code`) %>%
     filter(NWISRecordNumber %in% tracking$NWISRecordNumber)
   
+    # right_join(select(tracking, SiteID, pdate), by=c("site"="SiteID","pdate"))
+    
   nwis_neonic <- bind_rows(just_neonic, just_NWIS)
   
   return(nwis_neonic)

@@ -55,7 +55,7 @@ targets:
     command: get_classes("10_load_data/chemical_classes.csv")
     
   schedules:
-    command: c(I("4433"),I("2437"))
+    command: c(I("2437"))
     
   schedule_pCodes:
     command: get_schedules(schedules)
