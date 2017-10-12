@@ -7,6 +7,8 @@ library(toxEval)
 
 merged_NWIS <- function(tracking, NWIS, neonic, pCodeInfo, schedule_pCodes){
 
+  tracking <- filter(tracking, SampleTypeCode == 9)
+  
   just_neonic_data <- neonic %>%
     select( site = USGS.Site.ID, pdate, NWISRecordNumber,
            Acetamiprid, 
