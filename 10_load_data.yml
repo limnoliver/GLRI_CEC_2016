@@ -47,9 +47,12 @@ targets:
     
   NWIS:
     command: get_NWIS(tracking)
+    
+  pCodesExclude:
+    command: get_pCode_exclude("10_load_data/pCodes_Exclude.txt")
 
   pCodeInfo:
-    command: get_pCode(NWIS)
+    command: get_pCode(NWIS, pCodesExclude)
 
   classes: 
     command: get_classes("10_load_data/chemical_classes.csv")

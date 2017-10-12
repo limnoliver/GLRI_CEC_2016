@@ -65,18 +65,23 @@ get_special_cas <- function(){
   return(special_cas)
 }
 
-create_chemData <- function(neonic_NWIS, special_cas){
+create_chemData <- function(neonic_NWIS, special_cas, pCodeInfo){
 
   chem_data <- neonic_NWIS %>%
     select(SiteID = site,
            `Sample Date` = pdate,
            Value = value,remark_cd,
-           CAS = chemical) %>%
+           CAS = chemical,
+           pCode) %>%
     filter(!is.na(Value),
            !is.na(CAS)) %>%
     left_join(special_cas, by="CAS") %>%
-    mutate(Value = Value/1000) #ng -> ug
-  
+    left_join(select(pCodeInfo, pCode=parameter_cd, units=parameter_units), by="pCode") %>%
+    mutate(Value = Value/1000)
+    
+  # chem_data$Value[is.na(chem_data$units)] <- chem_data$Value[is.na(chem_data$units)]/1000  # Neonics
+  # chem_data$Value[chem_data$units == "ng/l"] <- chem_data$Value[chem_data$units == "ng/l"]/1000
+
   chem_data$CAS[!is.na(chem_data$casrn)] <- chem_data$casrn[!is.na(chem_data$casrn)]
   
   chem_data <- select(chem_data, -casrn, -Class) %>%
