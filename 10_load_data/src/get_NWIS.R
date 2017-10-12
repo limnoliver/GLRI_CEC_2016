@@ -39,10 +39,19 @@ get_NWIS <- function(tracking){
   
 }
 
-get_pCode <- function(NWIS){
+get_pCode_exclude <- function(path_to_exclude){
+
+  pCodes <- read.csv(path_to_exclude, header = FALSE,
+                     stringsAsFactors = FALSE)
+  return(pCodes$V1)
+}
+
+get_pCode <- function(NWIS, pCodesExclude){
 
   pCodes <- unique(NWIS$pCode)
-  pCodeInfo <- readNWISpCode(pCodes)
+  pCodeInfo <- readNWISpCode(pCodes) %>%
+    filter(!(parameter_cd %in% pCodesExclude))
+  
   return(pCodeInfo)
 }
 

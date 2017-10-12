@@ -65,21 +65,27 @@ get_special_cas <- function(){
   return(special_cas)
 }
 
-create_chemData <- function(neonic_NWIS, special_cas){
+create_chemData <- function(neonic_NWIS, special_cas, pCodeInfo){
 
   chem_data <- neonic_NWIS %>%
     select(SiteID = site,
            `Sample Date` = pdate,
            Value = value,remark_cd,
-           CAS = chemical) %>%
+           CAS = chemical,
+           pCode) %>%
     filter(!is.na(Value),
            !is.na(CAS)) %>%
     left_join(special_cas, by="CAS") %>%
-    mutate(Value = Value/1000) #ng -> ug
-  
+    left_join(select(pCodeInfo, pCode=parameter_cd, units=parameter_units), by="pCode") %>%
+    mutate(Value = Value/1000)
+    
+  # chem_data$Value[is.na(chem_data$units)] <- chem_data$Value[is.na(chem_data$units)]/1000  # Neonics
+  # chem_data$Value[chem_data$units == "ng/l"] <- chem_data$Value[chem_data$units == "ng/l"]/1000
+
   chem_data$CAS[!is.na(chem_data$casrn)] <- chem_data$casrn[!is.na(chem_data$casrn)]
   
-  chem_data <- select(chem_data, -casrn)
+  chem_data <- select(chem_data, -casrn, -Class) %>%
+    distinct()
 
   return(chem_data)
   
@@ -87,22 +93,35 @@ create_chemData <- function(neonic_NWIS, special_cas){
 }
 
 
-create_tox_chemInfo <- function(chem_data, special_cas, pCodeInfo, classes){
+create_tox_chemInfo <- function(neonic_NWIS, special_cas, pCodeInfo, classes){
 
-  chem_info <- select(chem_data, CAS) %>%
+  chem_data <- neonic_NWIS %>%
+    select(SiteID = site,
+           `Sample Date` = pdate,
+           Value = value,remark_cd,
+           CAS = chemical,
+           pCode) %>%
+    filter(!is.na(Value),
+           !is.na(CAS)) %>%
+    left_join(special_cas, by="CAS") 
+  
+  chem_data$CAS[!is.na(chem_data$casrn)] <- chem_data$casrn[!is.na(chem_data$casrn)]
+  
+  chem_info <- select(chem_data, CAS, pCode) %>%
     distinct() %>%
     left_join(select(pCodeInfo, CAS = casrn,
-                     `Chemical Name` = parameter_nm), by="CAS") %>%
+                     `Chemical Name` = parameter_nm,
+                     pCode = parameter_cd), by=c("CAS","pCode")) %>%
     left_join(special_cas, by=c("CAS"="casrn"))
   
   chem_info$`Chemical Name`[!is.na(chem_info$CAS.y)] <- chem_info$CAS.y[!is.na(chem_info$CAS.y)]
   
   chem_info <- select(chem_info, -CAS.y) %>%
-    left_join(select(classes, CAS, class1 = Class))
+    left_join(select(classes, CAS, class1 = Class), by="CAS")
 
   chem_info$Class[is.na(chem_info$Class)] <- chem_info$class1[is.na(chem_info$Class)]
   
-  chem_info <- select(chem_info, -class1)
+  chem_info <- select(chem_info, -class1, -pCode)
   
   return(chem_info)
 }
