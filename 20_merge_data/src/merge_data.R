@@ -41,7 +41,8 @@ merged_NWIS <- function(tracking, NWIS, neonic, pCodeInfo, schedule_pCodes){
     filter(NWISRecordNumber %in% tracking$NWISRecordNumber)
   
     # right_join(select(tracking, SiteID, pdate), by=c("site"="SiteID","pdate"))
-    
+  just_NWIS$site[just_NWIS$site == "04157005"] <- "04157000"  
+  
   nwis_neonic <- bind_rows(just_neonic, just_NWIS)
   
   return(nwis_neonic)

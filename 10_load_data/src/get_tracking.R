@@ -61,8 +61,6 @@ get_tracking_data <- function(get_tracking.config = "10_load_data/cfg/tracking_c
   df$NWISRecordNumber <- gsub("(DB3)", "", df$NWISRecordNumber, fixed=TRUE)
   df$NWISRecordNumber <- zeroPad(df$NWISRecordNumber, 8)
   
-  df$SiteID[df$SiteID == "04157005"] <- "04157000"
-  
   return(df)
   
 }
