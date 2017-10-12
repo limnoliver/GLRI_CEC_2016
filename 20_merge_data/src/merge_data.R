@@ -39,7 +39,17 @@ merged_NWIS <- function(tracking, NWIS, neonic, pCodeInfo, schedule_pCodes){
 
   just_NWIS <- select(NWIS, site=SiteID, NWISRecordNumber, pdate, pCode, value) %>%
     left_join(select(pCodeInfo, pCode=parameter_cd, chemical=casrn), by="pCode") %>%
-    filter(pCode %in% schedule_pCodes$`Parameter Code`) %>%
+    filter(pCode %in% schedule_pCodes$`Parameter Code`) 
+  
+  tracking$NWISRecordNumber[tracking$NWISRecordNumber == "01600425"] <- "01600815"
+  tracking$NWISRecordNumber[tracking$NWISRecordNumber == "016002001"] <- "01600123"
+  tracking$NWISRecordNumber[tracking$NWISRecordNumber == "01600236"] <- "01600262"
+  tracking$NWISRecordNumber[tracking$NWISRecordNumber == "01600484"] <- "01600487"
+  tracking$NWISRecordNumber[tracking$NWISRecordNumber == "01600700"] <- "01600698"
+  tracking$NWISRecordNumber[tracking$NWISRecordNumber == "01600769"] <- "01600768"
+  tracking$NWISRecordNumber[tracking$NWISRecordNumber == "01601616"] <- "01601615"
+  
+  just_NWIS <- just_NWIS %>%
     filter(NWISRecordNumber %in% tracking$NWISRecordNumber)
   
     # right_join(select(tracking, SiteID, pdate), by=c("site"="SiteID","pdate"))
