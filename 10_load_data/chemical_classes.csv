@@ -14,7 +14,7 @@ CAS,Class
 2163-68-0,Deg - Herbicide
 7313-54-4,Deg - Herbicide
 2814-20-2,Deg - Insecticide
-2327-02-8,Deg - Herbicide
+2/8/2327,Deg - Herbicide
 16655-82-6,Deg - Insecticide
 3739-38-6,Deg - Insecticide
 56750-76-6,Deg - Herbicide
@@ -64,14 +64,12 @@ CAS,Class
 4147-57-3,Deg - Herbicide
 3032-40-4,Deg - Herbicide
 56611-54-2,Deg - Herbicide
-52236-30-3 ,Deg - Herbicide
+52236-30-3,Deg - Herbicide
 23576-24-1,Deg - Herbicide
 333-41-5,Insecticide
 962-58-3,Deg - Insecticide
 1918-00-9,Herbicide
-62-73-7,Deg - Insecticide
 141-66-2,Insecticide
-56611-54-2,Deg - Herbicide
 35367-38-5,Insecticide
 109293-97-2,Insecticide
 143701-75-1,Deg - Herbicide
@@ -83,8 +81,8 @@ CAS,Class
 126-75-0,Deg - Insecticide
 2496-92-6,Deg - Insecticide
 2496-91-5,Deg - Insecticide
-2497-06-5,Deg - Insecticide
-2497-07-6,Deg - Insecticide
+6/5/2497,Deg - Insecticide
+7/6/2497,Deg - Insecticide
 330-54-1,Herbicide
 759-94-4,Herbicide
 13194-48-4,Insecticide
@@ -99,7 +97,7 @@ CAS,Class
 120067-83-6,Deg - Insecticide
 209248-72-6,Deg - Insecticide
 120068-36-2,Deg - Insecticide
-272451-65-7 ,Insecticide
+272451-65-7,Insecticide
 98967-40-9,Herbicide
 2164-17-2,Herbicide
 944-22-9,Insecticide
@@ -113,7 +111,7 @@ CAS,Class
 56681-55-1,Deg - Herbicide
 29820-16-4,Deg - Insecticide
 131068-72-9,Deg - Herbicide
-2599-11-3,Deg - Herbicide
+11/3/2599,Deg - Herbicide
 59962-54-8,Deg - Herbicide
 114311-32-9,Herbicide
 81335-37-7,Herbicide
@@ -160,11 +158,11 @@ CAS,Class
 298-00-0,Insecticide
 40487-42-1,Herbicide
 298-02-2,Insecticide
-2588-05-8,Deg - Insecticide
+5/8/2588,Deg - Insecticide
 2600-69-3,Deg - Insecticide
-2588-06-9,Deg - Insecticide
-2588-04-7,Deg - Insecticide
-2588-03-6,Deg - Insecticide
+6/9/2588,Deg - Insecticide
+4/7/2588,Deg - Insecticide
+3/6/2588,Deg - Insecticide
 732-11-6,Insecticide
 51-03-6,Synergist
 41198-08-7,Insecticide
@@ -239,21 +237,13 @@ CAS,Class
 91-57-6,Fuel
 581-42-0,Fuel
 98-82-8,Fuel
-1912-24-9,Herbicide
-314-40-9,Herbicide
-57837-19-1,Herbicide
-1610-18-0,Herbicide
-51218-45-2,Herbicide
 87-86-5,Herbicide
 102-36-3,Herbicide
 58-08-2,"Human Drug, Non Prescription"
 486-56-6,"Human Drug, Non Prescription"
 89-78-1,"Human Drug, Non Prescription"
-333-41-5,Insecticide
-63-25-2,Insecticide
 62-73-7,Insecticide
 134-62-3,Insecticide
-2921-88-2,Insecticide
 86-74-8,Insecticide
 119-36-8,Other
 106-46-7,Other
