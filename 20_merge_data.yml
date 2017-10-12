@@ -29,7 +29,7 @@ targets:
     command: create_chemData(neonic_NWIS, special_cas)
     
   chem_info:
-    command: create_tox_chemInfo(chem_data, special_cas, pCodeInfo, classes)
+    command: create_tox_chemInfo(neonic_NWIS, special_cas, pCodeInfo, classes)
 
   site_info:
     command: create_tox_siteInfo(sites)
