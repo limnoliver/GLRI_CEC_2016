@@ -20,7 +20,7 @@ targets:
       - chemicalSummary
 
   neonic_NWIS: 
-    command: merged_NWIS(tracking, NWIS, neonic, pCodeInfo)
+    command: merged_NWIS(tracking, NWIS, neonic, pCodeInfo, schedule_pCodes)
     
   special_cas:
     command: get_special_cas()

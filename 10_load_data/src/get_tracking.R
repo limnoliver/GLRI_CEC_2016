@@ -51,6 +51,15 @@ get_tracking_data <- function(get_tracking.config = "10_load_data/cfg/tracking_c
       df <- bind_rows(df,dfState)
     }
   }
+
+  df$NWISRecordNumber <- gsub(" ", "", df$NWISRecordNumber)
+  df$NWISRecordNumber <- gsub("(DB04)", "", df$NWISRecordNumber, fixed=TRUE)
+  df$NWISRecordNumber <- gsub("(DB01)", "", df$NWISRecordNumber, fixed=TRUE)
+  df$NWISRecordNumber <- gsub("(DB01", "", df$NWISRecordNumber, fixed=TRUE)
+  df$NWISRecordNumber <- gsub("q", "", df$NWISRecordNumber)
+  df$NWISRecordNumber <- gsub("(DB4)", "", df$NWISRecordNumber, fixed=TRUE)
+  df$NWISRecordNumber <- gsub("(DB3)", "", df$NWISRecordNumber, fixed=TRUE)
+  df$NWISRecordNumber <- zeroPad(df$NWISRecordNumber, 8)
   
   return(df)
   
