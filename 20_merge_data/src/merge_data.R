@@ -59,6 +59,14 @@ merged_NWIS <- function(tracking, NWIS, neonic, pCodeInfo, schedule_pCodes){
   return(nwis_neonic)
 }
 
+remove_censor <- function(neonic_NWIS){
+  
+  neonic_NWIS$value[neonic_NWIS$remark_cd == "<"] <- 0
+  
+  return(neonic_NWIS)
+  
+}
+
 get_special_cas <- function(){
   special_cas <- data.frame(casrn = c("135410-20-7",
                                     "210880-92-5",
