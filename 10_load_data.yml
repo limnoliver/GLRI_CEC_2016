@@ -33,7 +33,7 @@ targets:
     command: get_tracking_data('10_load_data/cfg/tracking_config.yaml')
 
   sites:
-    command: get_sites(tracking,"10_load_data/raw/GLRISiteCharacteristicsNeonicsForR.xlsx")
+    command: get_sites(tracking,"10_load_data/raw/GLRISPSites2016.rds")
   
   AOP:
     command: get_AOPs()

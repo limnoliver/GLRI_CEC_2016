@@ -24,12 +24,15 @@ targets:
     
   special_cas:
     command: get_special_cas()
+    
+  filtered_censor:
+    command: remove_censor(neonic_NWIS)
 
   chem_data: 
-    command: create_chemData(neonic_NWIS, special_cas, pCodeInfo)
+    command: create_chemData(filtered_censor, special_cas, pCodeInfo)
     
   chem_info:
-    command: create_tox_chemInfo(neonic_NWIS, special_cas, pCodeInfo, classes)
+    command: create_tox_chemInfo(filtered_censor, special_cas, pCodeInfo, classes)
 
   site_info:
     command: create_tox_siteInfo(sites)

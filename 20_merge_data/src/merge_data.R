@@ -48,7 +48,8 @@ merged_NWIS <- function(tracking, NWIS, neonic, pCodeInfo, schedule_pCodes){
   tracking$NWISRecordNumber[tracking$NWISRecordNumber == "01600700"] <- "01600698"
   tracking$NWISRecordNumber[tracking$NWISRecordNumber == "01600769"] <- "01600768"
   tracking$NWISRecordNumber[tracking$NWISRecordNumber == "01601616"] <- "01601615"
-
+  tracking$SiteID[tracking$SiteID == "04157005"] <- "04157000"
+  
   just_NWIS <- just_NWIS %>%
     right_join(select(tracking, site=SiteID, NWISRecordNumber), by=c("site","NWISRecordNumber"))
 
@@ -57,6 +58,14 @@ merged_NWIS <- function(tracking, NWIS, neonic, pCodeInfo, schedule_pCodes){
   nwis_neonic <- bind_rows(just_neonic, just_NWIS)
   
   return(nwis_neonic)
+}
+
+remove_censor <- function(neonic_NWIS){
+  
+  neonic_NWIS$value[neonic_NWIS$remark_cd == "<"] <- 0
+  
+  return(neonic_NWIS)
+  
 }
 
 get_special_cas <- function(){
