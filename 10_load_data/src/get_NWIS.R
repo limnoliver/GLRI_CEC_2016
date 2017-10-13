@@ -9,7 +9,7 @@ get_NWIS <- function(tracking){
 
   ## define sites for data retrieval ##
   sites <- zeroPad(unique(tracking$SiteID),8) #Use all sites in list for now
-browser()
+
   df <- readWQPdata(siteNumbers = c("USGS-04157000",paste0("USGS-",sites)), 
                       startDate = '2015-10-01',
                       endDate = '2016-09-30')
