@@ -48,7 +48,8 @@ merged_NWIS <- function(tracking, NWIS, neonic, pCodeInfo, schedule_pCodes){
   tracking$NWISRecordNumber[tracking$NWISRecordNumber == "01600700"] <- "01600698"
   tracking$NWISRecordNumber[tracking$NWISRecordNumber == "01600769"] <- "01600768"
   tracking$NWISRecordNumber[tracking$NWISRecordNumber == "01601616"] <- "01601615"
-
+  tracking$SiteID[tracking$SiteID == "04157005"] <- "04157000"
+  
   just_NWIS <- just_NWIS %>%
     right_join(select(tracking, site=SiteID, NWISRecordNumber), by=c("site","NWISRecordNumber"))
 
