@@ -13,4 +13,5 @@ targets:
       - reports/fig3.html
       - reports/fig2.html
       - data/pesticides.xlsx
+      - figure/benchmark_comparisons.png
       
