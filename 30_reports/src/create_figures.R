@@ -61,6 +61,19 @@ benchmark_tox <- function(chemicalSummary,
     mutate(type = "Benchmark",
            y=10^-8)
 
+  astrictData_tox <- countNonZero %>%
+    mutate(y = 10^-7.5,
+           askt = "*",
+           type = "ToxCast") %>%
+    filter(!(chnm %in% unique(chemicalSummary$chnm)))
+  
+  astrictData_bench <- countNonZero %>%
+    mutate(y = 10^-7.5,
+           askt = "*",
+           type = "Benchmark") %>%
+    filter(!(chnm %in% unique(chemicalSummary_bench$chnm)))
+    
+  
   toxPlot_All <- ggplot(data=graphData) +
     scale_y_log10(labels=fancyNumbers)  +
     geom_boxplot(aes(x=chnm, y=maxEAR, fill=Class),
@@ -87,7 +100,11 @@ benchmark_tox <- function(chemicalSummary,
   
   toxPlot_All_withLabels <- toxPlot_All +
     geom_text(data=countNonZero, 
-              aes(x= chnm, label = nonZero, y=y), size=1.75) 
+              aes(x= chnm, label = nonZero, y=y), size=1.75) +
+    geom_text(data = astrictData_bench, aes(x=chnm, label=askt, y=y),
+              size=5, vjust = 0.70)+
+    geom_text(data = astrictData_tox, aes(x=chnm, label=askt, y=y),
+              size=5, vjust = 0.70)
   
   ggsave(toxPlot_All_withLabels, filename = file_out, width = 11, height = 9)
   
