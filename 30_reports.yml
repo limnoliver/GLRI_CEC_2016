@@ -14,6 +14,7 @@ packages:
 sources:
   - 30_reports/src/render.R
   - 30_reports/src/create_tables.R
+  - 30_reports/src/create_figures.R
   
 targets:
   30_reports:
@@ -21,6 +22,7 @@ targets:
       - reports/fig2.html
       - reports/fig3.html
       - reports/siteTables.xlsx
+      - figure/benchmark_comparisons.png
   
   fig2.md:
     depends: 
@@ -49,4 +51,5 @@ targets:
   reports/siteTables.xlsx:
     command: get_siteTables(chemicalSummary, chem_info, site_info, AOP, target_name)
     
-  
+  figure/benchmark_comparisons.png:
+    command: benchmark_tox(chemicalSummary, chem_data, site_info, chem_info, benchmarks, exclusions, target_name)

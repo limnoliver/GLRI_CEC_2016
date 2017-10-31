@@ -28,6 +28,8 @@ targets:
       - classes
       - schedules
       - schedule_pCodes
+      - benchmarks
+      - exclusions
       
   tracking:
     command: get_tracking_data('10_load_data/cfg/tracking_config.yaml')
@@ -55,10 +57,16 @@ targets:
     command: get_pCode(NWIS, pCodesExclude)
 
   classes: 
-    command: get_classes("10_load_data/chemical_classes.csv")
+    command: get_csv("10_load_data/chemical_classes.csv")
     
   schedules:
     command: c(I("2437"))
     
   schedule_pCodes:
     command: get_schedules(schedules)
+    
+  benchmarks:
+    command: get_csv("10_load_data/benchmarks.csv")
+    
+  exclusions:
+    command: get_csv("10_load_data/exclusions.csv")

@@ -16,7 +16,7 @@ sources:
 targets:
   20_merge_data:
     depends: 
-      - data/neonic.xlsx
+      - data/pesticides.xlsx
       - chemicalSummary
 
   neonic_NWIS: 
@@ -37,8 +37,8 @@ targets:
   site_info:
     command: create_tox_siteInfo(sites)
     
-  data/neonic.xlsx:
-    command: create_toxExcel(chem_data, chem_info, site_info,target_name)
+  data/pesticides.xlsx:
+    command: create_toxExcel(chem_data, chem_info, site_info, exclusions, target_name)
 
   chemicalSummary:
-    command: get_chem_sum(chem_info, chem_data, site_info)
+    command: get_chem_sum(chem_info, chem_data, site_info, exclusions)

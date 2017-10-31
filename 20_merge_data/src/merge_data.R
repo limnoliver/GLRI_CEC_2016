@@ -81,7 +81,7 @@ get_special_cas <- function(){
                                   "Imidacloprid",
                                   "Thiacloprid",
                                   "Thiamethoxam") ,
-                          Class = "Neonic",stringsAsFactors = FALSE)
+                          Class = "Pesticide",stringsAsFactors = FALSE)
   return(special_cas)
 }
 
@@ -167,17 +167,18 @@ create_tox_siteInfo <- function(sites){
   
 }
   
-create_toxExcel <- function(chem_data, chem_info, site_info, file_out){
+create_toxExcel <- function(chem_data, chem_info, site_info, exclusions, file_out){
   
 
   list_of_datasets <- list("Data" = chem_data, 
                            "Chemicals" = chem_info,
-                           "Sites" = site_info)
+                           "Sites" = site_info,
+                           "Exclude" = exclusions)
   write.xlsx(list_of_datasets, file = file_out, append=TRUE)
 
 }
 
-get_chem_sum <- function(chem_info, chem_data, site_info){
+get_chem_sum <- function(chem_info, chem_data, site_info, exclusions){
   ACClong <- get_ACC(chem_info$CAS)
   ACClong <- remove_flags(ACClong)
   
@@ -188,6 +189,7 @@ get_chem_sum <- function(chem_info, chem_data, site_info){
                                           filtered_ep,
                                           chem_data, 
                                           site_info, 
-                                          chem_info)
+                                          chem_info,
+                                          exclusions)
   return(chemicalSummary)
 }
