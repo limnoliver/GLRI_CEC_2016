@@ -34,29 +34,34 @@ benchmark_tox <- function(chemicalSummary,
   chnm_df <- data.frame(CAS = chem_info$CAS, stringsAsFactors = FALSE) %>%
     left_join(distinct(select(ACC, CAS=casn, chnm)), by="CAS")
   
-  total_GD <- total_summary %>%
-    select(-Bio_category, -shortName, -chnm) %>%
-    group_by(site,date,CAS, Class, type) %>%
+  graphData <-  total_summary %>%
+    group_by(site,date,chnm, Class, type) %>%
     summarise(sumEAR=sum(EAR)) %>%
     data.frame() %>%
-    group_by(site, CAS, Class, type) %>%
+    group_by(site, chnm, Class, type) %>%
     summarise(maxEAR=max(sumEAR)) %>%
-    data.frame() %>%
-    rename(SiteID = site) %>%
-    left_join(chnm_df, by="CAS") %>%
-    left_join(distinct(select(benchmarks, CAS, ChemName=chnm)), by="CAS")
+    data.frame() 
   
-  total_GD$chnm[is.na(total_GD$chnm)] <- total_GD$ChemName[is.na(total_GD$chnm)]
+  orderClass_df <- toxEval:::orderClass(graphData)
   
-  total_GD$chnm <- factor(total_GD$chnm, 
-                          levels = c(levels(chemicalSummary$chnm),
-                                     unique(total_GD$chnm)[!unique(total_GD$chnm) %in% levels(chemicalSummary$chnm)]))
+  orderChem_df <- toxEval:::orderChem(graphData, orderClass_df)
+  
+  graphData$chnm <- factor(graphData$chnm,
+                           levels = orderChem_df$chnm)    
   
   cbValues <- c("#DCDA4B","#999999","#00FFFF","#CEA226","#CC79A7","#4E26CE",
                 "#FFFF00","#78C15A","#79AEAE","#FF0000","#00FF00","#B1611D",
                 "#FFA500","#F4426e")
   
-  toxPlot_All <- ggplot(data=total_GD) +
+  countNonZero <- graphData %>%
+    select(chnm, Class, maxEAR) %>%
+    group_by(chnm, Class) %>%
+    summarize(nonZero = as.character(sum(maxEAR>0))) %>%
+    ungroup() %>%
+    mutate(type = "Benchmark",
+           y=10^-8)
+
+  toxPlot_All <- ggplot(data=graphData) +
     scale_y_log10(labels=fancyNumbers)  +
     geom_boxplot(aes(x=chnm, y=maxEAR, fill=Class),
                  lwd=0.1,outlier.size=1) +
@@ -80,6 +85,10 @@ benchmark_tox <- function(chemicalSummary,
           legend.key.height = unit(1,"line")) +
     scale_fill_manual(values = cbValues, drop=FALSE) 
   
-  ggsave(toxPlot_All, filename = file_out, width = 11, height = 9)
+  toxPlot_All_withLabels <- toxPlot_All +
+    geom_text(data=countNonZero, 
+              aes(x= chnm, label = nonZero, y=y), size=1.75) 
+  
+  ggsave(toxPlot_All_withLabels, filename = file_out, width = 11, height = 9)
   
 }
