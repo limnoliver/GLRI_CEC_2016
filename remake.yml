@@ -12,5 +12,5 @@ targets:
       - reports/siteTables.xlsx
       - reports/fig3.html
       - reports/fig2.html
-      - data/neonic.xlsx
+      - data/pesticides.xlsx
       

@@ -2,7 +2,7 @@ library(readxl)
 library(dplyr)
 library(readr)
 
-get_classes <- function(file_classes){
+get_csv <- function(file_classes){
   
   classes <- data.frame(read_csv(file_classes))
   
