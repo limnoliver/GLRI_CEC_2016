@@ -180,6 +180,7 @@ create_toxExcel <- function(chem_data, chem_info, site_info, exclusions, file_ou
 }
 
 get_chem_sum <- function(chem_info, chem_data, site_info, exclusions){
+
   ACClong <- get_ACC(chem_info$CAS)
   ACClong <- remove_flags(ACClong)
   
