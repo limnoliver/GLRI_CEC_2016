@@ -28,9 +28,6 @@ benchmark_tox <- function(chemicalSummary,
   
   total_summary <- suppressWarnings(bind_rows(chemicalSummary, chemicalSummary_bench))
 
-  total_summary$Class <- factor(total_summary$Class, 
-                                levels = levels(chemicalSummary$Class))  
-  
   chnm_df <- data.frame(CAS = chem_info$CAS, stringsAsFactors = FALSE) %>%
     left_join(distinct(select(ACC, CAS=casn, chnm)), by="CAS")
   
@@ -48,7 +45,9 @@ benchmark_tox <- function(chemicalSummary,
   orderChem_df <- toxEval:::orderChem(graphData, orderClass_df)
   
   graphData$chnm <- factor(graphData$chnm,
-                           levels = orderChem_df$chnm)    
+                           levels = orderChem_df$chnm)
+  graphData$Class <- factor(graphData$Class,
+                           levels = orderClass_df$Class)
   
   cbValues <- c("#DCDA4B","#999999","#00FFFF","#CEA226","#CC79A7","#4E26CE",
                 "#FFFF00","#78C15A","#79AEAE","#FF0000","#00FF00","#B1611D",
@@ -92,10 +91,7 @@ benchmark_tox <- function(chemicalSummary,
           plot.background = element_rect(fill = "transparent",colour = NA),
           strip.background = element_rect(fill = "transparent",colour = NA),
           strip.text.y = element_blank()) +
-    guides(fill=guide_legend(ncol=6)) +
-    theme(legend.position="bottom",
-          legend.justification = "left",
-          legend.background = element_rect(fill = "transparent", colour = "transparent"),
+    theme(legend.background = element_rect(fill = "transparent", colour = "transparent"),
           legend.title=element_blank(),
           legend.text = element_text(size=8),
           legend.key.height = unit(1,"line")) +
