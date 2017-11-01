@@ -3,59 +3,55 @@ library(dplyr)
 library(ggplot2)
 
 
-benchmark_tox <- function(chemicalSummary, 
-                          chem_data, site_info, chem_info, 
-                          benchmarks, exclusions, file_out){
-  
-  benchmarks <- benchmarks %>%
-    rename(chnm = Compound,
-           ACC_value = value) %>%
-    filter(!is.na(CAS))
-  
-  filtered_ep <- select(benchmarks, endPoint) %>%
-    distinct() %>%
-    mutate(groupCol = "Aquatic Benchmark")
-  
-  chemicalSummary_bench <- get_chemical_summary(benchmarks,
-                                          filtered_ep,
-                                          chem_data, 
-                                          site_info, 
-                                          chem_info,
-                                          exclusions)
-  
+bench_tox_data <- function(chemicalSummary, chemicalSummary_bench, chem_info, benchmarks){
+
   chemicalSummary_bench$type <- "Benchmark"
   chemicalSummary$type <- "ToxCast"
   
   total_summary <- suppressWarnings(bind_rows(chemicalSummary, chemicalSummary_bench))
-
+  
   chnm_df <- data.frame(CAS = chem_info$CAS, stringsAsFactors = FALSE) %>%
-    left_join(distinct(select(ACC, CAS=casn, chnm)), by="CAS")
+    left_join(distinct(select(ACC, CAS=casn, chnm)), by="CAS") %>%
+    left_join(distinct(select(benchmarks, CAS, Compound))) %>%
+    distinct()
+  
+  chnm_df$chnm[is.na(chnm_df$chnm)] <- chnm_df$Compound[is.na(chnm_df$chnm)]
   
   graphData <-  total_summary %>%
-    group_by(site,date,chnm, Class, type) %>%
+    group_by(site,date,CAS, Class, type) %>%
     summarise(sumEAR=sum(EAR)) %>%
     data.frame() %>%
-    group_by(site, chnm, Class, type) %>%
+    group_by(site, CAS, Class, type) %>%
     summarise(maxEAR=max(sumEAR)) %>%
     data.frame() %>%
-    mutate(type = factor(type, levels = c("ToxCast","Benchmark")))
+    mutate(type = factor(type, levels = c("ToxCast","Benchmark"))) %>%
+    left_join(chnm_df, by="CAS")
   
   orderClass_df <- toxEval:::orderClass(graphData)
   
-  orderChem_df <- toxEval:::orderChem(graphData, orderClass_df)
+  orderChem_tc <- toxEval:::orderChem(filter(graphData, type == "ToxCast"), orderClass_df)
+  orderChem_bm <- toxEval:::orderChem(filter(graphData, type == "Benchmark"), orderClass_df) 
+  
+  orderedChems <- full_join(orderChem_tc, orderChem_bm, by=c("chnm","Class")) %>%
+    mutate(chnm = as.character(chnm)) %>%
+    arrange(Class, median.x, median.y)
   
   graphData$chnm <- factor(graphData$chnm,
-                           levels = orderChem_df$chnm)
+                           levels = orderedChems$chnm)
   graphData$Class <- factor(graphData$Class,
-                           levels = orderClass_df$Class)
+                            levels = orderClass_df$Class)
+  return(graphData)
+}
+
+benchmark_tox <- function(graphData, chemicalSummary, chemicalSummary_bench, file_out){
   
   cbValues <- c("#DCDA4B","#999999","#00FFFF","#CEA226","#CC79A7","#4E26CE",
                 "#FFFF00","#78C15A","#79AEAE","#FF0000","#00FF00","#B1611D",
                 "#FFA500","#F4426e")
   
   countNonZero <- graphData %>%
-    select(chnm, Class, maxEAR, type) %>%
-    group_by(chnm, Class, type) %>%
+    select(CAS, chnm, Class, maxEAR, type) %>%
+    group_by(CAS, chnm, Class, type) %>%
     summarize(nonZero = as.character(sum(maxEAR>0))) %>%
     ungroup() %>%
     select(-type) %>%
@@ -67,13 +63,13 @@ benchmark_tox <- function(chemicalSummary,
     mutate(y = 10^-7.5,
            askt = "*",
            type = factor("ToxCast", levels = c("ToxCast","Benchmark"))) %>%
-    filter(!(chnm %in% unique(chemicalSummary$chnm)))
+    filter(!(CAS %in% unique(chemicalSummary$CAS)))
   
   astrictData_bench <- countNonZero %>%
     mutate(y = 10^-7.5,
            askt = "*",
            type = factor("Benchmark", levels = c("ToxCast","Benchmark"))) %>%
-    filter(!(chnm %in% unique(chemicalSummary_bench$chnm)))
+    filter(!(CAS %in% unique(chemicalSummary_bench$CAS)))
     
   
   toxPlot_All <- ggplot(data=graphData) +

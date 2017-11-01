@@ -141,7 +141,8 @@ create_tox_chemInfo <- function(neonic_NWIS, special_cas, pCodeInfo, classes){
 
   chem_info$Class[is.na(chem_info$Class)] <- chem_info$class1[is.na(chem_info$Class)]
   
-  chem_info <- select(chem_info, -class1, -pCode)
+  chem_info <- select(chem_info, -class1, -pCode) %>%
+    distinct()
   
   return(chem_info)
 }
@@ -192,4 +193,25 @@ get_chem_sum <- function(chem_info, chem_data, site_info, exclusions){
                                           chem_info,
                                           exclusions)
   return(chemicalSummary)
+}
+
+get_chem_bench <- function(benchmarks, chem_data, site_info, chem_info, exclusions){
+  
+  benchmarks <- benchmarks %>%
+    rename(chnm = Compound,
+           ACC_value = value) %>%
+    filter(!is.na(CAS))
+  
+  filtered_ep <- select(benchmarks, endPoint) %>%
+    distinct() %>%
+    mutate(groupCol = "Aquatic Benchmark")
+  
+  chemicalSummary_bench <- get_chemical_summary(benchmarks,
+                                                filtered_ep,
+                                                chem_data, 
+                                                site_info, 
+                                                chem_info,
+                                                exclusions)
+  return(chemicalSummary_bench)
+  
 }
