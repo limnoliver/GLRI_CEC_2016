@@ -40,7 +40,8 @@ benchmark_tox <- function(chemicalSummary,
     data.frame() %>%
     group_by(site, chnm, Class, type) %>%
     summarise(maxEAR=max(sumEAR)) %>%
-    data.frame() 
+    data.frame() %>%
+    mutate(type = factor(type, levels = c("ToxCast","Benchmark")))
   
   orderClass_df <- toxEval:::orderClass(graphData)
   
@@ -54,28 +55,30 @@ benchmark_tox <- function(chemicalSummary,
                 "#FFA500","#F4426e")
   
   countNonZero <- graphData %>%
-    select(chnm, Class, maxEAR) %>%
-    group_by(chnm, Class) %>%
+    select(chnm, Class, maxEAR, type) %>%
+    group_by(chnm, Class, type) %>%
     summarize(nonZero = as.character(sum(maxEAR>0))) %>%
     ungroup() %>%
-    mutate(type = "Benchmark",
+    select(-type) %>%
+    distinct() %>%
+    mutate(type = factor("ToxCast", levels = c("ToxCast","Benchmark")),
            y=10^-8)
 
   astrictData_tox <- countNonZero %>%
     mutate(y = 10^-7.5,
            askt = "*",
-           type = "ToxCast") %>%
+           type = factor("ToxCast", levels = c("ToxCast","Benchmark"))) %>%
     filter(!(chnm %in% unique(chemicalSummary$chnm)))
   
   astrictData_bench <- countNonZero %>%
     mutate(y = 10^-7.5,
            askt = "*",
-           type = "Benchmark") %>%
+           type = factor("Benchmark", levels = c("ToxCast","Benchmark"))) %>%
     filter(!(chnm %in% unique(chemicalSummary_bench$chnm)))
     
   
   toxPlot_All <- ggplot(data=graphData) +
-    scale_y_log10(labels=fancyNumbers)  +
+    scale_y_log10(labels=fancyNumbers, breaks = c(1 %o% 10^(-8:0)))  +
     geom_boxplot(aes(x=chnm, y=maxEAR, fill=Class),
                  lwd=0.1,outlier.size=1) +
     facet_grid(. ~ type, scales = "free", space = "free") +
