@@ -51,5 +51,8 @@ targets:
   reports/siteTables.xlsx:
     command: get_siteTables(chemicalSummary, chem_info, site_info, AOP, target_name)
     
+  graphData:
+    command: bench_tox_data(chemicalSummary, chemicalSummary_bench, chem_info, benchmarks)
+  
   figure/benchmark_comparisons.png:
-    command: benchmark_tox(chemicalSummary, chem_data, site_info, chem_info, benchmarks, exclusions, target_name)
+    command: benchmark_tox(graphData, chemicalSummary, chemicalSummary_bench, target_name)
