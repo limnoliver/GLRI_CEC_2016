@@ -81,7 +81,7 @@ get_special_cas <- function(){
                                   "Imidacloprid",
                                   "Thiacloprid",
                                   "Thiamethoxam") ,
-                          Class = "Pesticide",stringsAsFactors = FALSE)
+                          Class = "Insecticide",stringsAsFactors = FALSE)
   return(special_cas)
 }
 
@@ -98,9 +98,6 @@ create_chemData <- function(neonic_NWIS, special_cas, pCodeInfo){
     left_join(special_cas, by="CAS") %>%
     left_join(select(pCodeInfo, pCode=parameter_cd, units=parameter_units), by="pCode") %>%
     mutate(Value = Value/1000)
-    
-  # chem_data$Value[is.na(chem_data$units)] <- chem_data$Value[is.na(chem_data$units)]/1000  # Neonics
-  # chem_data$Value[chem_data$units == "ng/l"] <- chem_data$Value[chem_data$units == "ng/l"]/1000
 
   chem_data$CAS[!is.na(chem_data$casrn)] <- chem_data$casrn[!is.na(chem_data$casrn)]
   
@@ -143,7 +140,9 @@ create_tox_chemInfo <- function(neonic_NWIS, special_cas, pCodeInfo, classes){
   
   chem_info <- select(chem_info, -class1, -pCode) %>%
     distinct()
-  
+
+  chem_info$`Chemical Name` <- gsub(", water, filtered, recoverable, nanograms per liter","",chem_info$`Chemical Name`)
+  # Note, we're converting from ng to ug in the create_chemData function
   return(chem_info)
 }
 
@@ -214,5 +213,27 @@ get_chem_bench <- function(benchmarks, chem_data, site_info, chem_info, exclusio
                                                 chem_info,
                                                 exclusions)
   return(chemicalSummary_bench)
+  
+}
+
+get_conc_summary <- function(chem_data, site_info, chem_info, exclusions){
+  
+  conc_ep <- select(chem_info, CAS, chnm=`Chemical Name`) %>%
+    mutate(ACC_value = 1,
+           endPoint = "Concentration") %>%
+    filter(!is.na(CAS)) %>%
+    distinct()
+  
+  filtered_ep <- select(conc_ep, endPoint) %>%
+    distinct() %>%
+    mutate(groupCol = "Concentrations")
+  
+  chemicalSummary_conc <- get_chemical_summary(conc_ep,
+                                                filtered_ep,
+                                                chem_data, 
+                                                site_info, 
+                                                chem_info,
+                                                exclusions)
+  return(chemicalSummary_conc)
   
 }

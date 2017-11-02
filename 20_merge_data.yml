@@ -19,6 +19,7 @@ targets:
       - data/pesticides.xlsx
       - chemicalSummary
       - chemicalSummary_bench
+      - chemicalSummary_conc
 
   neonic_NWIS: 
     command: merged_NWIS(tracking, NWIS, neonic, pCodeInfo, schedule_pCodes)
@@ -46,3 +47,6 @@ targets:
 
   chemicalSummary_bench:
     command: get_chem_bench(benchmarks, chem_data, site_info, chem_info, exclusions)
+
+  chemicalSummary_conc:
+    command: get_conc_summary(chem_data, site_info, chem_info, exclusions)
