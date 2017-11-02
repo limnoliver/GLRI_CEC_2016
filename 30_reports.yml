@@ -10,6 +10,8 @@ packages:
   - openxlsx
   - dplyr
   - tidyr
+  - ggplot2
+  - yaml
   
 sources:
   - 30_reports/src/render.R
@@ -24,6 +26,7 @@ targets:
       - reports/siteTables.xlsx
       - figure/benchmark_comparisons.png
       - figure/total_comparisons.png
+      - figure/created_class_figures.csv
   
   fig2.md:
     depends: 
@@ -52,6 +55,9 @@ targets:
   reports/siteTables.xlsx:
     command: get_siteTables(chemicalSummary, chem_info, site_info, AOP, target_name)
     
+  cbValues:
+    command: get_colors()
+
   graphData:
     command: bench_tox_data(chemicalSummary, chemicalSummary_bench, chem_info, benchmarks)
   
@@ -59,7 +65,10 @@ targets:
     command: bench_tox_conc_data(chemicalSummary, chemicalSummary_bench, chemicalSummary_conc, chem_info, benchmarks)
 
   figure/benchmark_comparisons.png:
-    command: benchmark_tox(graphData, chemicalSummary, chemicalSummary_bench, target_name)
+    command: benchmark_tox_figure(graphData, chemicalSummary, chemicalSummary_bench, cbValues, target_name)
   
   figure/total_comparisons.png:
-    command: benchmark_tox_conc(graphData_all_3, chemicalSummary, chemicalSummary_bench, target_name)
+    command: benchmark_tox_conc_figure(graphData_all_3, chemicalSummary, chemicalSummary_bench, cbValues, target_name)
+
+  figure/created_class_figures.csv:
+    command: class_figures(graphData_all_3, chemicalSummary, chemicalSummary_bench, cbValues, target_name)

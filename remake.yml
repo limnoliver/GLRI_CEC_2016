@@ -15,4 +15,5 @@ targets:
       - data/pesticides.xlsx
       - figure/benchmark_comparisons.png
       - figure/total_comparisons.png
+      - figure/created_class_figures.csv
       
