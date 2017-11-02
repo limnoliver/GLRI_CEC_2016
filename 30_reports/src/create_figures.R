@@ -234,6 +234,12 @@ class_figures <- function(graphData_all_3, chemicalSummary, chemicalSummary_benc
 
 plot_class_summaries <- function(file_out, chemicalSummary, category){
 
+  if(category == "Chemical Class"){
+    chemicalSummary$category <- chemicalSummary$Class
+  } else {
+    chemicalSummary$category <- chemicalSummary$Bio_category
+  }
+  
   tox_plot <- plot_tox_boxplots(chemicalSummary, category, mean_logic = FALSE)
   
   ggsave(tox_plot, filename = file_out, width = 7, height = 7)
@@ -251,7 +257,7 @@ plot_facet_class <- function(target_name, chemicalSummary, chemicalSummary_bench
   tots$type <- factor(tots$type, levels = c("ToxCast","Benchmark","Concentration"))
   tots$Class <- factor(tots$Class, levels = rev(levels(chemicalSummary$Class)))
   
-  class_plot <- plot_tox_boxplots_facet(tots, "Chemical Class")
+  class_plot <- plot_tox_boxplots_facet(tots)
   
   class_plot <- class_plot +
     facet_grid(. ~ type, scales = "free") 
@@ -260,19 +266,10 @@ plot_facet_class <- function(target_name, chemicalSummary, chemicalSummary_bench
   
 }
 
-plot_tox_boxplots_facet <- function(chemicalSummary, 
-                              category = "Biological"){
-  
-  match.arg(category, c("Biological","Chemical Class"))
+plot_tox_boxplots_facet <- function(chemicalSummary){
   
   site <- EAR <- sumEAR <- meanEAR <- groupCol <- nonZero <- ".dplyr"
 
-  if(category == "Chemical Class"){
-    chemicalSummary$category <- chemicalSummary$Class
-  } else {
-    chemicalSummary$category <- chemicalSummary$Bio_category
-  }
-  
   graphData_df <- chemicalSummary %>%
     group_by(site,date, category, type) %>%
     summarise(sumEAR=sum(EAR)) %>%
@@ -295,4 +292,76 @@ plot_tox_boxplots_facet <- function(chemicalSummary,
   
   return(bioPlot)
 
+}
+
+
+plot_genes <- function(file_out, chem_info, chem_data, site_info, exclusions, AOP){
+  
+  ACClong <- get_ACC(chem_info$CAS)
+  ACClong <- remove_flags(ACClong)
+  
+  cleaned_ep <- clean_endPoint_info(endPointInfo)
+  filtered_ep <- filter_groups(cleaned_ep, groupCol = "intended_target_gene_symbol")
+  
+  chemicalSummary <- get_chemical_summary(ACClong,
+                                          filtered_ep,
+                                          chem_data, 
+                                          site_info, 
+                                          chem_info,
+                                          exclusions)
+  chemicalSummary <- chemicalSummary %>%
+    left_join(AOP, by=c("Bio_category"="gene_symbol")) %>%
+    rename(category = Bio_category,
+           type = AOP)
+  
+  sub_chem <- filter(chemicalSummary, !is.na(type))
+  
+  graphData_df <- sub_chem %>%
+    group_by(site,date, category, type) %>%
+    summarise(sumEAR=sum(EAR)) %>%
+    data.frame() %>%
+    group_by(site, category, type) %>%
+    summarise(maxEAR=max(sumEAR)) %>%
+    data.frame() 
+  
+  x <- sapply(strsplit(graphData_df$type, " leading to"), function(x)x[[1]])
+  x <- sapply(strsplit(x, " leading to"), function(x)x[[1]])
+  
+  x <- gsub(" Beta-Oxidation Inhibition Leading to Steatosis, PPAR? activation","", x)
+  x <- gsub(" induced by competitive antagonists of ionotropic GABA receptors","", x)
+  x <- gsub("Peroxisomal Fatty Acid Beta-Oxidation Inhibition Leading to Steatosis, ","", x)
+  x <- gsub(" leading neurotoxicity and excess acute toxicity","", x)
+  x <- gsub("Upregulation of Thyroid Hormone Catabolism via Activation of Hepatic Nuclear Receptors, and Subsequent Adverse Neurodevelopmental Outcomes in Mammals , ","", x)
+  x <- gsub(" function Subsequent to Estradiol Activation in the Fetal Testis","", x)
+  x <- gsub(" function Subsequent to Estradiol Activation in the Fetal Testis","", x)
+  
+  graphData_df$type <- x
+  
+  bioPlot <- ggplot(data = graphData_df)+
+    coord_flip() +
+    theme_bw() +
+    xlab("") +
+    theme(plot.background = element_rect(fill = "transparent",colour = NA),
+          axis.text.y = element_text(color = "black", vjust = 0.2), 
+          axis.text.x = element_text(color = "black", vjust = 0, margin = margin(-0.5,0,0,0)))
+  
+  bioPlot <- bioPlot + 
+    geom_boxplot(aes(x=category, y=maxEAR, fill = type),lwd=0.1,outlier.size=1) +
+    scale_y_log10("Maximum EAR Per Site",labels=fancyNumbers) 
+  
+  
+  bioPlot <- bioPlot +
+    theme(axis.text = element_text( color = "black"),
+          axis.text.y = element_text(size=7),
+          axis.title=element_blank(),
+          panel.background = element_blank(),
+          plot.background = element_rect(fill = "transparent",colour = NA)) +
+    theme(legend.position="bottom",
+          legend.justification = "left",
+          legend.background = element_rect(fill = "transparent", colour = "transparent"),
+          legend.title=element_blank(),
+          legend.text = element_text(size=8),
+          legend.key.height = unit(1,"line")) 
+  
+  ggsave(filename = file_out, plot = bioPlot, width = 11, height = 8)
 }

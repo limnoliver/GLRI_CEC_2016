@@ -31,6 +31,7 @@ targets:
       - figure/Benchmark_class.png
       - figure/Conc_class.png
       - figure/ToxCast_bio.png
+      - figure/gene_AOP.png
       
   fig2.md:
     depends: 
@@ -92,3 +93,6 @@ targets:
   figure/facet_class.png:
      command: plot_facet_class(target_name, chemicalSummary, chemicalSummary_bench, chemicalSummary_conc)
      
+  figure/gene_AOP.png:
+     command: plot_genes(target_name, chem_info, chem_data, site_info, exclusions, AOP)
+ 
