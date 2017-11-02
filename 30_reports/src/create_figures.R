@@ -231,3 +231,68 @@ class_figures <- function(graphData_all_3, chemicalSummary, chemicalSummary_benc
   
   write.csv(plotted, file = file_out, row.names = FALSE)
 }
+
+plot_class_summaries <- function(file_out, chemicalSummary, category){
+
+  tox_plot <- plot_tox_boxplots(chemicalSummary, category, mean_logic = FALSE)
+  
+  ggsave(tox_plot, filename = file_out, width = 7, height = 7)
+  
+}
+
+plot_facet_class <- function(target_name, chemicalSummary, chemicalSummary_bench, chemicalSummary_conc){
+  
+  chemicalSummary$type <- "ToxCast"
+  chemicalSummary_bench$type <- "Benchmark"
+  chemicalSummary_conc$type <- "Concentration"
+  
+  tots <- bind_rows(chemicalSummary, chemicalSummary_bench, chemicalSummary_conc)
+  
+  tots$type <- factor(tots$type, levels = c("ToxCast","Benchmark","Concentration"))
+  tots$Class <- factor(tots$Class, levels = rev(levels(chemicalSummary$Class)))
+  
+  class_plot <- plot_tox_boxplots_facet(tots, "Chemical Class")
+  
+  class_plot <- class_plot +
+    facet_grid(. ~ type, scales = "free") 
+  
+  ggsave(filename = target_name, plot = class_plot, width = 11, height = 5)
+  
+}
+
+plot_tox_boxplots_facet <- function(chemicalSummary, 
+                              category = "Biological"){
+  
+  match.arg(category, c("Biological","Chemical Class"))
+  
+  site <- EAR <- sumEAR <- meanEAR <- groupCol <- nonZero <- ".dplyr"
+
+  if(category == "Chemical Class"){
+    chemicalSummary$category <- chemicalSummary$Class
+  } else {
+    chemicalSummary$category <- chemicalSummary$Bio_category
+  }
+  
+  graphData_df <- chemicalSummary %>%
+    group_by(site,date, category, type) %>%
+    summarise(sumEAR=sum(EAR)) %>%
+    data.frame() %>%
+    group_by(site, category, type) %>%
+    summarise(maxEAR=max(sumEAR)) %>%
+    data.frame() 
+  
+  bioPlot <- ggplot(data = graphData_df)+
+    coord_flip() +
+    theme_bw() +
+    xlab("") +
+    theme(plot.background = element_rect(fill = "transparent",colour = NA),
+          axis.text.y = element_text(color = "black", vjust = 0.2), 
+          axis.text.x = element_text(color = "black", vjust = 0, margin = margin(-0.5,0,0,0)))
+
+  bioPlot <- bioPlot + 
+    geom_boxplot(aes(x=category, y=maxEAR),lwd=0.1,outlier.size=1, fill = "steelblue") +
+    scale_y_log10("Maximum EAR Per Site",labels=fancyNumbers) 
+  
+  return(bioPlot)
+
+}

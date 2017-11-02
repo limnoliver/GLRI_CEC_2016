@@ -27,7 +27,11 @@ targets:
       - figure/benchmark_comparisons.png
       - figure/total_comparisons.png
       - figure/created_class_figures.csv
-  
+      - figure/ToxCast_class.png
+      - figure/Benchmark_class.png
+      - figure/Conc_class.png
+      - figure/ToxCast_bio.png
+      
   fig2.md:
     depends: 
       - chemicalSummary
@@ -72,3 +76,19 @@ targets:
 
   figure/created_class_figures.csv:
     command: class_figures(graphData_all_3, chemicalSummary, chemicalSummary_bench, cbValues, target_name)
+
+  figure/ToxCast_class.png:
+    command: plot_class_summaries(target_name, chemicalSummary, I("Chemical Class"))
+
+  figure/Benchmark_class.png:
+    command: plot_class_summaries(target_name, chemicalSummary_bench, I("Chemical Class"))
+
+  figure/Conc_class.png:
+    command: plot_class_summaries(target_name, chemicalSummary_conc, I("Chemical Class"))
+
+  figure/ToxCast_bio.png:
+    command: plot_class_summaries(target_name, chemicalSummary, I("Biological"))
+
+  figure/facet_class.png:
+     command: plot_facet_class(target_name, chemicalSummary, chemicalSummary_bench, chemicalSummary_conc)
+     
