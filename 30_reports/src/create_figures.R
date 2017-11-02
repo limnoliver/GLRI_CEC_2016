@@ -94,8 +94,8 @@ bench_tox_conc_data <- function(chemicalSummary, chemicalSummary_bench, chemical
   return(graphData)
 }
 
-benchmark_tox_figure <- function(graphData, chemicalSummary, chemicalSummary_bench, cbValues, file_out){
-
+graph_tox_bench <- function(graphData, facet_levels, tox_chems, bench_chems, fill_boxes = "Dynamic"){
+  
   countNonZero <- graphData %>%
     select(CAS, chnm, Class, maxEAR, type) %>%
     group_by(CAS, chnm, Class, type) %>%
@@ -103,25 +103,35 @@ benchmark_tox_figure <- function(graphData, chemicalSummary, chemicalSummary_ben
     ungroup() %>%
     select(-type) %>%
     distinct() %>%
-    mutate(type = factor("ToxCast", levels = c("ToxCast","Benchmark")),
+    mutate(type = factor(facet_levels[1], levels = facet_levels),
            y=10^-8)
-
+  
   astrictData_tox <- countNonZero %>%
     mutate(y = 10^-7.5,
            askt = "*",
-           type = factor("ToxCast", levels = c("ToxCast","Benchmark"))) %>%
-    filter(!(CAS %in% unique(chemicalSummary$CAS)))
+           type = factor(facet_levels[1], levels = facet_levels)) %>%
+    filter(!(CAS %in% tox_chems))
   
   astrictData_bench <- countNonZero %>%
     mutate(y = 10^-7.5,
            askt = "*",
-           type = factor("Benchmark", levels = c("ToxCast","Benchmark"))) %>%
-    filter(!(CAS %in% unique(chemicalSummary_bench$CAS)))
-
+           type = factor(facet_levels[2], levels = facet_levels)) %>%
+    filter(!(CAS %in% bench_chems))
+  
   toxPlot_All <- ggplot(data=graphData) +
-    scale_y_log10(labels=fancyNumbers, breaks = c(1 %o% 10^(-8:1)))  +
-    geom_boxplot(aes(x=chnm, y=maxEAR, fill=Class),
-                 lwd=0.1,outlier.size=1) +
+    scale_y_log10(labels=fancyNumbers, breaks = c(1 %o% 10^(-8:1))) 
+  
+  if(fill_boxes == "Dynamic"){
+    toxPlot_All <- toxPlot_All +
+      geom_boxplot(aes(x=chnm, y=maxEAR, fill=Class),
+                 lwd=0.1,outlier.size=1) 
+  } else {
+    toxPlot_All <- toxPlot_All +
+      geom_boxplot(aes(x=chnm, y=maxEAR),
+                   lwd=0.1,outlier.size=1, fill=fill_boxes) 
+  }
+  
+  toxPlot_All <- toxPlot_All +
     facet_grid(. ~ type, scales = "free") +
     theme_bw() +
     scale_x_discrete(drop=TRUE) +
@@ -136,13 +146,17 @@ benchmark_tox_figure <- function(graphData, chemicalSummary, chemicalSummary_ben
     theme(legend.background = element_rect(fill = "transparent", colour = "transparent"),
           legend.title=element_blank(),
           legend.text = element_text(size=8),
-          legend.key.height = unit(1,"line")) +
-    scale_fill_manual(values = cbValues, drop=FALSE) 
+          legend.key.height = unit(1,"line")) 
   
   layout_stuff <- ggplot_build(toxPlot_All)
   layout_stuff$layout$panel_ranges[[1]]$x.range[1]
   
-  astrictData_tox$y <- 10^(layout_stuff$layout$panel_ranges[[1]]$x.range[1])
+  if(nrow(astrictData_tox) > 0){
+    astrictData_tox$y <- 10^(layout_stuff$layout$panel_ranges[[1]]$x.range[1])
+  }
+  if(nrow(astrictData_bench) > 0){
+    astrictData_bench$y <- 10^(layout_stuff$layout$panel_ranges[[2]]$x.range[1])
+  }
   
   toxPlot_All_withLabels <- toxPlot_All +
     geom_text(data = astrictData_bench, aes(x=chnm, label=askt, y=y),
@@ -159,76 +173,32 @@ benchmark_tox_figure <- function(graphData, chemicalSummary, chemicalSummary_ben
     geom_text(data=countNonZero, 
               aes(x= chnm, label = nonZero, y=y), size=1.75) 
   
+  return(toxPlot_All_withLabels)
+}
+
+benchmark_tox_figure <- function(graphData, chemicalSummary, chemicalSummary_bench, cbValues, file_out){
+
+  toxPlot_All_withLabels <- graph_tox_bench(graphData, 
+                                            facet_levels = c("ToxCast","Benchmark"),
+                                            tox_chems = unique(chemicalSummary$CAS),
+                                            bench_chems = unique(chemicalSummary_bench$CAS),
+                                            fill_boxes = "Dynamic") +
+    scale_fill_manual(values = cbValues, drop=FALSE) 
+  
   ggsave(toxPlot_All_withLabels, filename = file_out, width = 11, height = 9)
   
 }
 
 benchmark_tox_conc_figure <- function(graphData_all_3, chemicalSummary, chemicalSummary_bench, cbValues, file_out){
 
-  countNonZero <- graphData_all_3 %>%
-    select(CAS, chnm, Class, maxEAR, type) %>%
-    group_by(CAS, chnm, Class, type) %>%
-    summarize(nonZero = as.character(sum(maxEAR>0))) %>%
-    ungroup() %>%
-    select(-type) %>%
-    distinct() %>%
-    mutate(type = factor("ToxCast", levels = c("ToxCast","Benchmark","Concentration")),
-           y=10^-8)
-  
-  astrictData_tox <- countNonZero %>%
-    mutate(y = 10^-7.5,
-           askt = "*",
-           type = factor("ToxCast", levels = c("ToxCast","Benchmark","Concentration"))) %>%
-    filter(!(CAS %in% unique(chemicalSummary$CAS)))
-  
-  astrictData_bench <- countNonZero %>%
-    mutate(y = 10^-7.5,
-           askt = "*",
-           type = factor("Benchmark", levels = c("ToxCast","Benchmark"))) %>%
-    filter(!(CAS %in% unique(chemicalSummary_bench$CAS)))
-  
-  toxPlot_All <- ggplot(data=graphData_all_3) +
-    scale_y_log10(labels=fancyNumbers, breaks = c(1 %o% 10^(-8:1)))  +
-    geom_boxplot(aes(x=chnm, y=maxEAR, fill=Class),
-                 lwd=0.1,outlier.size=1) +
-    facet_grid(. ~ type, scales = "free") +
-    theme_bw() +
-    scale_x_discrete(drop=TRUE) +
-    coord_flip() +
-    theme(axis.text = element_text( color = "black"),
-          axis.text.y = element_text(size=7),
-          axis.title=element_blank(),
-          panel.background = element_blank(),
-          plot.background = element_rect(fill = "transparent",colour = NA),
-          strip.background = element_rect(fill = "transparent",colour = NA),
-          strip.text.y = element_blank()) +
-    theme(legend.background = element_rect(fill = "transparent", colour = "transparent"),
-          legend.title=element_blank(),
-          legend.text = element_text(size=8),
-          legend.key.height = unit(1,"line"),
-          legend.position="bottom",
-          legend.justification = "left") +
-    scale_fill_manual(values = cbValues, drop=FALSE) 
-  
-  layout_stuff <- ggplot_build(toxPlot_All)
-  
-  astrictData_tox$y <- 10^(layout_stuff$layout$panel_ranges[[1]]$x.range[1])
-  astrictData_bench$y <- 10^(layout_stuff$layout$panel_ranges[[2]]$x.range[1])
-  
-  toxPlot_All_withLabels <- toxPlot_All +
-    geom_text(data = astrictData_bench, aes(x=chnm, label=askt, y=y),
-              size=5, vjust = 0.70)+
-    geom_text(data = astrictData_tox, aes(x=chnm, label=askt, y=y),
-              size=5, vjust = 0.70)
-  
-  layout_stuff <- ggplot_build(toxPlot_All_withLabels)
-  layout_stuff$layout$panel_ranges[[1]]$x.range[1]
-  
-  countNonZero$y <- 10^(layout_stuff$layout$panel_ranges[[1]]$x.range[1])
-  
-  toxPlot_All_withLabels <- toxPlot_All_withLabels +
-    geom_text(data=countNonZero, 
-            aes(x= chnm, label = nonZero, y=y), size=1.75) 
+  toxPlot_All_withLabels <- graph_tox_bench(graphData_all_3, 
+                                            facet_levels = c("ToxCast","Benchmark","Concentration"),
+                                            tox_chems = unique(chemicalSummary$CAS),
+                                            bench_chems = unique(chemicalSummary_bench$CAS),
+                                            fill_boxes = "Dynamic") +
+    scale_fill_manual(values = cbValues, drop=FALSE) +
+    theme(legend.position="bottom",
+          legend.justification = "left")
   
   ggsave(toxPlot_All_withLabels, filename = file_out, width = 11, height = 9)
   
@@ -244,71 +214,15 @@ class_figures <- function(graphData_all_3, chemicalSummary, chemicalSummary_benc
     plot_class <- levels(graphData_all_3$Class)[i]
     sub_data <- filter(graphData_all_3, Class == plot_class)
     
-    countNonZero <- sub_data %>%
-      select(CAS, chnm, Class, maxEAR, type) %>%
-      group_by(CAS, chnm, Class, type) %>%
-      summarize(nonZero = as.character(sum(maxEAR>0))) %>%
-      ungroup() %>%
-      select(-type) %>%
-      distinct() %>%
-      mutate(type = factor("ToxCast", levels = c("ToxCast","Benchmark","Concentration")),
-             y=10^-8)
-    
-    astrictData_tox <- countNonZero %>%
-      mutate(y = 10^-7.5,
-             askt = "*",
-             type = factor("ToxCast", levels = c("ToxCast","Benchmark","Concentration"))) %>%
-      filter(!(CAS %in% unique(chemicalSummary$CAS)))
-    
-    astrictData_bench <- countNonZero %>%
-      mutate(y = 10^-7.5,
-             askt = "*",
-             type = factor("Benchmark", levels = c("ToxCast","Benchmark"))) %>%
-      filter(!(CAS %in% unique(chemicalSummary_bench$CAS)))
-    
-    toxPlot_All <- ggplot(data=sub_data) +
-      scale_y_log10(labels=fancyNumbers, breaks = c(1 %o% 10^(-8:2)))  +
-      geom_boxplot(aes(x=chnm, y=maxEAR),
-                   lwd=0.1,outlier.size=1, fill = cbValues[i]) +
-      facet_grid(. ~ type, scales = "free") +
-      theme_bw() +
-      scale_x_discrete(drop=TRUE) +
-      coord_flip() +
-      theme(axis.text = element_text( color = "black"),
-            axis.text.y = element_text(size=7),
-            axis.title=element_blank(),
-            panel.background = element_blank(),
-            plot.background = element_rect(fill = "transparent",colour = NA),
-            strip.background = element_rect(fill = "transparent",colour = NA),
-            strip.text.y = element_blank()) +
-      theme(legend.position="none") +
-      ggtitle(label = plot_class)
-    
-    layout_stuff <- ggplot_build(toxPlot_All)
-    
-    if(nrow(astrictData_tox) > 0){
-      astrictData_tox$y <- 10^(layout_stuff$layout$panel_ranges[[1]]$x.range[1])
-    }
-    
-    if(nrow(astrictData_bench) > 0){
-      astrictData_bench$y <- 10^(layout_stuff$layout$panel_ranges[[2]]$x.range[1])
-    }
-    
-    
-    toxPlot_All_withLabels <- toxPlot_All +
-      geom_text(data = astrictData_bench, aes(x=chnm, label=askt, y=y),
-                size=5, vjust = 0.70)+
-      geom_text(data = astrictData_tox, aes(x=chnm, label=askt, y=y),
-                size=5, vjust = 0.70)
-    
-    layout_stuff <- ggplot_build(toxPlot_All_withLabels)
-    layout_stuff$layout$panel_ranges[[1]]$x.range[1]
-    
-    countNonZero$y <- 10^(layout_stuff$layout$panel_ranges[[1]]$x.range[1])
+    toxPlot_All_withLabels <- graph_tox_bench(sub_data, 
+                                              facet_levels = c("ToxCast","Benchmark","Concentratino"),
+                                              tox_chems = unique(chemicalSummary$CAS),
+                                              bench_chems = unique(chemicalSummary_bench$CAS),
+                                              fill_boxes = cbValues[i])
     
     toxPlot_All_withLabels <- toxPlot_All_withLabels +
-      geom_text(data=countNonZero, 
-                aes(x= chnm, label = nonZero, y=y)) 
+      theme(legend.position="none") +
+      ggtitle(label = plot_class)
     
     file_to_save <- paste0("figure/Compare_",plot_class,".png")
     ggsave(toxPlot_All_withLabels, filename = file_to_save, width = 11, height = 9)
@@ -316,4 +230,69 @@ class_figures <- function(graphData_all_3, chemicalSummary, chemicalSummary_benc
   }
   
   write.csv(plotted, file = file_out, row.names = FALSE)
+}
+
+plot_class_summaries <- function(file_out, chemicalSummary, category){
+
+  tox_plot <- plot_tox_boxplots(chemicalSummary, category, mean_logic = FALSE)
+  
+  ggsave(tox_plot, filename = file_out, width = 7, height = 7)
+  
+}
+
+plot_facet_class <- function(target_name, chemicalSummary, chemicalSummary_bench, chemicalSummary_conc){
+  
+  chemicalSummary$type <- "ToxCast"
+  chemicalSummary_bench$type <- "Benchmark"
+  chemicalSummary_conc$type <- "Concentration"
+  
+  tots <- bind_rows(chemicalSummary, chemicalSummary_bench, chemicalSummary_conc)
+  
+  tots$type <- factor(tots$type, levels = c("ToxCast","Benchmark","Concentration"))
+  tots$Class <- factor(tots$Class, levels = rev(levels(chemicalSummary$Class)))
+  
+  class_plot <- plot_tox_boxplots_facet(tots, "Chemical Class")
+  
+  class_plot <- class_plot +
+    facet_grid(. ~ type, scales = "free") 
+  
+  ggsave(filename = target_name, plot = class_plot, width = 11, height = 5)
+  
+}
+
+plot_tox_boxplots_facet <- function(chemicalSummary, 
+                              category = "Biological"){
+  
+  match.arg(category, c("Biological","Chemical Class"))
+  
+  site <- EAR <- sumEAR <- meanEAR <- groupCol <- nonZero <- ".dplyr"
+
+  if(category == "Chemical Class"){
+    chemicalSummary$category <- chemicalSummary$Class
+  } else {
+    chemicalSummary$category <- chemicalSummary$Bio_category
+  }
+  
+  graphData_df <- chemicalSummary %>%
+    group_by(site,date, category, type) %>%
+    summarise(sumEAR=sum(EAR)) %>%
+    data.frame() %>%
+    group_by(site, category, type) %>%
+    summarise(maxEAR=max(sumEAR)) %>%
+    data.frame() 
+  
+  bioPlot <- ggplot(data = graphData_df)+
+    coord_flip() +
+    theme_bw() +
+    xlab("") +
+    theme(plot.background = element_rect(fill = "transparent",colour = NA),
+          axis.text.y = element_text(color = "black", vjust = 0.2), 
+          axis.text.x = element_text(color = "black", vjust = 0, margin = margin(-0.5,0,0,0)))
+
+  bioPlot <- bioPlot + 
+    geom_boxplot(aes(x=category, y=maxEAR),lwd=0.1,outlier.size=1, fill = "steelblue") +
+    scale_y_log10("Maximum EAR Per Site",labels=fancyNumbers) 
+  
+  return(bioPlot)
+
 }

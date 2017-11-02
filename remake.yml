@@ -16,4 +16,9 @@ targets:
       - figure/benchmark_comparisons.png
       - figure/total_comparisons.png
       - figure/created_class_figures.csv
+      - figure/ToxCast_class.png
+      - figure/Benchmark_class.png
+      - figure/Conc_class.png
+      - figure/ToxCast_bio.png
+      - figure/facet_class.png
       
