@@ -23,6 +23,7 @@ targets:
       - reports/fig3.html
       - reports/siteTables.xlsx
       - figure/benchmark_comparisons.png
+      - figure/total_comparisons.png
   
   fig2.md:
     depends: 
@@ -54,5 +55,11 @@ targets:
   graphData:
     command: bench_tox_data(chemicalSummary, chemicalSummary_bench, chem_info, benchmarks)
   
+  graphData_all_3:
+    command: bench_tox_conc_data(chemicalSummary, chemicalSummary_bench, chemicalSummary_conc, chem_info, benchmarks)
+
   figure/benchmark_comparisons.png:
     command: benchmark_tox(graphData, chemicalSummary, chemicalSummary_bench, target_name)
+  
+  figure/total_comparisons.png:
+    command: benchmark_tox_conc(graphData_all_3, chemicalSummary, chemicalSummary_bench, target_name)
