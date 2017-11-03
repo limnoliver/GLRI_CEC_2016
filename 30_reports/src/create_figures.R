@@ -2,6 +2,7 @@ library(toxEval)
 library(dplyr)
 library(ggplot2)
 library(tidyr)
+library(grid)
 
 get_colors <- function(){
   cbValues <- c("#DCDA4B","#999999","#00FFFF","#CEA226","#CC79A7","#4E26CE",
@@ -372,8 +373,42 @@ plot_landuse <- function(target_name, sites){
     theme_minimal() +
     xlab("") +
     ylab("Land Use %") +
-    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+    theme(axis.text.x = element_blank())
   
   ggsave(filename = target_name, plot = landuse, width = 10, height = 7)
+  
+  return(landuse)
 }
 
+plot_stacks <- function(target_name, sites, chemicalSummary, site_info){
+  
+  sites$shortName[is.na(sites$shortName)] <- "Saginaw"
+  
+  long_site <- select(sites, shortName, Urban, Ag=Ag..total, Forest, 
+                      Wetland=Water..wetland, Other = Other.land.use) %>%
+    gather(landuse, values, -shortName) 
+  
+  order_sites <- long_site %>%
+    filter(landuse == "Ag") %>%
+    arrange(desc(values))
+  
+  long_site$landuse <- factor(long_site$landuse, levels = c("Other","Wetland","Forest","Urban","Ag"))
+  long_site$shortName <- factor(long_site$shortName, levels = order_sites$shortName)
+  
+  chem_site$`Short Name` <- factor(chem_site$`Short Name`, levels = order_sites$shortName)
+  
+  stack_fig <- plot_tox_stacks(chemicalSummary, chem_site)
+  
+  ggsave(filename = target_name, plot = stack_fig, width = 10, height = 7)
+  
+  return(stack_fig)
+}
+
+combine_figures <- function(target_name, landuse_fig, stacK_fig){
+
+  png(file = target_name, height = 900, width = 1100)
+  grid.newpage()
+  grid.draw(rbind(ggplotGrob(stacK_fig), ggplotGrob(landuse_fig),  size = "last")) 
+  dev.off()
+
+}

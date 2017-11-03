@@ -32,7 +32,7 @@ targets:
       - figure/Conc_class.png
       - figure/ToxCast_bio.png
       - figure/gene_AOP.png
-      - figure/landuse.png
+      - figure/combo_stack.png
       
   fig2.md:
     depends: 
@@ -97,5 +97,11 @@ targets:
   figure/gene_AOP.png:
      command: plot_genes(target_name, chem_info, chem_data, site_info, exclusions, AOP)
 
-  figure/landuse.png:
-    command: plot_landuse(target_name, sites)
+  landuse_fig:
+    command: plot_landuse(I("figure/landuse.png"), sites)
+    
+  stacK_fig:
+    command: plot_stacks(I("figure/stack.png"), sites, chemicalSummary, site_info)
+    
+  figure/combo_stack.png:
+    command: combine_figures(target_name, landuse_fig, stacK_fig)
