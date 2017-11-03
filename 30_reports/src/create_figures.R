@@ -17,10 +17,13 @@ bench_tox_data <- function(chemicalSummary, chemicalSummary_bench, chem_info, be
   chemicalSummary$type <- "ToxCast"
   
   total_summary <- suppressWarnings(bind_rows(chemicalSummary, chemicalSummary_bench))
+
+  bench_stuff <- distinct(select(benchmarks, CAS, Compound))
+  bench_stuff <- bench_stuff[!duplicated(bench_stuff$CAS),]
   
   chnm_df <- data.frame(CAS = chem_info$CAS, stringsAsFactors = FALSE) %>%
     left_join(distinct(select(ACC, CAS=casn, chnm)), by="CAS") %>%
-    left_join(distinct(select(benchmarks, CAS, Compound))) %>%
+    left_join(bench_stuff, by="CAS") %>%
     distinct()
   
   chnm_df$chnm[is.na(chnm_df$chnm)] <- chnm_df$Compound[is.na(chnm_df$chnm)]
@@ -59,9 +62,13 @@ bench_tox_conc_data <- function(chemicalSummary, chemicalSummary_bench, chemical
   
   total_summary <- suppressWarnings(bind_rows(chemicalSummary, chemicalSummary_bench, chemicalSummary_conc))
   
+  bench_stuff <- distinct(select(benchmarks, CAS, Compound))
+  bench_stuff <- bench_stuff[!duplicated(bench_stuff$CAS),]
+  
+
   chnm_df <- data.frame(CAS = chem_info$CAS, stringsAsFactors = FALSE) %>%
     left_join(distinct(select(ACC, CAS=casn, chnm)), by="CAS") %>%
-    left_join(distinct(select(benchmarks, CAS, Compound)), by="CAS") %>%
+    left_join(bench_stuff, by="CAS") %>%
     left_join(distinct(select(chem_info, CAS, `Chemical Name`)), by="CAS") %>%
     distinct()
   
@@ -99,15 +106,14 @@ bench_tox_conc_data <- function(chemicalSummary, chemicalSummary_bench, chemical
 graph_tox_bench <- function(graphData, facet_levels, tox_chems, bench_chems, fill_boxes = "Dynamic"){
   
   countNonZero <- graphData %>%
-    select(CAS, chnm, Class, maxEAR, type) %>%
-    group_by(CAS, chnm, Class, type) %>%
-    summarize(nonZero = as.character(sum(maxEAR>0))) %>%
+    select(CAS, chnm, Class, maxEAR,type) %>%
+    group_by(CAS, chnm, Class,type) %>%
+    summarize(nonZero = sum(maxEAR>0)) %>%
     ungroup() %>%
     select(-type) %>%
     distinct() %>%
-    mutate(type = factor(facet_levels[1], levels = facet_levels),
-           y=10^-8)
-  
+    mutate(type = factor(facet_levels[1], levels = facet_levels))
+
   astrictData_tox <- countNonZero %>%
     mutate(y = 10^-7.5,
            askt = "*",
@@ -308,7 +314,7 @@ plot_genes <- function(file_out, chem_info, chem_data, site_info, exclusions, AO
   
   cleaned_ep <- clean_endPoint_info(endPointInfo)
   filtered_ep <- filter_groups(cleaned_ep, groupCol = "intended_target_gene_symbol")
-  browser()
+
   chemicalSummary <- get_chemical_summary(ACClong,
                                           filtered_ep,
                                           chem_data, 
