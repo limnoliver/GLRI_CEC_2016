@@ -1,6 +1,7 @@
 library(toxEval)
 library(dplyr)
 library(ggplot2)
+library(tidyr)
 
 get_colors <- function(){
   cbValues <- c("#DCDA4B","#999999","#00FFFF","#CEA226","#CC79A7","#4E26CE",
@@ -350,3 +351,29 @@ plot_genes <- function(file_out, chem_info, chem_data, site_info, exclusions, AO
   
   ggsave(filename = file_out, plot = bioPlot, width = 11, height = 8)
 }
+
+plot_landuse <- function(target_name, sites){
+  
+  sites$shortName[is.na(sites$shortName)] <- "Saginaw"
+  
+  long_site <- select(sites, shortName, Urban, Ag=Ag..total, Forest, 
+                      Wetland=Water..wetland, Other = Other.land.use) %>%
+    gather(landuse, values, -shortName) 
+  
+  order_sites <- long_site %>%
+    filter(landuse == "Ag") %>%
+    arrange(desc(values))
+  
+  long_site$landuse <- factor(long_site$landuse, levels = c("Other","Wetland","Forest","Urban","Ag"))
+  long_site$shortName <- factor(long_site$shortName, levels = order_sites$shortName)
+  
+  landuse <- ggplot(data = long_site, aes(x = shortName)) +
+    geom_col(aes(y = values, fill = landuse)) +
+    theme_minimal() +
+    xlab("") +
+    ylab("Land Use %") +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+  
+  ggsave(filename = target_name, plot = landuse, width = 10, height = 7)
+}
+

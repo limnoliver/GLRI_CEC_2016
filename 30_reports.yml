@@ -32,6 +32,7 @@ targets:
       - figure/Conc_class.png
       - figure/ToxCast_bio.png
       - figure/gene_AOP.png
+      - figure/landuse.png
       
   fig2.md:
     depends: 
@@ -95,3 +96,6 @@ targets:
      
   figure/gene_AOP.png:
      command: plot_genes(target_name, chem_info, chem_data, site_info, exclusions, AOP)
+
+  figure/landuse.png:
+    command: plot_landuse(target_name, sites)
