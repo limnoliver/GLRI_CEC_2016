@@ -232,7 +232,7 @@ class_figures <- function(graphData_all_3, chemicalSummary, chemicalSummary_benc
   write.csv(plotted, file = file_out, row.names = FALSE)
 }
 
-plot_class_summaries <- function(file_out, chemicalSummary, category){
+plot_class_summaries <- function(file_out, chemicalSummary, category, title_words){
 
   if(category == "Chemical Class"){
     chemicalSummary$category <- chemicalSummary$Class
@@ -242,12 +242,15 @@ plot_class_summaries <- function(file_out, chemicalSummary, category){
   
   tox_plot <- plot_tox_boxplots(chemicalSummary, category, mean_logic = FALSE)
   
+  tox_plot <-tox_plot +
+    ggtitle(label = title_words)
+  
   ggsave(tox_plot, filename = file_out, width = 7, height = 7)
   
 }
 
 plot_facet_class <- function(target_name, chemicalSummary, chemicalSummary_bench, chemicalSummary_conc){
-  
+
   chemicalSummary$type <- "ToxCast"
   chemicalSummary_bench$type <- "Benchmark"
   chemicalSummary_conc$type <- "Concentration"
@@ -256,6 +259,8 @@ plot_facet_class <- function(target_name, chemicalSummary, chemicalSummary_bench
   
   tots$type <- factor(tots$type, levels = c("ToxCast","Benchmark","Concentration"))
   tots$Class <- factor(tots$Class, levels = rev(levels(chemicalSummary$Class)))
+  
+  tots$category <- tots$Class
   
   class_plot <- plot_tox_boxplots_facet(tots)
   
@@ -294,7 +299,6 @@ plot_tox_boxplots_facet <- function(chemicalSummary){
 
 }
 
-
 plot_genes <- function(file_out, chem_info, chem_data, site_info, exclusions, AOP){
   
   ACClong <- get_ACC(chem_info$CAS)
@@ -309,22 +313,14 @@ plot_genes <- function(file_out, chem_info, chem_data, site_info, exclusions, AO
                                           site_info, 
                                           chem_info,
                                           exclusions)
-  chemicalSummary <- chemicalSummary %>%
+  
+  chemicalSummary <- select(chemicalSummary, -Class, -chnm) %>%
     left_join(AOP, by=c("Bio_category"="gene_symbol")) %>%
-    rename(category = Bio_category,
-           type = AOP)
+    rename(chnm = Bio_category,
+           Class = AOP) %>%
+    filter(!is.na(Class))
   
-  sub_chem <- filter(chemicalSummary, !is.na(type))
-  
-  graphData_df <- sub_chem %>%
-    group_by(site,date, category, type) %>%
-    summarise(sumEAR=sum(EAR)) %>%
-    data.frame() %>%
-    group_by(site, category, type) %>%
-    summarise(maxEAR=max(sumEAR)) %>%
-    data.frame() 
-  
-  x <- sapply(strsplit(graphData_df$type, " leading to"), function(x)x[[1]])
+  x <- sapply(strsplit(chemicalSummary$Class, " leading to"), function(x)x[[1]])
   x <- sapply(strsplit(x, " leading to"), function(x)x[[1]])
   
   x <- gsub(" Beta-Oxidation Inhibition Leading to Steatosis, PPAR? activation","", x)
@@ -335,33 +331,22 @@ plot_genes <- function(file_out, chem_info, chem_data, site_info, exclusions, AO
   x <- gsub(" function Subsequent to Estradiol Activation in the Fetal Testis","", x)
   x <- gsub(" function Subsequent to Estradiol Activation in the Fetal Testis","", x)
   
-  graphData_df$type <- x
+  chemicalSummary$Class <- x
   
-  bioPlot <- ggplot(data = graphData_df)+
-    coord_flip() +
-    theme_bw() +
-    xlab("") +
-    theme(plot.background = element_rect(fill = "transparent",colour = NA),
-          axis.text.y = element_text(color = "black", vjust = 0.2), 
-          axis.text.x = element_text(color = "black", vjust = 0, margin = margin(-0.5,0,0,0)))
+  gd <- graph_chem_data(chemicalSummary)
   
-  bioPlot <- bioPlot + 
-    geom_boxplot(aes(x=category, y=maxEAR, fill = type),lwd=0.1,outlier.size=1) +
-    scale_y_log10("Maximum EAR Per Site",labels=fancyNumbers) 
+  orderClass_df <- toxEval:::orderClass(gd)
+  
+  orderChem_df <- toxEval:::orderChem(gd, orderClass_df)
+
+  chemicalSummary$chnm <- factor(chemicalSummary$chnm,
+                                 levels = orderChem_df$chnm)    
+  
+  chemicalSummary$Class <- factor(chemicalSummary$Class,
+                                  levels = rev(levels(orderChem_df$Class)))
   
   
-  bioPlot <- bioPlot +
-    theme(axis.text = element_text( color = "black"),
-          axis.text.y = element_text(size=7),
-          axis.title=element_blank(),
-          panel.background = element_blank(),
-          plot.background = element_rect(fill = "transparent",colour = NA)) +
-    theme(legend.position="bottom",
-          legend.justification = "left",
-          legend.background = element_rect(fill = "transparent", colour = "transparent"),
-          legend.title=element_blank(),
-          legend.text = element_text(size=8),
-          legend.key.height = unit(1,"line")) 
+  bioPlot <- plot_chemical_boxplots(chemicalSummary)
   
   ggsave(filename = file_out, plot = bioPlot, width = 11, height = 8)
 }
