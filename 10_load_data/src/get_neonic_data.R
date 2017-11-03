@@ -12,7 +12,8 @@ get_csv <- function(file_classes){
 get_sites <- function(tracking, file.sites){
   
   sites <- readRDS(file.sites)
-
+  sites$USGS.station.number[which(sites$USGS.station.number == "04157005")]  <- "04157000"
+  
   tracking$SiteID[which(tracking$SiteID == "04157005")] <- "04157000"
 
   from_NWIS <- readNWISsite(zeroPad(unique(tracking$SiteID),padTo = 8))

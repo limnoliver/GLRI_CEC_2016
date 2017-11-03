@@ -31,6 +31,8 @@ targets:
       - figure/Benchmark_class.png
       - figure/Conc_class.png
       - figure/ToxCast_bio.png
+      - figure/gene_AOP.png
+      - figure/combo_stack.png
       
   fig2.md:
     depends: 
@@ -78,17 +80,28 @@ targets:
     command: class_figures(graphData_all_3, chemicalSummary, chemicalSummary_bench, cbValues, target_name)
 
   figure/ToxCast_class.png:
-    command: plot_class_summaries(target_name, chemicalSummary, I("Chemical Class"))
+    command: plot_class_summaries(target_name, chemicalSummary, I("Chemical Class"), I("ToxCast"))
 
   figure/Benchmark_class.png:
-    command: plot_class_summaries(target_name, chemicalSummary_bench, I("Chemical Class"))
+    command: plot_class_summaries(target_name, chemicalSummary_bench, I("Chemical Class"), I("Benchmarks"))
 
   figure/Conc_class.png:
-    command: plot_class_summaries(target_name, chemicalSummary_conc, I("Chemical Class"))
+    command: plot_class_summaries(target_name, chemicalSummary_conc, I("Chemical Class"), I("Concentration"))
 
   figure/ToxCast_bio.png:
-    command: plot_class_summaries(target_name, chemicalSummary, I("Biological"))
+    command: plot_class_summaries(target_name, chemicalSummary, I("Biological"), I("ToxCast"))
 
   figure/facet_class.png:
      command: plot_facet_class(target_name, chemicalSummary, chemicalSummary_bench, chemicalSummary_conc)
      
+  figure/gene_AOP.png:
+     command: plot_genes(target_name, chem_info, chem_data, site_info, exclusions, AOP)
+
+  landuse_fig:
+    command: plot_landuse(I("figure/landuse.png"), sites)
+    
+  stacK_fig:
+    command: plot_stacks(I("figure/stack.png"), sites, chemicalSummary, site_info)
+    
+  figure/combo_stack.png:
+    command: combine_figures(target_name, landuse_fig, stacK_fig)

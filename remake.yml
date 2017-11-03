@@ -21,4 +21,6 @@ targets:
       - figure/Conc_class.png
       - figure/ToxCast_bio.png
       - figure/facet_class.png
+      - figure/gene_AOP.png
+      - figure/combo_stack.png
       
