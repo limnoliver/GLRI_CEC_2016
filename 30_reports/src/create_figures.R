@@ -308,7 +308,7 @@ plot_genes <- function(file_out, chem_info, chem_data, site_info, exclusions, AO
   
   cleaned_ep <- clean_endPoint_info(endPointInfo)
   filtered_ep <- filter_groups(cleaned_ep, groupCol = "intended_target_gene_symbol")
-  
+  browser()
   chemicalSummary <- get_chemical_summary(ACClong,
                                           filtered_ep,
                                           chem_data, 
