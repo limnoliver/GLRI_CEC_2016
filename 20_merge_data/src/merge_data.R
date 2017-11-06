@@ -63,7 +63,7 @@ merged_NWIS <- function(tracking, NWIS, neonic, pCodeInfo, schedule_pCodes){
 remove_censor <- function(neonic_NWIS){
   
   neonic_NWIS$value[neonic_NWIS$remark_cd == "<"] <- 0
-  
+  neonic_NWIS$value[is.na(neonic_NWIS$value)] <- 0
   return(neonic_NWIS)
   
 }
