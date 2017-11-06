@@ -16,7 +16,9 @@ get_NWIS <- function(tracking){
 
   df$remark_cd <- ""
   df$remark_cd[grep("^Not Detected$",df$ResultDetectionConditionText)] <- "<"
-
+  df$remark_cd[grep("Detected Not Quantified",df$ResultDetectionConditionText)] <- "<"
+  
+  
   df$occur <-  df$remark_cd != "<"
   df$occur <- ifelse(is.na(df$occur),TRUE,df$occur)
   
@@ -31,7 +33,7 @@ get_NWIS <- function(tracking){
     mutate(SiteID = gsub(pattern = "USGS-","",FullsiteID),
            NWISRecordNumber = sapply(strsplit(ActivityIdentifier,"\\."), function(x) x[3])) %>%
     select(-ActivityIdentifier, -FullsiteID)
-  
+
   #Saginaw!!!
   df_sub$SiteID[df_sub$SiteID == "04157005"] <- "04157000"
 
