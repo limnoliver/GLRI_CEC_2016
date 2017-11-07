@@ -156,14 +156,21 @@ graph_tox_bench <- function(graphData, facet_levels, tox_chems, bench_chems, fil
           legend.text = element_text(size=8),
           legend.key.height = unit(1,"line")) 
   
-  layout_stuff <- ggplot_build(toxPlot_All)
-  layout_stuff$layout$panel_ranges[[1]]$x.range[1]
-  
+  layout_stuff <- ggplot_build(toxPlot_All) 
+
+  if(packageVersion("ggplot2") >= "2.2.1.9000"){
+    y_tox <- 10^(layout_stuff$layout$panel_scales_y[[1]]$range$range[1])
+    y_bench <- 10^(layout_stuff$layout$panel_scales_y[[2]]$range$range[1])
+  } else {
+    y_tox <- 10^(layout_stuff$layout$panel_ranges[[1]]$x.range[1])
+    y_bench <- 10^(layout_stuff$layout$panel_ranges[[2]]$x.range[1])
+  } 
+
   if(nrow(astrictData_tox) > 0){
-    astrictData_tox$y <- 10^(layout_stuff$layout$panel_ranges[[1]]$x.range[1])
+    astrictData_tox$y <- y_tox
   }
   if(nrow(astrictData_bench) > 0){
-    astrictData_bench$y <- 10^(layout_stuff$layout$panel_ranges[[2]]$x.range[1])
+    astrictData_bench$y <- y_bench
   }
   
   toxPlot_All_withLabels <- toxPlot_All +
@@ -173,9 +180,14 @@ graph_tox_bench <- function(graphData, facet_levels, tox_chems, bench_chems, fil
               size=5, vjust = 0.70)
   
   layout_stuff <- ggplot_build(toxPlot_All_withLabels)
-  layout_stuff$layout$panel_ranges[[1]]$x.range[1]
   
-  countNonZero$y <- 10^(layout_stuff$layout$panel_ranges[[1]]$x.range[1])
+  if(packageVersion("ggplot2") >= "2.2.1.9000"){
+    nonZ_y <- 10^(layout_stuff$layout$panel_scales_y[[1]]$range$range[1])
+  } else {
+    nonZ_y <- 10^(layout_stuff$layout$panel_ranges[[1]]$x.range[1])
+  } 
+  
+  countNonZero$y <- nonZ_y
   
   toxPlot_All_withLabels <- toxPlot_All_withLabels +
     geom_text(data=countNonZero, 
@@ -401,9 +413,9 @@ plot_stacks <- function(target_name, sites, chemicalSummary, site_info){
   long_site$landuse <- factor(long_site$landuse, levels = c("Other","Wetland","Forest","Urban","Ag"))
   long_site$shortName <- factor(long_site$shortName, levels = order_sites$shortName)
   
-  chem_site$`Short Name` <- factor(chem_site$`Short Name`, levels = order_sites$shortName)
+  site_info$`Short Name` <- factor(site_info$`Short Name`, levels = order_sites$shortName)
   
-  stack_fig <- plot_tox_stacks(chemicalSummary, chem_site)
+  stack_fig <- plot_tox_stacks(chemicalSummary, site_info)
   
   ggsave(filename = target_name, plot = stack_fig, width = 10, height = 7)
   
