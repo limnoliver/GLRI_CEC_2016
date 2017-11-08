@@ -33,6 +33,10 @@ targets:
       - figure/ToxCast_bio.png
       - figure/gene_AOP.png
       - figure/combo_stack.png
+      - figure/concentration.png
+      - figure/bench_conc.png
+      - figure/tox_conc.png
+      - figure/total_comparisons_ppt.png
       
   fig2.md:
     depends: 
@@ -62,7 +66,7 @@ targets:
     command: get_siteTables(chemicalSummary, chem_info, site_info, AOP, target_name)
     
   cbValues:
-    command: get_colors()
+    command: get_colors(chemicalSummary_conc)
 
   graphData:
     command: bench_tox_data(chemicalSummary, chemicalSummary_bench, chem_info, benchmarks)
@@ -105,3 +109,21 @@ targets:
     
   figure/combo_stack.png:
     command: combine_figures(target_name, landuse_fig, stacK_fig)
+
+  figure/concentration.png:
+    command: conc_plot(chemicalSummary_conc, target_name)
+    
+  graphData_b_c:
+    command: bench_tox_data(chemicalSummary_bench, chemicalSummary_conc, chem_info, benchmarks)
+    
+  figure/bench_conc.png:
+    command: benchmark_conc_figure(graphData_b_c, chemicalSummary_bench, chemicalSummary_conc, cbValues, target_name)
+
+  graphData_t_c:
+    command: bench_tox_data(chemicalSummary, chemicalSummary_conc, chem_info, benchmarks)
+    
+  figure/tox_conc.png:
+    command: tox_conc_figure(graphData_t_c, chemicalSummary, chemicalSummary_conc, cbValues, target_name)
+
+  figure/total_comparisons_ppt.png:
+    command: all_3_cleaned(chemicalSummary, chemicalSummary_bench, chemicalSummary_conc, chem_info, cbValues, target_name)

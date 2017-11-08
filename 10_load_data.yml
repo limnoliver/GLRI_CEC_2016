@@ -47,14 +47,8 @@ targets:
                       sites,
                       tracking)
     
-  NWIS:
-    command: get_NWIS(tracking)
-    
   pCodesExclude:
     command: get_pCode_exclude("10_load_data/pCodes_Exclude.txt")
-
-  pCodeInfo:
-    command: get_pCode(NWIS, pCodesExclude)
 
   classes: 
     command: get_csv("10_load_data/chemical_classes.csv")
@@ -65,8 +59,14 @@ targets:
   schedule_pCodes:
     command: get_schedules(schedules)
     
+  NWIS:
+    command: get_NWIS(tracking, schedule_pCodes, pCodesExclude)
+    
   benchmarks:
     command: get_csv("10_load_data/benchmarks.csv")
+    
+  pCodeInfo:
+    command: get_pCode(NWIS)
     
   exclusions:
     command: get_csv("10_load_data/exclusions.csv")

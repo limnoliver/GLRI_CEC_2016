@@ -5,12 +5,12 @@ library(dataRetrieval)
 library(openxlsx)
 library(toxEval)
 
-merged_NWIS <- function(tracking, NWIS, neonic, pCodeInfo, schedule_pCodes){
+merged_NWIS <- function(tracking, NWIS, neonic, pCodeInfo){
 
   tracking <- filter(tracking, SampleTypeCode == 9)
   
   just_neonic_data <- neonic %>%
-    select( site = USGS.Site.ID, pdate, NWISRecordNumber,
+    select(site = USGS.Site.ID, pdate, NWISRecordNumber,
            Acetamiprid, 
            Clothianidin,
            Dinotefuran,
@@ -37,9 +37,8 @@ merged_NWIS <- function(tracking, NWIS, neonic, pCodeInfo, schedule_pCodes){
   just_neonic <- left_join(just_neonic_data, 
                            just_neonic_remarks, by=c("site","pdate","chemical","NWISRecordNumber"))
 
-  just_NWIS <- select(NWIS, site=SiteID, NWISRecordNumber, pdate, pCode, value) %>%
-    left_join(select(pCodeInfo, pCode=parameter_cd, chemical=casrn), by="pCode") %>%
-    filter(pCode %in% schedule_pCodes$`Parameter Code`) 
+  just_NWIS <- select(NWIS, site=SiteID, pdate, pCode, value, remark_cd) %>%
+    left_join(select(pCodeInfo, pCode=parameter_cd, chemical=casrn), by="pCode") 
   
   tracking$NWISRecordNumber[tracking$NWISRecordNumber == "01600425"] <- "01600815"
   tracking$NWISRecordNumber[tracking$NWISRecordNumber == "016002001"] <- "01600123"
@@ -50,11 +49,6 @@ merged_NWIS <- function(tracking, NWIS, neonic, pCodeInfo, schedule_pCodes){
   tracking$NWISRecordNumber[tracking$NWISRecordNumber == "01601616"] <- "01601615"
   tracking$SiteID[tracking$SiteID == "04157005"] <- "04157000"
   
-  just_NWIS <- just_NWIS %>%
-    right_join(select(tracking, site=SiteID, NWISRecordNumber), by=c("site","NWISRecordNumber"))
-
-  just_NWIS$site[just_NWIS$site == "04157005"] <- "04157000"  
-  
   nwis_neonic <- bind_rows(just_neonic, just_NWIS)
   
   return(nwis_neonic)
@@ -64,6 +58,9 @@ remove_censor <- function(neonic_NWIS){
   
   neonic_NWIS$value[neonic_NWIS$remark_cd == "<"] <- 0
   neonic_NWIS$value[is.na(neonic_NWIS$value)] <- 0
+  
+  neonic_NWIS <- filter(neonic_NWIS, value != 0)
+    
   return(neonic_NWIS)
   
 }
