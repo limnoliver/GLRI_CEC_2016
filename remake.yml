@@ -22,4 +22,8 @@ targets:
       - figure/facet_class.png
       - figure/gene_AOP.png
       - figure/combo_stack.png
+      - figure/concentration.png
+      - figure/bench_conc.png
+      - figure/tox_conc.png
+      - figure/total_comparisons_ppt.png
       

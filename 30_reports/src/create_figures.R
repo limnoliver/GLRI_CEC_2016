@@ -4,10 +4,12 @@ library(ggplot2)
 library(tidyr)
 library(grid)
 
-get_colors <- function(){
+get_colors <- function(chemicalSummary_conc){
   cbValues <- c("#DCDA4B","#999999","#00FFFF","#CEA226","#CC79A7","#4E26CE",
                 "#FFFF00","#78C15A","#79AEAE","#FF0000","#00FF00","#B1611D",
                 "#FFA500","#F4426e")
+  cbValues <- cbValues[1:length(levels(chemicalSummary_conc$Class))]
+  names(cbValues) <- levels(chemicalSummary_conc$Class)
   return(cbValues)
 }
 
@@ -130,12 +132,12 @@ graph_tox_bench <- function(graphData, facet_levels, tox_chems, bench_chems, fil
   
   if(fill_boxes == "Dynamic"){
     toxPlot_All <- toxPlot_All +
-      geom_boxplot(aes(x=chnm, y=maxEAR, fill=Class),
-                 lwd=0.1,outlier.size=1) 
+      geom_boxplot(aes(x=chnm, y=maxEAR, fill=Class, color = Class),
+                 outlier.size=0.75, width = 2) 
   } else {
     toxPlot_All <- toxPlot_All +
       geom_boxplot(aes(x=chnm, y=maxEAR),
-                   lwd=0.1,outlier.size=1, fill=fill_boxes) 
+                   lwd=0.1,outlier.size=0.5, fill=fill_boxes, width = 2) 
   }
   
   toxPlot_All <- toxPlot_All +
@@ -202,7 +204,8 @@ benchmark_tox_figure <- function(graphData, chemicalSummary, chemicalSummary_ben
                                             tox_chems = unique(chemicalSummary$CAS),
                                             bench_chems = unique(chemicalSummary_bench$CAS),
                                             fill_boxes = "Dynamic") +
-    scale_fill_manual(values = cbValues, drop=FALSE) 
+    scale_fill_manual(values = cbValues, drop=FALSE) +
+    scale_color_manual(values = cbValues, drop=FALSE) 
   
   ggsave(toxPlot_All_withLabels, filename = file_out, width = 11, height = 9)
   
@@ -216,6 +219,7 @@ benchmark_tox_conc_figure <- function(graphData_all_3, chemicalSummary, chemical
                                             bench_chems = unique(chemicalSummary_bench$CAS),
                                             fill_boxes = "Dynamic") +
     scale_fill_manual(values = cbValues, drop=FALSE) +
+    scale_color_manual(values = cbValues, drop=FALSE) +
     theme(legend.position="bottom",
           legend.justification = "left")
   
@@ -311,7 +315,7 @@ plot_tox_boxplots_facet <- function(chemicalSummary){
           axis.text.x = element_text(color = "black", vjust = 0, margin = margin(-0.5,0,0,0)))
 
   bioPlot <- bioPlot + 
-    geom_boxplot(aes(x=category, y=maxEAR),lwd=0.1,outlier.size=1, fill = "steelblue") +
+    geom_boxplot(aes(x=category, y=maxEAR),lwd=0.1,outlier.size=0.75, fill = "steelblue") +
     scale_y_log10("Maximum EAR Per Site",labels=fancyNumbers) 
   
   return(bioPlot)
@@ -427,4 +431,101 @@ combine_figures <- function(target_name, landuse_fig, stacK_fig){
   grid.draw(rbind(ggplotGrob(stacK_fig), ggplotGrob(landuse_fig),  size = "last")) 
   dev.off()
 
+}
+
+
+conc_plot <- function(chemicalSummary_conc, target_name){
+  
+  chem_bp <- plot_chemical_boxplots(chemicalSummary_conc, plot_ND = FALSE)
+  
+  chem_bp <- chem_bp +
+    theme(legend.position = "right",
+          axis.text.y=element_blank(),
+          axis.ticks.y=element_blank(),
+          axis.text.x=element_text(color = "black"),
+          legend.text=element_text(size=14)) +
+    guides(fill=guide_legend(ncol=1)) +
+    ggtitle("Concentrations")
+  
+  chem_bp$layers <- list(chem_bp$layers[[1]])
+  
+  chem_bp 
+    
+  
+  ggsave(filename = target_name, plot = chem_bp, width = 10, height = 5)
+  
+}
+
+plot_two <- function(graphData_b_c, chemicalSummary_bench, chemicalSummary_conc, cbValues, facet_labels){
+  
+  graphData_b_c <- filter(graphData_b_c, chnm %in% unique(chemicalSummary_bench$chnm))
+  
+  graphData_b_c$type <- factor(graphData_b_c$type, labels = facet_labels)
+  
+  toxPlot_All <- ggplot(data=graphData_b_c) +
+    scale_y_log10(labels=fancyNumbers, breaks = c(1 %o% 10^(-8:1))) +
+    geom_boxplot(aes(x=chnm, y=maxEAR, fill=Class),
+                 lwd=0.1,outlier.size=0.75, width = 2)  +
+    facet_grid(. ~ type, scales = "free") +
+    theme_bw() +
+    scale_x_discrete(drop=TRUE) +
+    scale_fill_manual(values = cbValues, drop=TRUE) +
+    coord_flip() +
+    theme(axis.text = element_text( color = "black"),
+          axis.text.y = element_text(size=7),
+          axis.title=element_blank(),
+          panel.background = element_blank(),
+          plot.background = element_rect(fill = "transparent",colour = NA),
+          strip.background = element_rect(fill = "transparent",colour = NA),
+          strip.text.y = element_blank()) +
+    theme(legend.background = element_rect(fill = "transparent", colour = "transparent"),
+          legend.title=element_blank(),
+          legend.text = element_text(size=8),
+          legend.key.height = unit(1,"line")) 
+  return(toxPlot_All)
+}
+
+benchmark_conc_figure <- function(graphData_b_c, chemicalSummary_bench, chemicalSummary_conc, cbValues, file_out){
+  
+  facet_labels <- c("Benchmark","Concentration")
+  toxPlot_All <- plot_two(graphData_b_c, chemicalSummary_bench, chemicalSummary_conc, cbValues, facet_labels)
+  
+  ggsave(toxPlot_All, filename = file_out, width = 10, height = 5)
+  
+}
+
+tox_conc_figure <- function(graphData_b_c, chemicalSummary_bench, chemicalSummary_conc, cbValues, file_out){
+  
+  facet_labels <- c("ToxCast","Concentration")
+  toxPlot_All <- plot_two(graphData_b_c, chemicalSummary_bench, chemicalSummary_conc, cbValues, facet_labels)
+  
+  ggsave(toxPlot_All, filename = file_out, width = 10, height = 5)
+  
+}
+
+all_3_cleaned <- function(chemicalSummary, chemicalSummary_bench, chemicalSummary_conc, cbValues, target_name){
+  
+  browser()
+  graphData_all_3 <- filter(graphData_all_3, chnm %in% levels(chemicalSummary$chnm))
+
+  graphData_all_3$chnm <- factor(as.character(graphData_all_3$chnm), levels = levels(chemicalSummary$chnm))
+  
+  toxPlot_All_withLabels <- graph_tox_bench(graphData_all_3, 
+                                            facet_levels = c("ToxCast","Benchmark","Concentration"),
+                                            tox_chems = levels(graphData_all_3$chnm),
+                                            bench_chems = levels(graphData_all_3$chnm),
+                                            fill_boxes = "Dynamic") +
+    scale_fill_manual(values = cbValues, drop=TRUE) +
+    scale_color_manual(values = cbValues, drop=TRUE) +
+    theme(legend.position = "right",
+          axis.text.y=element_blank(),
+          axis.ticks.y=element_blank(),
+          axis.text.x=element_text(color = "black"),
+          legend.text=element_text(size=14)) +
+    guides(fill=guide_legend(ncol=1))
+  
+  toxPlot_All_withLabels$layers <- list(toxPlot_All_withLabels$layers[[1]])
+  
+  ggsave(toxPlot_All_withLabels, filename = target_name, width = 10, height = 5)
+  
 }
