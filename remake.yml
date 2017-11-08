@@ -9,7 +9,6 @@ include:
 targets:
   all:
     depends: 
-      - reports/siteTables.xlsx
       - reports/fig3.html
       - reports/fig2.html
       - data/pesticides.xlsx

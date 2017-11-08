@@ -3,7 +3,9 @@ library(dplyr)
 library(readr)
 
 get_csv <- function(file_classes){
-  
+  #Changed to Other:
+  # 78-48-8,Defoliant
+  # 51-03-6,Synergist
   classes <- data.frame(read_csv(file_classes))
   
   return(classes)

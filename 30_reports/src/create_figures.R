@@ -65,7 +65,6 @@ bench_tox_conc_data <- function(chemicalSummary, chemicalSummary_bench, chemical
   bench_stuff <- distinct(select(benchmarks, CAS, Compound))
   bench_stuff <- bench_stuff[!duplicated(bench_stuff$CAS),]
   
-
   chnm_df <- data.frame(CAS = chem_info$CAS, stringsAsFactors = FALSE) %>%
     left_join(distinct(select(ACC, CAS=casn, chnm)), by="CAS") %>%
     left_join(bench_stuff, by="CAS") %>%
@@ -337,8 +336,7 @@ plot_genes <- function(file_out, chem_info, chem_data, site_info, exclusions, AO
   chemicalSummary <- select(chemicalSummary, -Class, -chnm) %>%
     left_join(AOP, by=c("Bio_category"="gene_symbol")) %>%
     rename(chnm = Bio_category,
-           Class = AOP) %>%
-    filter(!is.na(Class))
+           Class = AOP) 
   
   x <- sapply(strsplit(chemicalSummary$Class, " leading to"), function(x)x[[1]])
   x <- sapply(strsplit(x, " leading to"), function(x)x[[1]])
@@ -368,7 +366,7 @@ plot_genes <- function(file_out, chem_info, chem_data, site_info, exclusions, AO
   
   bioPlot <- plot_chemical_boxplots(chemicalSummary)
   
-  ggsave(filename = file_out, plot = bioPlot, width = 11, height = 8)
+  ggsave(filename = file_out, plot = bioPlot, width = 11, height = 20)
 }
 
 plot_landuse <- function(target_name, sites){
