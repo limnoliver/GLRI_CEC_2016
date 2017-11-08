@@ -78,7 +78,7 @@ targets:
     command: benchmark_tox_figure(graphData, chemicalSummary, chemicalSummary_bench, cbValues, target_name)
   
   figure/total_comparisons.png:
-    command: benchmark_tox_conc_figure(chemicalSummary, chemicalSummary_bench, chemicalSummary_conc, cbValues, target_name)
+    command: benchmark_tox_conc_figure(graphData_all_3, chemicalSummary, chemicalSummary_bench, cbValues, target_name)
 
   figure/created_class_figures.csv:
     command: class_figures(graphData_all_3, chemicalSummary, chemicalSummary_bench, cbValues, target_name)
@@ -126,4 +126,4 @@ targets:
     command: tox_conc_figure(graphData_t_c, chemicalSummary, chemicalSummary_conc, cbValues, target_name)
 
   figure/total_comparisons_ppt.png:
-    command: all_3_cleaned(graphData_all_3, chemicalSummary, chemicalSummary_bench, cbValues, target_name)
+    command: all_3_cleaned(chemicalSummary, chemicalSummary_bench, chemicalSummary_conc, chem_info, cbValues, target_name)
