@@ -101,6 +101,16 @@ get_tracking_data <- function(get_tracking.config = "10_load_data/cfg/tracking_c
   df <- select(df, -pdate) %>%
     rename(pdate = pdate_1)
   
+  #Getting the record numbers to line up in WQP:
+  # tracking$NWISRecordNumber[tracking$NWISRecordNumber == "01600425"] <- "01600815"		
+  # tracking$NWISRecordNumber[tracking$NWISRecordNumber == "016002001"] <- "01600123"		
+  # tracking$NWISRecordNumber[tracking$NWISRecordNumber == "01600236"] <- "01600262"		
+  # tracking$NWISRecordNumber[tracking$NWISRecordNumber == "01600484"] <- "01600487"		
+  # tracking$NWISRecordNumber[tracking$NWISRecordNumber == "01600700"] <- "01600698"		
+  # tracking$NWISRecordNumber[tracking$NWISRecordNumber == "01600769"] <- "01600768"		
+  # tracking$NWISRecordNumber[tracking$NWISRecordNumber == "01601616"] <- "01601615"		
+  # tracking$SiteID[tracking$SiteID == "04157005"] <- "04157000"
+  
   return(df)
   
 }
