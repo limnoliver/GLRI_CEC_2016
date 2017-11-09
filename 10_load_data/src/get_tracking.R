@@ -61,6 +61,46 @@ get_tracking_data <- function(get_tracking.config = "10_load_data/cfg/tracking_c
   df$NWISRecordNumber <- gsub("(DB3)", "", df$NWISRecordNumber, fixed=TRUE)
   df$NWISRecordNumber <- zeroPad(df$NWISRecordNumber, 8)
   
+  tracking <- df
+  
+  # Making things right:
+  tracking$SiteID[tracking$SiteID == "04157005"] <- "04157000"
+  tracking <- filter(tracking, SampleTypeCode == "9")
+  tracking$Date[tracking$NWISRecordNumber == "01601472"] <- as.Date("2016-04-07")
+  tracking$Date[tracking$NWISRecordNumber == "01600121"] <- as.Date("2016-02-02")
+  tracking$SiteID[tracking$SiteID == "4249000"] <- "04249000"
+  tracking$Time[tracking$NWISRecordNumber == "01600388"] <- "10:20"
+  tracking$Time[tracking$NWISRecordNumber == "01600462"] <- "09:10"
+  tracking$Date[tracking$NWISRecordNumber == "01600384"] <- as.Date("2015-12-09")
+  tracking$Date[tracking$NWISRecordNumber == "01600381"] <- as.Date("2015-12-08")
+  tracking$Time[tracking$NWISRecordNumber == "01601976"] <-  "08:00"
+  tracking$Date[tracking$NWISRecordNumber == "01600102"] <- as.Date("2015-11-12")
+  tracking$Time[tracking$NWISRecordNumber == "01600461"] <- "12:10"
+  tracking$Time[tracking$NWISRecordNumber == "016002001"] <- "11:00"
+  tracking$Time[tracking$NWISRecordNumber == "01600207"] <- "11:00"
+  tracking$Time[tracking$NWISRecordNumber == "01600236"] <- "12:00"
+  tracking$Time[tracking$NWISRecordNumber == "01600484"] <- "11:00"
+  tracking$Time[tracking$NWISRecordNumber == "01600973"] <- "11:00"
+  tracking$Time[tracking$NWISRecordNumber == "01601028"] <- "12:00"
+  tracking$Date[tracking$NWISRecordNumber == "01601028"] <- as.Date("2016-05-10")
+  tracking$Time[tracking$NWISRecordNumber == "01601556"] <- "11:00"
+  tracking$Time[tracking$NWISRecordNumber == "01601641"] <- "10:00"
+  tracking$Time[tracking$NWISRecordNumber == "01600618"] <- "13:00"
+  tracking$Time[tracking$NWISRecordNumber == "01600700"] <- "10:00"
+  
+  tracking$pdate_new <- paste(tracking$Date,tracking$Time)
+  
+  df <- data.frame()
+  for(st in States){
+    track_st <- filter(tracking, State == st)
+    track_st$pdate_1 <- as.POSIXct(track_st$pdate_new,format='%Y-%m-%d %H:%M',tz=timeZone[st])
+    attr(track_st$pdate_1, "tzone") <- "UTC"
+    df <- bind_rows(df, track_st)
+  }
+  
+  df <- select(df, -pdate) %>%
+    rename(pdate = pdate_1)
+  
   return(df)
   
 }

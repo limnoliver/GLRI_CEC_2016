@@ -463,7 +463,7 @@ conc_plot <- function(chemicalSummary_conc, target_name){
 
 plot_two <- function(graphData_b_c, chemicalSummary_bench, chemicalSummary_conc, cbValues, facet_labels){
   
-  graphData_b_c <- filter(graphData_b_c, chnm %in% unique(chemicalSummary_bench$chnm))
+  graphData_b_c <- filter(graphData_b_c, CAS %in% unique(chemicalSummary_bench$CAS))
   
   graphData_b_c$type <- factor(graphData_b_c$type, labels = facet_labels)
   
