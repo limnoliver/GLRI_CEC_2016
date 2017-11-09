@@ -26,31 +26,6 @@ get_NWIS <- function(tracking, schedule_pCodes, pCodesExclude){
   #Saginaw!!!
   df_sub$SiteID[df_sub$SiteID == "04157005"] <- "04157000"
   
-  # Making things right:
-  tracking$SiteID[tracking$SiteID == "04157005"] <- "04157000"
-  tracking <- filter(tracking, SampleTypeCode == "9")
-  tracking$Date[tracking$NWISRecordNumber == "01601472"] <- as.Date("2016-04-07")
-  tracking$Date[tracking$NWISRecordNumber == "01600121"] <- as.Date("2016-02-02")
-  tracking$SiteID[tracking$SiteID == "4249000"] <- "04249000"
-  tracking$Time[tracking$NWISRecordNumber == "01600388"] <- "10:20"
-  tracking$Time[tracking$NWISRecordNumber == "01600462"] <- "09:10"
-  tracking$Date[tracking$NWISRecordNumber == "01600384"] <- as.Date("2015-12-09")
-  tracking$Date[tracking$NWISRecordNumber == "01600381"] <- as.Date("2015-12-08")
-  tracking$Time[tracking$NWISRecordNumber == "01601976"] <-  "08:00"
-  tracking$Date[tracking$NWISRecordNumber == "01600102"] <- as.Date("2015-11-12")
-  tracking$Time[tracking$NWISRecordNumber == "01600461"] <- "12:10"
-  tracking$Time[tracking$NWISRecordNumber == "016002001"] <- "11:00"
-  tracking$Time[tracking$NWISRecordNumber == "01600207"] <- "11:00"
-  tracking$Time[tracking$NWISRecordNumber == "01600236"] <- "12:00"
-  tracking$Time[tracking$NWISRecordNumber == "01600484"] <- "11:00"
-  tracking$Time[tracking$NWISRecordNumber == "01600973"] <- "11:00"
-  tracking$Time[tracking$NWISRecordNumber == "01601028"] <- "12:00"
-  tracking$Date[tracking$NWISRecordNumber == "01601028"] <- as.Date("2016-05-10")
-  tracking$Time[tracking$NWISRecordNumber == "01601556"] <- "11:00"
-  tracking$Time[tracking$NWISRecordNumber == "01601641"] <- "10:00"
-  tracking$Time[tracking$NWISRecordNumber == "01600618"] <- "13:00"
-  tracking$Time[tracking$NWISRecordNumber == "01600700"] <- "10:00"
-  
   schedule_pCodes <- filter(schedule_pCodes, 
                             !grepl("surr",schedule_pCodes$`Parameter Name`),
                             !(`Parameter Code` %in% pCodesExclude))

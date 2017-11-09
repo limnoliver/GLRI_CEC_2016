@@ -26,4 +26,5 @@ targets:
       - figure/bench_conc.png
       - figure/tox_conc.png
       - figure/total_comparisons_ppt.png
+      - figure/total_comparisons_filtered.png
       

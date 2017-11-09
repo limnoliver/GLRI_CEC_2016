@@ -8,20 +8,20 @@ library(toxEval)
 merged_NWIS <- function(tracking, NWIS, neonic, pCodeInfo){
 
   tracking <- filter(tracking, SampleTypeCode == 9)
-  
+
   just_neonic_data <- neonic %>%
-    select(site = USGS.Site.ID, pdate, NWISRecordNumber,
+    select(site = USGS.Site.ID, NWISRecordNumber,
            Acetamiprid, 
            Clothianidin,
            Dinotefuran,
            Imidacloprid,
            Thiacloprid,
            Thiamethoxam) %>%
-    gather(chemical, value, -site, -pdate, -NWISRecordNumber) %>%
+    gather(chemical, value, -site, -NWISRecordNumber) %>%
     mutate(site = zeroPad(site,8))
   
   just_neonic_remarks <- neonic %>%
-    select(site = USGS.Site.ID, pdate, NWISRecordNumber,
+    select(site = USGS.Site.ID,  NWISRecordNumber,
            R_Acetamiprid, 
            R_Clothianidin,
            R_Dinotefuran,
@@ -29,25 +29,17 @@ merged_NWIS <- function(tracking, NWIS, neonic, pCodeInfo){
            R_Thiacloprid,
            R_Thiamethoxam
     ) %>%
-    gather(chemical_rk, remark_cd, -site, -pdate, -NWISRecordNumber) %>%
+    gather(chemical_rk, remark_cd, -site,  -NWISRecordNumber) %>%
     mutate(chemical = gsub("R_","",chemical_rk)) %>%
     select(-chemical_rk)%>%
     mutate(site = zeroPad(site,8))
 
   just_neonic <- left_join(just_neonic_data, 
-                           just_neonic_remarks, by=c("site","pdate","chemical","NWISRecordNumber"))
+                           just_neonic_remarks, by=c("site","chemical","NWISRecordNumber")) %>%
+    left_join(select(tracking, NWISRecordNumber, pdate), by="NWISRecordNumber")
 
   just_NWIS <- select(NWIS, site=SiteID, pdate, pCode, value, remark_cd) %>%
     left_join(select(pCodeInfo, pCode=parameter_cd, chemical=casrn), by="pCode") 
-  
-  tracking$NWISRecordNumber[tracking$NWISRecordNumber == "01600425"] <- "01600815"
-  tracking$NWISRecordNumber[tracking$NWISRecordNumber == "016002001"] <- "01600123"
-  tracking$NWISRecordNumber[tracking$NWISRecordNumber == "01600236"] <- "01600262"
-  tracking$NWISRecordNumber[tracking$NWISRecordNumber == "01600484"] <- "01600487"
-  tracking$NWISRecordNumber[tracking$NWISRecordNumber == "01600700"] <- "01600698"
-  tracking$NWISRecordNumber[tracking$NWISRecordNumber == "01600769"] <- "01600768"
-  tracking$NWISRecordNumber[tracking$NWISRecordNumber == "01601616"] <- "01601615"
-  tracking$SiteID[tracking$SiteID == "04157005"] <- "04157000"
   
   nwis_neonic <- bind_rows(just_neonic, just_NWIS)
   
