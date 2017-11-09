@@ -12,6 +12,7 @@ packages:
   - tidyr
   - ggplot2
   - yaml
+  - RColorBrewer
   
 sources:
   - 30_reports/src/render.R
@@ -37,6 +38,7 @@ targets:
       - figure/bench_conc.png
       - figure/tox_conc.png
       - figure/total_comparisons_ppt.png
+      - figure/total_comparisons_filtered.png
       
   fig2.md:
     depends: 
@@ -127,3 +129,6 @@ targets:
 
   figure/total_comparisons_ppt.png:
     command: all_3_cleaned(chemicalSummary, chemicalSummary_bench, chemicalSummary_conc, chem_info, cbValues, target_name)
+
+  figure/total_comparisons_filtered.png:
+    command: all_3_filtered(chemicalSummary, chemicalSummary_bench, chemicalSummary_conc, chem_info, cbValues, target_name)
