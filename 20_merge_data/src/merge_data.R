@@ -169,6 +169,8 @@ create_toxExcel <- function(chem_data, chem_info, site_info, exclusions, file_ou
 
 get_chem_sum <- function(chem_info, chem_data, site_info, exclusions){
 
+  chem_data <- filter(chem_data, Value != 0)
+  
   ACClong <- get_ACC(chem_info$CAS)
   ACClong <- remove_flags(ACClong)
   
@@ -186,6 +188,8 @@ get_chem_sum <- function(chem_info, chem_data, site_info, exclusions){
 }
 
 get_chem_bench <- function(benchmarks, chem_data, site_info, chem_info, exclusions){
+  
+  chem_data <- filter(chem_data, Value != 0)
   
   benchmarks <- benchmarks %>%
     rename(chnm = Compound,
@@ -208,6 +212,8 @@ get_chem_bench <- function(benchmarks, chem_data, site_info, chem_info, exclusio
 }
 
 get_conc_summary <- function(chem_data, site_info, chem_info, exclusions){
+  
+  chem_data <- filter(chem_data, Value != 0)
   
   conc_ep <- select(chem_info, CAS, chnm=`Chemical Name`) %>%
     mutate(ACC_value = 1,
