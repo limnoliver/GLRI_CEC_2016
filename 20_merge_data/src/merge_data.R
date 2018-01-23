@@ -88,7 +88,14 @@ create_chemData <- function(neonic_NWIS, special_cas, pCodeInfo){
     left_join(select(pCodeInfo, pCode=parameter_cd, units=parameter_units), by="pCode") %>%
     mutate(Value = Value/1000)
 
-  chem_data$CAS[!is.na(chem_data$casrn)] <- chem_data$casrn[!is.na(chem_data$casrn)]
+  chem_data$CAS[!is.na(chem_data$pCode) & chem_data$pCode == "68574"] <- "56611-54-2_68574"
+  
+  chem_data$CAS[chem_data$CAS == "Acetamiprid"] <- "135410-20-7"
+  chem_data$CAS[chem_data$CAS == "Thiamethoxam"] <- "153719-23-4"
+  chem_data$CAS[chem_data$CAS == "Thiacloprid"] <- "111988-49-9"
+  chem_data$CAS[chem_data$CAS == "Imidacloprid"] <- "138261-41-3_GLRI"
+  chem_data$CAS[chem_data$CAS == "Dinotefuran"] <- "165252-70-0"
+  chem_data$CAS[chem_data$CAS == "Clothianidin"] <- "210880-92-5"
   
   chem_data <- select(chem_data, -casrn, -Class) %>%
     distinct()
@@ -99,20 +106,9 @@ create_chemData <- function(neonic_NWIS, special_cas, pCodeInfo){
 }
 
 
-create_tox_chemInfo <- function(neonic_NWIS, special_cas, pCodeInfo, classes){
+create_tox_chemInfo <- function(chem_data, special_cas, pCodeInfo, classes){
 
-  chem_data <- neonic_NWIS %>%
-    select(SiteID = site,
-           `Sample Date` = pdate,
-           Value = value,remark_cd,
-           CAS = chemical,
-           pCode) %>%
-    filter(!is.na(Value),
-           !is.na(CAS)) %>%
-    left_join(special_cas, by="CAS") 
-  
-  chem_data$CAS[!is.na(chem_data$casrn)] <- chem_data$casrn[!is.na(chem_data$casrn)]
-  
+
   chem_info <- select(chem_data, CAS, pCode) %>%
     distinct() %>%
     left_join(select(pCodeInfo, CAS = casrn,
@@ -131,6 +127,13 @@ create_tox_chemInfo <- function(neonic_NWIS, special_cas, pCodeInfo, classes){
     distinct()
 
   chem_info$`Chemical Name` <- gsub(", water, filtered, recoverable, nanograms per liter","",chem_info$`Chemical Name`)
+  
+  chem_info$`Chemical Name`[chem_info$CAS == "138261-41-3_GLRI"] <- "Imidacloprid"
+  chem_info$Class[chem_info$CAS == "138261-41-3_GLRI"] <- "Insecticide"
+  
+  chem_info$`Chemical Name`[chem_info$CAS == "56611-54-2_68574"] <- "Didemethyl hexazinone F"
+  chem_info$Class[chem_info$CAS == "56611-54-2_68574"] <- "Deg - Herbicide"
+  
   # Note, we're converting from ng to ug in the create_chemData function
   return(chem_info)
 }
