@@ -51,7 +51,7 @@ remove_censor <- function(neonic_NWIS){
   neonic_NWIS$value[neonic_NWIS$remark_cd == "<"] <- 0
   neonic_NWIS$value[is.na(neonic_NWIS$value)] <- 0
   
-  neonic_NWIS <- filter(neonic_NWIS, value != 0)
+  # neonic_NWIS <- filter(neonic_NWIS, value != 0)
     
   return(neonic_NWIS)
   
@@ -175,12 +175,13 @@ get_chem_sum <- function(chem_info, chem_data, site_info, exclusions){
   cleaned_ep <- clean_endPoint_info(endPointInfo)
   filtered_ep <- filter_groups(cleaned_ep)
   
-  chemicalSummary <- get_chemical_summary(ACClong,
-                                          filtered_ep,
-                                          chem_data, 
-                                          site_info, 
-                                          chem_info,
-                                          exclusions)
+  chemicalSummary <- get_chemical_summary(tox_list = NULL,
+                                          ACClong = ACClong,
+                                          filtered_ep = filtered_ep,
+                                          chem.data = chem_data, 
+                                          chem.site = site_info,
+                                          chem.info = chem_info,
+                                          exclusion = exclusions)
   return(chemicalSummary)
 }
 
@@ -195,12 +196,13 @@ get_chem_bench <- function(benchmarks, chem_data, site_info, chem_info, exclusio
     distinct() %>%
     mutate(groupCol = "Aquatic Benchmark")
   
-  chemicalSummary_bench <- get_chemical_summary(benchmarks,
-                                                filtered_ep,
-                                                chem_data, 
-                                                site_info, 
-                                                chem_info,
-                                                exclusions)
+  chemicalSummary_bench <- get_chemical_summary(tox_list = NULL,
+                                                ACClong = benchmarks,
+                                                filtered_ep = filtered_ep,
+                                                chem.data = chem_data, 
+                                                chem.site = site_info,
+                                                chem.info = chem_info,
+                                                exclusion = exclusions)
   return(chemicalSummary_bench)
   
 }
@@ -217,12 +219,13 @@ get_conc_summary <- function(chem_data, site_info, chem_info, exclusions){
     distinct() %>%
     mutate(groupCol = "Concentrations")
   
-  chemicalSummary_conc <- get_chemical_summary(conc_ep,
-                                                filtered_ep,
-                                                chem_data, 
-                                                site_info, 
-                                                chem_info,
-                                                exclusions)
+  chemicalSummary_conc <- get_chemical_summary(tox_list = NULL,
+                                               ACClong = conc_ep,
+                                               filtered_ep = filtered_ep,
+                                               chem.data = chem_data, 
+                                               chem.site = site_info,
+                                               chem.info = chem_info,
+                                               exclusion = exclusions)
   return(chemicalSummary_conc)
   
 }

@@ -126,11 +126,11 @@ graph_tox_bench <- function(graphData, facet_levels, tox_chems, bench_chems, fil
   if(fill_boxes == "Dynamic"){
     toxPlot_All <- toxPlot_All +
       geom_boxplot(aes(x=chnm, y=maxEAR, fill=Class),
-                 outlier.size=0.75, position = position_dodge2(preserve = "total")) 
+                 outlier.size=0.75)#, position = position_dodge2(preserve = "total")) 
   } else {
     toxPlot_All <- toxPlot_All +
       geom_boxplot(aes(x=chnm, y=maxEAR),
-                   lwd=0.1,outlier.size=0.5, fill=fill_boxes, position = position_dodge2(preserve = "total")) 
+                   lwd=0.1,outlier.size=0.5, fill=fill_boxes)#, position = position_dodge2(preserve = "total")) 
   }
   
   toxPlot_All <- toxPlot_All +
@@ -323,12 +323,13 @@ plot_genes <- function(file_out, chem_info, chem_data, site_info, exclusions, AO
   cleaned_ep <- clean_endPoint_info(endPointInfo)
   filtered_ep <- filter_groups(cleaned_ep, groupCol = "intended_target_gene_symbol")
 
-  chemicalSummary <- get_chemical_summary(ACClong,
-                                          filtered_ep,
-                                          chem_data, 
-                                          site_info, 
-                                          chem_info,
-                                          exclusions)
+  chemicalSummary <- get_chemical_summary(tox_list = NULL,
+                                          ACClong = ACClong,
+                                          filtered_ep = filtered_ep,
+                                          chem.data = chem_data, 
+                                          chem.site = site_info,
+                                          chem.info = chem_info,
+                                          exclusion = exclusions)
   
   chemicalSummary <- select(chemicalSummary, -Class, -chnm) %>%
     left_join(AOP, by=c("Bio_category"="gene_symbol")) %>%
@@ -467,7 +468,7 @@ plot_two <- function(graphData_b_c, chemicalSummary_bench, chemicalSummary_conc,
   toxPlot_All <- ggplot(data=graphData_b_c) +
     scale_y_log10(labels=fancyNumbers, breaks = c(1 %o% 10^(-8:1))) +
     geom_boxplot(aes(x=chnm, y=maxEAR, fill=Class),
-                 lwd=0.1,outlier.size=0.75, position = position_dodge2(preserve = "total"))  +
+                 lwd=0.1,outlier.size=0.75)+ #, position = position_dodge2(preserve = "total"))  +
     facet_grid(. ~ type, scales = "free") +
     theme_bw() +
     scale_x_discrete(drop=TRUE) +
@@ -578,7 +579,7 @@ all_3_cleaned <- function(chemicalSummary, chemicalSummary_bench, chemicalSummar
   toxPlot_All <- ggplot(data=graphData_df) +
     scale_y_log10(labels=fancyNumbers, breaks = c(1 %o% 10^(-8:1))) +
     geom_boxplot(aes(x=chnm, y=maxEAR, fill=Class, color = Class),
-                 outlier.size=0.75, position = position_dodge2(preserve = "total")) +
+                 outlier.size=0.75) + #, position = position_dodge2(preserve = "total")) +
     facet_grid(. ~ type, scales = "free") +
     theme_bw() +
     scale_x_discrete(drop=TRUE) +
@@ -691,10 +692,15 @@ all_3_filtered <- function(chemicalSummary, chemicalSummary_bench, chemicalSumma
            type = factor("ToxCast", levels = levels(graphData_df$type))) %>%
     filter(!(CAS %in% unique(chemicalSummary$CAS)))
 
+  dummy2 <- data.frame(type = factor(c("ToxCast", "Benchmark"),
+                                     levels = levels(graphData_df$type)),
+                       thresh = 10^-3)
+  
   toxPlot_All <- ggplot(data=graphData_df) +
     scale_y_log10(labels=fancyNumbers, breaks = c(1 %o% 10^(-8:1))) +
     geom_boxplot(aes(x=chnm, y=maxEAR, fill=Class, color = Class),
-                 outlier.size=0.75, position = position_dodge2(preserve = "total")) +
+                 outlier.size=0.75) +#, position = position_dodge2(preserve = "total")) +
+    geom_hline(data = dummy2, aes(yintercept = thresh), linetype = "longdash") +
     facet_grid(. ~ type, scales = "free") +
     theme_bw() +
     scale_x_discrete(drop=TRUE) +
