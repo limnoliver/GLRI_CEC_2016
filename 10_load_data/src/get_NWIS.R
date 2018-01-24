@@ -30,7 +30,9 @@ get_NWIS <- function(tracking, schedule_pCodes, pCodesExclude){
                             !grepl("surr",schedule_pCodes$`Parameter Name`),
                             !(`Parameter Code` %in% pCodesExclude))
   
-  nwis_filtered <- filter(df_sub, pCode %in% schedule_pCodes$`Parameter Code`) %>%
+  pCodesToUse <- c(schedule_pCodes$`Parameter Code`,"99960", "62722", "62649")
+  
+  nwis_filtered <- filter(df_sub, pCode %in% pCodesToUse) %>%
     filter(samp_type_cd == "9") %>%
     select(-samp_type_cd)
   
