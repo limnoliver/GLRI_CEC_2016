@@ -134,6 +134,11 @@ create_tox_chemInfo <- function(chem_data, special_cas, pCodeInfo, classes){
   chem_info$`Chemical Name`[chem_info$CAS == "56611-54-2_68574"] <- "Didemethyl hexazinone F"
   chem_info$Class[chem_info$CAS == "56611-54-2_68574"] <- "Deg - Herbicide"
   
+  chem_info$`Chemical Name`[chem_info$CAS == "1066-51-9"] <- "Aminomethylphosphonic acid"
+  chem_info$`Chemical Name`[chem_info$CAS == "1071-83-6"] <- "Glyphosate"
+  
+  chem_info <- distinct(chem_info)
+  
   # Note, we're converting from ng to ug in the create_chemData function
   return(chem_info)
 }
