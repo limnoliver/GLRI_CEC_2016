@@ -86,7 +86,8 @@ create_chemData <- function(neonic_NWIS, special_cas, pCodeInfo){
            !is.na(CAS)) %>%
     left_join(special_cas, by="CAS") %>%
     left_join(select(pCodeInfo, pCode=parameter_cd, units=parameter_units), by="pCode") %>%
-    mutate(Value = Value/1000)
+    mutate(Value = if_else(is.na(units) | units == "ng/l",Value/1000,Value) ) %>%
+    select(-units)
 
   chem_data$CAS[!is.na(chem_data$pCode) & chem_data$pCode == "68574"] <- "56611-54-2_68574"
   chem_data$CAS[!is.na(chem_data$pCode) & chem_data$pCode == "99960"] <- "1071-83-6_99960"
