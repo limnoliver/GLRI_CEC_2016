@@ -30,7 +30,7 @@ get_NWIS <- function(tracking, schedule_pCodes, pCodesExclude){
                             !grepl("surr",schedule_pCodes$`Parameter Name`),
                             !(`Parameter Code` %in% pCodesExclude))
   
-  pCodesToUse <- c(schedule_pCodes$`Parameter Code`,"99960", "62722", "62649")
+  pCodesToUse <- c(schedule_pCodes$`Parameter Code`,"99960")#, "62722", "62649")
   
   nwis_filtered <- filter(df_sub, pCode %in% pCodesToUse) %>%
     filter(samp_type_cd == "9") %>%
@@ -43,8 +43,8 @@ get_NWIS <- function(tracking, schedule_pCodes, pCodesExclude){
                                   "SiteID")) %>%
     rename(pdate = pdate.x)
   
-  x <- tracking[which(!(tracking$NWISRecordNumber %in% unique(nwis_tracking$NWISRecordNumber))),]
-  y <- filter(nwis_tracking, is.na(NWISRecordNumber))
+  # x <- tracking[which(!(tracking$NWISRecordNumber %in% unique(nwis_tracking$NWISRecordNumber))),]
+  # y <- filter(nwis_tracking, is.na(NWISRecordNumber))
   ##########################
 
   return(nwis_tracking)
