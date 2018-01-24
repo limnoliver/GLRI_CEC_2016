@@ -86,10 +86,11 @@ create_chemData <- function(neonic_NWIS, special_cas, pCodeInfo){
            !is.na(CAS)) %>%
     left_join(special_cas, by="CAS") %>%
     left_join(select(pCodeInfo, pCode=parameter_cd, units=parameter_units), by="pCode") %>%
-    mutate(Value = Value/1000)
+    mutate(Value = if_else(is.na(units) | units == "ng/l",Value/1000,Value) ) %>%
+    select(-units)
 
   chem_data$CAS[!is.na(chem_data$pCode) & chem_data$pCode == "68574"] <- "56611-54-2_68574"
-  chem_data$CAS[!is.na(chem_data$pCode) & chem_data$pCode == "99960"] <- "1071-83-6_99960"
+  # chem_data$CAS[!is.na(chem_data$pCode) & chem_data$pCode == "99960"] <- "1071-83-6_99960"
   
   chem_data$CAS[chem_data$CAS == "Acetamiprid"] <- "135410-20-7"
   chem_data$CAS[chem_data$CAS == "Thiamethoxam"] <- "153719-23-4"
@@ -137,7 +138,7 @@ create_tox_chemInfo <- function(chem_data, special_cas, pCodeInfo, classes){
   
   chem_info$`Chemical Name`[chem_info$CAS == "1066-51-9"] <- "Aminomethylphosphonic acid"
   chem_info$`Chemical Name`[chem_info$CAS == "1071-83-6"] <- "Glyphosate"
-  chem_info$`Chemical Name`[chem_info$CAS == "1071-83-6_99960"] <- "Glyphosate"
+  # chem_info$`Chemical Name`[chem_info$CAS == "1071-83-6_99960"] <- "Glyphosate"
   
   chem_info <- distinct(chem_info)
   
@@ -189,7 +190,7 @@ get_chem_sum <- function(chem_info, chem_data, site_info, exclusions){
   
   #remove special CAS labels
   chem_data$CAS[chem_data$CAS == "56611-54-2_68574"] <- "56611-54-2"
-  chem_data$CAS[chem_data$CAS == "1071-83-6_99960"] <- "1071-83-6"
+  # chem_data$CAS[chem_data$CAS == "1071-83-6_99960"] <- "1071-83-6"
   chem_data$CAS[chem_data$CAS == "138261-41-3_GLRI"] <- "138261-41-3"
   
   chemicalSummary <- get_chemical_summary(tox_list = NULL,
@@ -207,7 +208,7 @@ get_chem_bench <- function(benchmarks, chem_data, site_info, chem_info, exclusio
   chem_data <- filter(chem_data, Value != 0)
   
   chem_data$CAS[chem_data$CAS == "56611-54-2_68574"] <- "56611-54-2"
-  chem_data$CAS[chem_data$CAS == "1071-83-6_99960"] <- "1071-83-6"
+  # chem_data$CAS[chem_data$CAS == "1071-83-6_99960"] <- "1071-83-6"
   chem_data$CAS[chem_data$CAS == "138261-41-3_GLRI"] <- "138261-41-3"
   
   benchmarks <- benchmarks %>%
@@ -235,7 +236,7 @@ get_conc_summary <- function(chem_data, site_info, chem_info, exclusions){
   chem_data <- filter(chem_data, Value != 0)
   
   chem_data$CAS[chem_data$CAS == "56611-54-2_68574"] <- "56611-54-2"
-  chem_data$CAS[chem_data$CAS == "1071-83-6_99960"] <- "1071-83-6"
+  # chem_data$CAS[chem_data$CAS == "1071-83-6_99960"] <- "1071-83-6"
   chem_data$CAS[chem_data$CAS == "138261-41-3_GLRI"] <- "138261-41-3"
   
   conc_ep <- select(chem_info, CAS, chnm=`Chemical Name`) %>%
