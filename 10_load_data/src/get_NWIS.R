@@ -66,23 +66,3 @@ get_pCode <- function(NWIS){
   return(pCodeInfo)
 }
 
-get_AOPs <- function(){
-  path_to_tox <-  system.file("extdata", package="toxEval")
-  file_name <- "AOP_crosswalk.csv"
-  full_path <- file.path(path_to_tox, file_name)
-  
-  AOP_crosswalk <- read.csv(full_path, stringsAsFactors = FALSE)
-  
-  AOP_crosswalk <- select(AOP_crosswalk, 
-                          gene_symbol=Target.Gene.Symbol, 
-                          AOP=AOP.name)
-  
-  AOP <- data.frame(gene_symbol = unique(AOP_crosswalk$gene_symbol),
-                    AOP = "",
-                    stringsAsFactors = FALSE)
-  for(gene in AOP$gene_symbol){
-    AOP$AOP[AOP$gene_symbol %in% gene] <- paste(AOP_crosswalk$AOP[AOP_crosswalk$gene_symbol %in% gene],collapse = ", ")
-  }
-  
-  return(AOP)
-}

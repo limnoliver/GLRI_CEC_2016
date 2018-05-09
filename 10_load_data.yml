@@ -17,6 +17,7 @@ sources:
   - 10_load_data/src/get_NWIS.R
   - 10_load_data/src/get_tracking.R
   - 10_load_data/src/get_schedules.R
+  - 10_load_data/src/get_AOPs.R
 
 targets:
   10_load_data:
@@ -30,6 +31,7 @@ targets:
       - schedule_pCodes
       - benchmarks
       - exclusions
+      - AOP
       
   tracking:
     command: get_tracking_data('10_load_data/cfg/tracking_config.yaml')
@@ -38,7 +40,7 @@ targets:
     command: get_sites(tracking,"10_load_data/raw/GLRISPSites2016.rds")
   
   AOP:
-    command: get_AOPs()
+    command: get_AOPs("10_load_data/raw/AOP_crosswalk.csv")
   
   neonic:
     command: >-
