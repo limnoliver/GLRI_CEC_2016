@@ -48,8 +48,8 @@ merged_NWIS <- function(tracking, NWIS, neonic, pCodeInfo){
 
 remove_censor <- function(neonic_NWIS){
   
-  neonic_NWIS$value[neonic_NWIS$remark_cd == "<"] <- 0
-  neonic_NWIS$value[is.na(neonic_NWIS$value)] <- 0
+  # neonic_NWIS$value[neonic_NWIS$remark_cd == "<"] <- 0
+  # neonic_NWIS$value[is.na(neonic_NWIS$value)] <- 0
   
   # neonic_NWIS <- filter(neonic_NWIS, value != 0)
     
@@ -169,6 +169,9 @@ create_tox_siteInfo <- function(sites){
   
 create_toxExcel <- function(chem_data, chem_info, site_info, exclusions, file_out){
   
+  chem_data$CAS[chem_data$CAS == "56611-54-2_68574"] <- "56611-54-2"
+  # chem_data$CAS[chem_data$CAS == "1071-83-6_99960"] <- "1071-83-6"
+  chem_data$CAS[chem_data$CAS == "138261-41-3_GLRI"] <- "138261-41-3"
 
   list_of_datasets <- list("Data" = chem_data, 
                            "Chemicals" = chem_info,
@@ -178,84 +181,87 @@ create_toxExcel <- function(chem_data, chem_info, site_info, exclusions, file_ou
 
 }
 
-get_chem_sum <- function(chem_info, chem_data, site_info, exclusions){
-
-  chem_data <- filter(chem_data, Value != 0)
+create_WQExcel <- function(chem_data, chem_info, site_info, exclusions, benchmarks, file_out){
   
-  ACClong <- get_ACC(chem_info$CAS)
+  chem_data$CAS[chem_data$CAS == "56611-54-2_68574"] <- "56611-54-2"
+  # chem_data$CAS[chem_data$CAS == "1071-83-6_99960"] <- "1071-83-6"
+  chem_data$CAS[chem_data$CAS == "138261-41-3_GLRI"] <- "138261-41-3"
+  
+  benchmarks_new <- data.frame(CAS = chem_info$CAS, 
+                           orig_name = chem_info$`Chemical Name`,
+                           stringsAsFactors = FALSE) %>%
+    left_join(select(toxEval::tox_chemicals, CAS=Substance_CASRN, chnm=Substance_Name), by="CAS") %>%
+    left_join(select(benchmarks, CAS, endPoint, Value = value), by="CAS") %>%
+    mutate(groupCol = "WQ")
+  
+  benchmarks_new$chnm[is.na(benchmarks_new$chnm)] <- benchmarks_new$orig_name[is.na(benchmarks_new$chnm)]
+  
+  list_of_datasets <- list("Data" = chem_data, 
+                           "Chemicals" = chem_info,
+                           "Sites" = site_info,
+                           "Exclude" = exclusions,
+                           "Benchmarks" = benchmarks_new)
+  write.xlsx(list_of_datasets, file = file_out, append=TRUE)
+  
+}
+
+create_ConcExcel <- function(chem_data, chem_info, site_info, exclusions, file_out){
+  
+  chem_data$CAS[chem_data$CAS == "56611-54-2_68574"] <- "56611-54-2"
+  # chem_data$CAS[chem_data$CAS == "1071-83-6_99960"] <- "1071-83-6"
+  chem_data$CAS[chem_data$CAS == "138261-41-3_GLRI"] <- "138261-41-3"
+  
+  benchmarks <- data.frame(CAS = chem_info$CAS, 
+                           orig_name = chem_info$`Chemical Name`,
+                           stringsAsFactors = FALSE) %>%
+    left_join(select(toxEval::tox_chemicals, CAS=Substance_CASRN, chnm=Substance_Name), by="CAS") %>%
+    mutate(endPoint = "Concentration",
+           Value = 1,
+           groupCol = "Concentration")
+  
+  benchmarks$chnm[is.na(benchmarks$chnm)] <- benchmarks$orig_name[is.na(benchmarks$chnm)]
+
+  list_of_datasets <- list("Data" = chem_data, 
+                           "Chemicals" = chem_info,
+                           "Sites" = site_info,
+                           "Exclude" = exclusions,
+                           "Benchmarks" = benchmarks)
+  write.xlsx(list_of_datasets, file = file_out, append=TRUE)
+  
+}
+
+get_chem_sum <- function(data_file){
+
+  tox_list <- create_toxEval(data_file)
+  tox_list$chem_data <- filter(tox_list$chem_data, Value != 0)
+  
+  ACClong <- get_ACC(tox_list$chem_info$CAS)
   ACClong <- remove_flags(ACClong)
   
   cleaned_ep <- clean_endPoint_info(endPointInfo)
   filtered_ep <- filter_groups(cleaned_ep)
   
-  #remove special CAS labels
-  chem_data$CAS[chem_data$CAS == "56611-54-2_68574"] <- "56611-54-2"
-  # chem_data$CAS[chem_data$CAS == "1071-83-6_99960"] <- "1071-83-6"
-  chem_data$CAS[chem_data$CAS == "138261-41-3_GLRI"] <- "138261-41-3"
-  
-  chemicalSummary <- get_chemical_summary(tox_list = NULL,
-                                          ACClong = ACClong,
-                                          filtered_ep = filtered_ep,
-                                          chem.data = chem_data, 
-                                          chem.site = site_info,
-                                          chem.info = chem_info,
-                                          exclusion = exclusions)
+  chemicalSummary <- get_chemical_summary(tox_list, ACClong, filtered_ep)
   return(chemicalSummary)
 }
 
-get_chem_bench <- function(benchmarks, chem_data, site_info, chem_info, exclusions){
+get_chem_bench <- function(data_file){
   
-  chem_data <- filter(chem_data, Value != 0)
+  tox_list <- create_toxEval(data_file)
+  tox_list$chem_data <- filter(tox_list$chem_data, Value != 0)
+
+  chemicalSummary_bench <- get_chemical_summary(tox_list)
   
-  chem_data$CAS[chem_data$CAS == "56611-54-2_68574"] <- "56611-54-2"
-  # chem_data$CAS[chem_data$CAS == "1071-83-6_99960"] <- "1071-83-6"
-  chem_data$CAS[chem_data$CAS == "138261-41-3_GLRI"] <- "138261-41-3"
-  
-  benchmarks <- benchmarks %>%
-    rename(chnm = Compound,
-           ACC_value = value) %>%
-    filter(!is.na(CAS))
-  
-  filtered_ep <- select(benchmarks, endPoint) %>%
-    distinct() %>%
-    mutate(groupCol = "Aquatic Benchmark")
-  
-  chemicalSummary_bench <- get_chemical_summary(tox_list = NULL,
-                                                ACClong = benchmarks,
-                                                filtered_ep = filtered_ep,
-                                                chem.data = chem_data, 
-                                                chem.site = site_info,
-                                                chem.info = chem_info,
-                                                exclusion = exclusions)
   return(chemicalSummary_bench)
   
 }
 
-get_conc_summary <- function(chem_data, site_info, chem_info, exclusions){
+get_conc_summary <- function(data_file){
   
-  chem_data <- filter(chem_data, Value != 0)
-  
-  chem_data$CAS[chem_data$CAS == "56611-54-2_68574"] <- "56611-54-2"
-  # chem_data$CAS[chem_data$CAS == "1071-83-6_99960"] <- "1071-83-6"
-  chem_data$CAS[chem_data$CAS == "138261-41-3_GLRI"] <- "138261-41-3"
-  
-  conc_ep <- select(chem_info, CAS, chnm=`Chemical Name`) %>%
-    mutate(ACC_value = 1,
-           endPoint = "Concentration") %>%
-    filter(!is.na(CAS)) %>%
-    distinct()
-  
-  filtered_ep <- select(conc_ep, endPoint) %>%
-    distinct() %>%
-    mutate(groupCol = "Concentrations")
-  
-  chemicalSummary_conc <- get_chemical_summary(tox_list = NULL,
-                                               ACClong = conc_ep,
-                                               filtered_ep = filtered_ep,
-                                               chem.data = chem_data, 
-                                               chem.site = site_info,
-                                               chem.info = chem_info,
-                                               exclusion = exclusions)
+  tox_list <- create_toxEval(data_file)
+  tox_list$chem_data <- filter(tox_list$chem_data, Value != 0)
+
+  chemicalSummary_conc <- get_chemical_summary(tox_list)
   return(chemicalSummary_conc)
   
 }

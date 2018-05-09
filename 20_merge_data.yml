@@ -17,6 +17,8 @@ targets:
   20_merge_data:
     depends: 
       - data/pesticides.xlsx
+      - data/pesticides_Conc.xlsx
+      - data/pesticides_Bench.xlsx
       - chemicalSummary
       - chemicalSummary_bench
       - chemicalSummary_conc
@@ -42,11 +44,17 @@ targets:
   data/pesticides.xlsx:
     command: create_toxExcel(chem_data, chem_info, site_info, exclusions, target_name)
 
+  data/pesticides_Conc.xlsx:
+    command: create_ConcExcel(chem_data, chem_info, site_info, exclusions, target_name)
+
+  data/pesticides_Bench.xlsx:
+    command: create_WQExcel(chem_data, chem_info, site_info, exclusions, benchmarks, target_name)
+
   chemicalSummary:
-    command: get_chem_sum(chem_info, chem_data, site_info, exclusions)
+    command: get_chem_sum("data/pesticides.xlsx")
 
   chemicalSummary_bench:
-    command: get_chem_bench(benchmarks, chem_data, site_info, chem_info, exclusions)
+    command: get_chem_bench("data/pesticides_Bench.xlsx")
 
   chemicalSummary_conc:
-    command: get_conc_summary(chem_data, site_info, chem_info, exclusions)
+    command: get_conc_summary("data/pesticides_Conc.xlsx")

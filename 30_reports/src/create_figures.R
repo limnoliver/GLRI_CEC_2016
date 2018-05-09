@@ -121,7 +121,7 @@ graph_tox_bench <- function(graphData, facet_levels, tox_chems, bench_chems, fil
     filter(!(CAS %in% bench_chems))
   
   toxPlot_All <- ggplot(data=graphData) +
-    scale_y_log10(labels=fancyNumbers, breaks = c(1 %o% 10^(-8:1))) 
+    scale_y_log10(labels=toxEval:::fancyNumbers, breaks = c(1 %o% 10^(-8:1))) 
   
   if(fill_boxes == "Dynamic"){
     toxPlot_All <- toxPlot_All +
@@ -309,7 +309,7 @@ plot_tox_boxplots_facet <- function(chemicalSummary){
 
   bioPlot <- bioPlot + 
     geom_boxplot(aes(x=category, y=maxEAR),lwd=0.1,outlier.size=0.75, fill = "steelblue") +
-    scale_y_log10("Maximum EAR Per Site",labels=fancyNumbers) 
+    scale_y_log10("Maximum EAR Per Site",labels=toxEval:::fancyNumbers) 
   
   return(bioPlot)
 
@@ -466,7 +466,7 @@ plot_two <- function(graphData_b_c, chemicalSummary_bench, chemicalSummary_conc,
     filter(type == levels(graphData_b_c$type)[1])
   
   toxPlot_All <- ggplot(data=graphData_b_c) +
-    scale_y_log10(labels=fancyNumbers, breaks = c(1 %o% 10^(-8:1))) +
+    scale_y_log10(labels=toxEval:::fancyNumbers, breaks = c(1 %o% 10^(-8:1))) +
     geom_boxplot(aes(x=chnm, y=maxEAR, fill=Class),
                  lwd=0.1,outlier.size=0.75)+ #, position = position_dodge2(preserve = "total"))  +
     facet_grid(. ~ type, scales = "free") +
@@ -577,7 +577,7 @@ all_3_cleaned <- function(chemicalSummary, chemicalSummary_bench, chemicalSummar
     filter(!(CAS %in% unique(chemicalSummary_bench$CAS)))
 
   toxPlot_All <- ggplot(data=graphData_df) +
-    scale_y_log10(labels=fancyNumbers, breaks = c(1 %o% 10^(-8:1))) +
+    scale_y_log10(labels=toxEval:::fancyNumbers, breaks = c(1 %o% 10^(-8:1))) +
     geom_boxplot(aes(x=chnm, y=maxEAR, fill=Class, color = Class),
                  outlier.size=0.75) + #, position = position_dodge2(preserve = "total")) +
     facet_grid(. ~ type, scales = "free") +
@@ -697,7 +697,7 @@ all_3_filtered <- function(chemicalSummary, chemicalSummary_bench, chemicalSumma
                        thresh = 10^-3)
   
   toxPlot_All <- ggplot(data=graphData_df) +
-    scale_y_log10(labels=fancyNumbers, breaks = c(1 %o% 10^(-8:1))) +
+    scale_y_log10(labels=toxEval:::fancyNumbers, breaks = c(1 %o% 10^(-8:1))) +
     geom_boxplot(aes(x=chnm, y=maxEAR, fill=Class, color = Class),
                  outlier.size=0.75) +#, position = position_dodge2(preserve = "total")) +
     geom_hline(data = dummy2, aes(yintercept = thresh), linetype = "longdash") +
