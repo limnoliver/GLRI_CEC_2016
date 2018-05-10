@@ -13,7 +13,6 @@ packages:
   - yaml
   
 sources:
-  - 40_owc_figs/src/data_setup.R
   - 40_owc_figs/src/combo_graph_function.R
   - 40_owc_figs/src/fig1_combo_graph.R
   
@@ -21,5 +20,9 @@ sources:
 targets:
   40_owc_figs:
     depends: 
-      - toxData
+      - figure/tox_bench_drop.png
       
+  
+  figure/tox_bench_drop.png:
+    command: graphData_combos(chemicalSummary, chemicalSummary_bench, chemicalSummary_conc, target_name)
+    
