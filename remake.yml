@@ -18,5 +18,7 @@ targets:
       - figure/Benchmark_class.png
       - figure/Conc_class.png
       - figure/ToxCast_bio.png
-      - figure/tox_bench_drop.png
+      - figure/tox_bench_conc.png
+      - figure/tox_bench.png
+      - figure/endpoint.png
       
