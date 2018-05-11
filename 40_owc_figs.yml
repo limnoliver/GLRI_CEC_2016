@@ -1,0 +1,46 @@
+target_default: 40_owc_figs
+
+include:
+  - 30_reports.yml
+
+packages:
+  - knitr
+  - rmarkdown
+  - toxEval
+  - dplyr
+  - tidyr
+  - ggplot2
+  - yaml
+  
+sources:
+  - 40_owc_figs/src/combo_graph_function.R
+  - 40_owc_figs/src/fig1_combo_graph.R
+  - 40_owc_figs/src/plot_tox_endpoints_manuscript.R
+  - 40_owc_figs/src/endpoint_graph.R
+  
+targets:
+  40_owc_figs:
+    depends: 
+      - figure/tox_bench_conc.png
+      - figure/tox_bench.png
+      - figure/endpoint.png
+      
+  graph_data_tox:
+    command: graph_chem_data(chemicalSummary)
+    
+  graph_data_wq:
+    command: graph_chem_data(chemicalSummary_bench, sum_logic = FALSE)
+    
+  graph_data_conc:
+    command: graph_chem_data(chemicalSummary_conc)
+  
+  figure/tox_bench_conc.png:
+    command: graphData_combos(graph_data_tox, graph_data_wq, graph_data_conc, target_name)
+  
+  figure/tox_bench.png:
+    command: graphData_wq_tox(graph_data_tox, graph_data_wq, target_name)
+    
+  figure/endpoint.png:
+    command: endpoint_graph(target_name, chemicalSummary, AOP, I(0.001), I(10))
+
+    

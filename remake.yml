@@ -4,27 +4,21 @@ packages:
   - remake
   
 include:
-  - 30_reports.yml
+  - 40_owc_figs.yml
 
 targets:
   all:
     depends: 
-      - reports/fig3.html
-      - reports/fig2.html
       - data/pesticides.xlsx
-      - figure/benchmark_comparisons.png
-      - figure/total_comparisons.png
-      - figure/created_class_figures.csv
+      - data/pesticides_Bench.xlsx
+      - data/pesticides_Conc.xlsx
+      - reports/fig2.html
+      - reports/fig3.html
       - figure/ToxCast_class.png
       - figure/Benchmark_class.png
       - figure/Conc_class.png
       - figure/ToxCast_bio.png
-      - figure/facet_class.png
-      - figure/gene_AOP.png
-      - figure/combo_stack.png
-      - figure/concentration.png
-      - figure/bench_conc.png
-      - figure/tox_conc.png
-      - figure/total_comparisons_ppt.png
-      - figure/total_comparisons_filtered.png
+      - figure/tox_bench_conc.png
+      - figure/tox_bench.png
+      - figure/endpoint.png
       

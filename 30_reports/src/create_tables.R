@@ -4,7 +4,7 @@ library(dplyr)
 library(tidyr)
 
 get_siteTables <- function(chemicalSummary, chem_info, site_info, AOP, file_out){
-  
+  browser()
   chemicalSummary <- chemicalSummary %>%
     left_join(select(endPointInfo, 
                      endPoint=assay_component_endpoint_name,
