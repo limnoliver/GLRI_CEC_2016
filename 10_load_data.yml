@@ -28,6 +28,7 @@ targets:
       - pesticides
       - glyphosate
       - NWIS
+      - owc
       - classes
       - schedules
       - schedule_pCodes
@@ -58,7 +59,7 @@ targets:
     command: get_csv("10_load_data/chemical_classes.csv")
     
   schedules:
-    command: c(I("2437"))
+    command: c(I("2437"), I("4433"))
     
   schedule_pCodes:
     command: get_schedules(schedules)
@@ -74,6 +75,9 @@ targets:
     
   glyphosate:
     command: filter_glyphosate(NWIS)
+    
+  owc:
+    command: filter_owc(NWIS, schedule_pCodes)
     
   benchmarks:
     command: get_csv("10_load_data/benchmarks.csv")
