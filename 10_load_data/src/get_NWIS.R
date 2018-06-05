@@ -36,6 +36,7 @@ get_NWIS <- function(tracking){
 filter_pesticides <- function(NWIS, schedule_pCodes, pCodesExclude) {
 
   schedule_pCodes <- filter(schedule_pCodes, 
+                            schedule %in% 2437, 
                             !grepl("surr",schedule_pCodes$`Parameter Name`),
                             !(`Parameter Code` %in% pCodesExclude))
   
@@ -80,8 +81,17 @@ filter_neonics <- function(NWIS) {
 
 }
 
-filter_owc <- function(NWIS) {
+filter_owc <- function(NWIS, schedule_pCodes) {
   
+  schedule_pCodes <- filter(schedule_pCodes, 
+                            schedule %in% 4433, 
+                            !grepl("surr",schedule_pCodes$`Parameter Name`))
+  
+  pCodesToUse <- c(schedule_pCodes$`Parameter Code`)
+  
+  nwis_filtered <- filter(NWIS, pCode %in% pCodesToUse)
+  
+  return(nwis_filtered)
 }
 
 filter_glyphosate <- function(NWIS) {
