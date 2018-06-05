@@ -79,7 +79,8 @@ create_chemData <- function(neonic_NWIS, special_cas, pCodeInfo){
   chem_data <- neonic_NWIS %>%
     select(SiteID = site,
            `Sample Date` = pdate,
-           Value = value,remark_cd,
+           Value = value,
+           remark_cd,
            CAS = chemical,
            pCode) %>%
     filter(!is.na(Value),
