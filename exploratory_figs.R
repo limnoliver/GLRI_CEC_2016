@@ -24,7 +24,7 @@ nwis_pcodes <- nrow(schedule_pCodes) - length(exclude_pCodes)
 ## neonic summary
 neonic_sum <- neonic %>%
   mutate(date = date(pdate)) %>%
-  group_by(Site, USGS.Site.ID, date) %>%
+  group_by(SiteID, date) %>%
   summarize(n = n())
 
 neonic_sum
