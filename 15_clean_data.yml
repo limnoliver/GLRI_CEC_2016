@@ -1,0 +1,23 @@
+target_default: 15_clean_data
+
+packages:
+  - dplyr
+  
+## All R files that are used must be listed here:
+sources:
+  - 15_clean_data/src/clean_dat.R
+
+targets:
+  15_clean_data:
+    depends: 
+      - pesticides_clean
+      - neonic_clean
+      - glyphosate_clean
+      
+  pesticides_clean:
+    command: clean_pesticides(dat = pesticides)
+    
+  neonic_clean:
+    command: clean_neonics(dat = neonic)
+
+  
