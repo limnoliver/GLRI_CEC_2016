@@ -12,6 +12,7 @@ get_schedules <- function(schedule.numbers){
     temp.file <- file.path(temp.path,"AnalyticalServicesGuide.xls")
     download.file(url.info, destfile = temp.file, mode="wb")
     schedule.data <- read_excel(temp.file)
+    schedule.data$schedule <- schedule
     info <- bind_rows(info, schedule.data)
   }
 
