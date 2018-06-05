@@ -25,6 +25,8 @@ targets:
       - sites
       - tracking
       - neonic
+      - pesticides
+      - glyphosate
       - NWIS
       - classes
       - schedules
@@ -42,12 +44,12 @@ targets:
   AOP:
     command: get_AOPs("10_load_data/raw/AOP_crosswalk.csv")
   
-  neonic:
-    command: >-
-      get_neonic_data("10_load_data/raw/GLRI_Neonic_to_NWIS_011317.csv", 
-                      "10_load_data/raw/neonicMDLs.csv",
-                      sites,
-                      tracking)
+  #neonic:
+  #  command: >-
+  #    get_neonic_data("10_load_data/raw/GLRI_Neonic_to_NWIS_011317.csv", 
+  #                    "10_load_data/raw/neonicMDLs.csv",
+  #                    sites,
+  #                    tracking)
     
   pCodesExclude:
     command: get_pCode_exclude("10_load_data/pCodes_Exclude.txt")
@@ -62,7 +64,16 @@ targets:
     command: get_schedules(schedules)
     
   NWIS:
-    command: get_NWIS(tracking, schedule_pCodes, pCodesExclude)
+    command: get_NWIS(tracking)
+    
+  pesticides:
+    command: filter_pesticides(NWIS, schedule_pCodes, pCodesExclude)
+    
+  neonic: 
+    command: filter_neonics(NWIS)
+    
+  glyphosate:
+    command: filter_glyphosate(NWIS)
     
   benchmarks:
     command: get_csv("10_load_data/benchmarks.csv")
