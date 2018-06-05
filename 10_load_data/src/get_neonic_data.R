@@ -67,12 +67,12 @@ get_neonic_data <- function(file.neonic,
   # Hand correcting inconsistencies:
   # Same site/time, but 3751's not in tracking and 3646's not in data"
   dfNeonic$Sample[dfNeonic$Sample == "WS3751"] <- "WS3646"
-  dfNeonic$Sample[dfNeonic$Sample =="WS3836"] <- "WS3838"
+  dfNeonic$Sample[dfNeonic$Sample =="WS3836"] <- "WS3838" #think this one might be bad? 
   dfTracking$Neonics[dfTracking$NWISRecordNumber =="1600273(DB01)"] <- "WS3928"
   dfNeonic$Sample[dfNeonic$Sample =="WS4288"] <- "WS4422"
   
   df <- dfNeonic %>%
-    mutate(Date = as.Date(Date)) %>%
+    mutate(Date = as.Date(Date, format = "%m/%d/%Y")) %>%
     left_join(select(dfTracking, -Site),
                   by = c("Sample"="Neonics")) %>%
     select(-Date.x, -Time.y, -Time.x, -Date.y) %>%
