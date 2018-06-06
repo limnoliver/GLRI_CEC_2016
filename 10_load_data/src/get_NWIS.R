@@ -38,15 +38,25 @@ filter_pesticides <- function(NWIS, schedule_pCodes, pCodesExclude) {
   schedule_pCodes <- filter(schedule_pCodes, 
                             schedule %in% 2437, 
                             !grepl("surr",schedule_pCodes$`Parameter Name`),
-                            !(`Parameter Code` %in% pCodesExclude))
+                            !(`Parameter Code` %in% pCodesExclude), 
+                            !(`Parameter Code` %in% '68426')) # exclude imidacloprid for now, add back in once have unique date/times
   
   pCodesToUse <- c(schedule_pCodes$`Parameter Code`)
 
   nwis_filtered <- filter(NWIS, pCode %in% pCodesToUse)
   
-  return(nwis_filtered)
+  pest_sum <- select(nwis_filtered, SiteID, pdate) %>%
+    distinct()
+  
+  imidacloprid <- filter(NWIS, pCode %in% '68426')
+  imidacloprid <- left_join(pest_sum, imidacloprid, by = c('SiteID', 'pdate'))
+  
+  all_dat <- bind_rows(nwis_filtered, imidacloprid)
+  
+  return(all_dat)
   
 }
+
 
 filter_neonics <- function(NWIS) {
   
