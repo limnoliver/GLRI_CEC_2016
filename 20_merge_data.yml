@@ -23,14 +23,14 @@ targets:
       - chemicalSummary_bench
       - chemicalSummary_conc
 
-  neonic_NWIS: 
-    command: merged_NWIS(tracking, NWIS, neonic, pCodeInfo)
+  merged_dat: 
+    command: merge_data(tracking, pesticides_clean, neonics_clean, glyphosate_clean)
     
   special_cas:
     command: get_special_cas()
     
   filtered_censor:
-    command: remove_censor(neonic_NWIS)
+    command: remove_censor(merged_dat)
 
   chem_data: 
     command: create_chemData(filtered_censor, special_cas, pCodeInfo)

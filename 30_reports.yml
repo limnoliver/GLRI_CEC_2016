@@ -22,12 +22,13 @@ sources:
 targets:
   30_reports:
     depends:
-      - reports/fig2.html
-      - reports/fig3.html
-      - figure/ToxCast_class.png
-      - figure/Benchmark_class.png
-      - figure/Conc_class.png
-      - figure/ToxCast_bio.png
+      #- reports/fig2.html
+      #- reports/fig3.html
+      - reports/method_comparison.html
+      #- figure/ToxCast_class.png
+      #- figure/Benchmark_class.png
+      #- figure/Conc_class.png
+      #- figure/ToxCast_bio.png
       
   fig2.md:
     depends: 
@@ -52,6 +53,16 @@ targets:
   reports/fig3.html:
     command: render_html("fig3.md", target_name)
     cleanup_level: purge
+    
+  method_comparison.md:
+    depends:
+      - glyphosate_clean
+    knitr:
+      input: 30_reports/method_comparison.Rmd
+    cleanup_level: purge
+    
+  reports/method_comparison.html:
+    command: render_html("method_comparison.md", target_name)
  
   cbValues:
     command: get_colors(chemicalSummary_conc)
