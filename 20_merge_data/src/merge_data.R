@@ -5,45 +5,19 @@ library(dataRetrieval)
 library(openxlsx)
 library(toxEval)
 
-merged_NWIS <- function(tracking, NWIS, neonic, pCodeInfo){
+merge_data <- function(tracking, pesticides_clean, neonics_clean, glyphosate_clean){
 
-  tracking <- filter(tracking, SampleTypeCode == 9)
+  tracking_sub <- filter(tracking, SampleTypeCode == 9 & MediumCode %in% 'WS') %>%
+    select(-MediumCode, -SampleTypeCode, -(ToxCast:Passive), -pdate)
 
-  just_neonic_data <- neonic %>%
-    select(site = USGS.Site.ID, NWISRecordNumber,
-           Acetamiprid, 
-           Clothianidin,
-           Dinotefuran,
-           Imidacloprid,
-           Thiacloprid,
-           Thiamethoxam) %>%
-    gather(chemical, value, -site, -NWISRecordNumber) %>%
-    mutate(site = zeroPad(site,8))
+  all_dat <- bind_rows(pesticides_clean, neonics_clean, glyphosate_clean)
   
-  just_neonic_remarks <- neonic %>%
-    select(site = USGS.Site.ID,  NWISRecordNumber,
-           R_Acetamiprid, 
-           R_Clothianidin,
-           R_Dinotefuran,
-           R_Imidacloprid,
-           R_Thiacloprid,
-           R_Thiamethoxam
-    ) %>%
-    gather(chemical_rk, remark_cd, -site,  -NWISRecordNumber) %>%
-    mutate(chemical = gsub("R_","",chemical_rk)) %>%
-    select(-chemical_rk)%>%
-    mutate(site = zeroPad(site,8))
-
-  just_neonic <- left_join(just_neonic_data, 
-                           just_neonic_remarks, by=c("site","chemical","NWISRecordNumber")) %>%
-    left_join(select(tracking, NWISRecordNumber, pdate), by="NWISRecordNumber")
-
-  just_NWIS <- select(NWIS, site=SiteID, pdate, pCode, value, remark_cd) %>%
-    left_join(select(pCodeInfo, pCode=parameter_cd, chemical=casrn), by="pCode") 
+  all_dat <- left_join(all_dat, tracking_sub, by = c('SiteID', 'sample_dt' = 'Date'))
   
-  nwis_neonic <- bind_rows(just_neonic, just_NWIS)
+  all_dat_sum <- group_by(all_dat, SiteID, sample_dt) %>%
+    summarize(n = n())
   
-  return(nwis_neonic)
+  return(all_dat)
 }
 
 remove_censor <- function(neonic_NWIS){
@@ -155,7 +129,7 @@ create_tox_siteInfo <- function(sites){
            dec_lat = dec_lat_va,
            dec_lon = dec_long_va,
            map_nm,
-           station_nm)%>%
+           station_nm) %>%
     mutate(site_grouping = "All")
   
   siteInfo$`Short Name`[is.na(siteInfo$`Short Name`)] <- siteInfo$map_nm[is.na(siteInfo$`Short Name`)]
