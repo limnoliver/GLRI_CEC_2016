@@ -5,6 +5,7 @@ clean_pesticides <- function(dat) {
   
   dat$sample_dt[dat$SiteID %in% '04087170' & dat$sample_dt %in% as.Date('2016-04-05')] <- as.Date('2016-04-07')
   dat$source <- 'pesticides_s2437'
+  return(dat)
 }
 
 clean_neonics <- function(dat) {
@@ -21,4 +22,5 @@ clean_neonics <- function(dat) {
 clean_glyphosate <- function(dat) {
   dat$sample_dt[dat$SiteID %in% '04087170' & dat$sample_dt %in% as.Date('2016-04-05')] <- as.Date('2016-04-07')
   dat$source <- 'glyphosate'
+  return(dat)
 }
