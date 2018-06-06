@@ -1,0 +1,78 @@
+
+
+```{r setup, include=FALSE}
+library(knitr)
+library(rmarkdown)
+library(dplyr)
+library(ggplot2)
+library(remake)
+options(continue=" ")
+options(width=60)
+knitr::opts_chunk$set(echo = TRUE,
+                      warning = FALSE,
+                      message = FALSE,
+                      fig.height = 7,
+                      fig.width = 9)
+```
+
+## Methods comparison
+
+Two pesticides were measured using different methods: glyphosate was measured using both an "immuno" and "full" method,
+where the "full" method is the more expensive test that is assumed to be more accurate. Imidacloprid was measured both in the NWQL pesticide schedule (2437) and by the neonic schedule. Here, we compare results from each method. 
+
+## Glyphosate comparison
+
+```{r glyphosate, include = FALSE}
+glyph_summary <- group_by(glyphosate_clean, SiteID, sample_dt) %>%
+  summarize(n())
+
+glyph_compar <- select(glyphosate_clean, SiteID, sample_dt, pCode, value, remark_cd) %>%
+  #mutate(value = ifelse(remark_cd %in% "<", 0.5*value, value)) %>%
+  group_by(SiteID, sample_dt, pCode) %>%
+  summarize(value = mean(value)) %>%
+  ungroup() %>%
+  spread(key = pCode, value = value)
+
+glyph_both <- filter(glyph_compar, !is.na(`99960`) & !is.na(`62722`))
+
+#glyph_comments <- select(glyphosate_clean, SiteID, sample_dt, pCode, value, remark_cd) %>%
+  #mutate(value = ifelse(remark_cd %in% "<", 0.5*value, value)) %>%
+#  group_by(SiteID, sample_dt, pCode) %>%
+#  summarize(remark_cd = ifelse(grep))
+
+immuno_mdl <- filter(glyphosate_clean, pCode %in% '99960' & remark_cd %in% '<') %>%
+  select(value) %>%
+  distinct()
+
+full_mdl <- filter(glyphosate_clean, pCode %in% '62722' & remark_cd %in% '<') %>%
+  select(value) %>%
+  distinct()
+
+p <- ggplot(glyph_compar, aes(x = `99960`, y = `62722`)) +
+  geom_point(size = 2, alpha = 0.5) +
+  geom_abline(slope = 1, intercept = 0) +
+  scale_x_continuous(trans = 'log10', limits = c(0.01,1.5)) +
+  scale_y_continuous(trans = 'log10', limits = c(0.01, 1.5)) +
+  theme_bw() +
+  labs(x = "Glyphosate conc. (immuno method)", y = "Glyphosate conc. (full method)")
+
+p2 <- ggplot(glyph_compar, aes(x = `62722`, y = `62649`)) +
+  geom_point() + 
+  geom_abline(slope = 1, intercept = 0) + 
+  geom_abline(slope = 2, intercept = 0, col = 'red') + 
+  scale_x_continuous(trans = 'log10') +
+  scale_y_continuous(trans = 'log10')
+
+```
+Glyphosate was measured in `r nrow(glyph_summary)` samples, `r length(which(!is.na(glyph_compar[,5])))` times by the "immuno" method and `r length(which(!is.na(glyph_compar[,4])))` times by the "full" method. However, there were only `r nrow(glyph_both)` instances where both methods were used on the same sample, which is depicted in the figure below. 
+
+```{r plot_glyph_compare, echo = FALSE, fig.cap = "Comparison of concentrations measured by two glyphosate methods"}
+print(p)
+```
+
+## Site Counts
+
+```{r siteCounts}
+
+
+```
