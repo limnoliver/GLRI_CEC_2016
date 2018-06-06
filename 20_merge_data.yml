@@ -1,7 +1,7 @@
 target_default: 20_merge_data
 
 include:
-  - 10_load_data.yml
+  - 15_clean_data.yml
 
 packages:
   - dplyr
