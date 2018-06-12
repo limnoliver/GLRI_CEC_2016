@@ -18,7 +18,7 @@ knitr::opts_chunk$set(echo = TRUE,
 ## Methods comparison
 
 Two pesticides were measured using different methods: glyphosate was measured using both an "immuno" and "full" method,
-where the "full" method is the more expensive test that is assumed to be more accurate. Imidacloprid was measured both in the NWQL pesticide schedule (2437) and by the neonic schedule. Here, we compare results from each method. 
+where the "full" method is the more expensive test that was measured at fewer sites. Imidacloprid was measured both in the NWQL pesticide schedule (2437) and by the neonic schedule. Here, we compare results from each method. 
 
 ## Glyphosate comparison
 
@@ -59,20 +59,89 @@ p <- ggplot(glyph_compar, aes(x = `99960`, y = `62722`)) +
 p2 <- ggplot(glyph_compar, aes(x = `62722`, y = `62649`)) +
   geom_point() + 
   geom_abline(slope = 1, intercept = 0) + 
-  geom_abline(slope = 2, intercept = 0, col = 'red') + 
   scale_x_continuous(trans = 'log10') +
-  scale_y_continuous(trans = 'log10')
+  scale_y_continuous(trans = 'log10') +
+  labs(x = "Glyphosate conc. (full method)", y = "Aminomethylphosphonic acid conc. (full method)") +
+  theme_bw()
 
 ```
-Glyphosate was measured in `r nrow(glyph_summary)` samples, `r length(which(!is.na(glyph_compar[,5])))` times by the "immuno" method and `r length(which(!is.na(glyph_compar[,4])))` times by the "full" method. However, there were only `r nrow(glyph_both)` instances where both methods were used on the same sample, which is depicted in the figure below. 
+Glyphosate was measured in `r nrow(glyph_summary)` samples, `r length(which(!is.na(glyph_compar[,5])))` times by the "immuno" method and `r length(which(!is.na(glyph_compar[,4])))` times by the "full" method. However, there were only `r nrow(glyph_both)` instances where both methods were used on the same sample, which are depicted in the figure below. The immuno method had a method detection limit (MDL) of `r as.numeric(immuno_mdl)`, whereas the full method had an MDL of `r as.numeric(full_mdl)`. There were only 4 instances where both methods measured a value > MDL. 
 
-```{r plot_glyph_compare, echo = FALSE, fig.cap = "Comparison of concentrations measured by two glyphosate methods"}
+```{r plot_glyph_compare, echo = FALSE, fig.cap = "*Figure 1. Comparison of concentrations measured by two glyphosate methods. The line shows the 1:1 relationship.*", fig.height = 5, fig.width = 5}
 print(p)
 ```
 
-## Site Counts
+The "full" method also measured a glyphosate degradate, aminomethylphosphonic acid. 
 
-```{r siteCounts}
+```{r plot_glyph_degradate, echo = FALSE, fig.cap = "*Figure 2. The concentration of a glyphosate degradate, aminomethylphosphonic acid, as a function of glyphosate concentration. The line shows the 1:1 relationship.*", fig.height = 5, fig.width = 5}
+print(p2)
+```
 
+## Imidacloprid comparison
 
+``` {r process_imidacloprid, include= FALSE}
+imidacloprid_p <- filter(pesticides_clean, pCode == '68426')
+imidacloprid_n <- filter(neonics_clean, pCode == '68426')  
+
+imidacloprid <- bind_rows(imidacloprid_p, imidacloprid_n) %>%
+  select(SiteID, sample_dt, value, source) %>%
+  spread(key = source, value = value)
+
+imidacloprid_c <- bind_rows(imidacloprid_p, imidacloprid_n) %>%
+  select(SiteID, sample_dt, remark_cd, source) %>%
+  spread(key = source, value = remark_cd) %>%
+  rename(neonic_rmk = neonic, pesticides_s2437_rmk = pesticides_s2437)
+
+imidacloprid <- left_join(imidacloprid, imidacloprid_c) %>%
+  mutate(neonic = ifelse(neonic_rmk %in% '<', 0.5*neonic, neonic),
+         pesticides_s2437 = ifelse(pesticides_s2437_rmk %in% '<', 0.5*pesticides_s2437, pesticides_s2437))
+
+imid_rpd <- filter(imidacloprid, !is.na(neonic) & !is.na(pesticides_s2437)) %>%
+  filter(!(neonic_rmk %in% "<") & !(pesticides_s2437_rmk %in% "<")) %>%
+  mutate(rpd = 100*((neonic-pesticides_s2437)/((neonic + pesticides_s2437)/2))) %>%
+  mutate(rpd_direction = ifelse(rpd <= 0, 'Pesticide > Neonic', 'Neonic > Pesticide'))
+
+imid_detect_compare <- filter(imidacloprid, !is.na(neonic) & !is.na(pesticides_s2437)) %>%
+  mutate(both_bdl = ifelse(neonic_rmk %in% "<" & pesticides_s2437_rmk %in% "<", TRUE, FALSE),
+                              neonic_bdl = ifelse(neonic_rmk %in% "<" & !(pesticides_s2437_rmk %in% "<"), TRUE, FALSE), 
+                              pesticide_bdl = ifelse(!(neonic_rmk %in% "<") & pesticides_s2437_rmk %in% "<", TRUE, FALSE), 
+                              both_adl = ifelse(!(neonic_rmk %in% "<") & !(pesticides_s2437_rmk %in% "<"), TRUE, FALSE)) %>%
+  #mutate(pesticide_bdl = ifelse(pesticide_bdl %in% TRUE & neonic < pesticides_s2437, FALSE, TRUE)) %>%
+  summarize(both_bdl = sum(both_bdl), 
+            neonic_bdl = sum(neonic_bdl), 
+            pesticide_bdl = sum(pesticide_bdl), 
+            both_adl = sum(both_adl))
+
+p3 <- ggplot(imidacloprid, aes(x = pesticides_s2437, y = neonic)) +
+  geom_point(alpha = 0.5, size = 2) +
+  #geom_abline(intercept = 0, slope = 1) +
+  geom_smooth(method = 'lm') + 
+  theme_bw() +
+  labs(x = "Imidacloprid conc. from pesticide schedule", y = "Imidacloprid conc. from neonic schedule")
+
+p4 <- ggplot(imid_rpd, aes(x = SiteID, y = rpd)) +
+  geom_boxplot() +
+  theme_bw() +
+  labs(x = "Site", y = "RPD (Neonic - Pesticide schedule)") +
+  geom_hline(yintercept = mean(imid_rpd$rpd), color = 'red')
+
+mdl_n <- filter(imidacloprid, neonic_rmk %in% '<') %>%
+  select(neonic) %>%
+  distinct()
+
+mdl_p <- filter(imidacloprid, pesticides_s2437_rmk %in% '<') %>%
+  select(pesticides_s2437) %>%
+  distinct()
+
+mdl_p_range <- range(mdl_p$pesticides_s2437)
+```
+
+Imidacloprid was measured by both the pesticide and neonic schedule in `r nrow(filter(imidacloprid, !is.na(neonic) & !is.na(pesticides_s2437)))` instances, `r nrow(imid_rpd)` of which had concentrations above MDL across both methods. The MDL of imidacloprid in the pesticide schedule ranged from `r mdl_p_range[1]` to `r mdl_p_range[2]` ng/L, whereas the MDL in the neonic schedule was `r as.numeric(mdl_n$neonic)` ng/L. After accounting for differences in detection limit, there was only a single disagreement between methods when considering detects/non-detects. The mean relative percent difference between the methods was `r round(mean(abs(imid_rpd$rpd)), 0)`% and all observations of imidacloprid from the pesticide schedule were greater than those measured in the neonic schedule.
+
+```{r plot_imidacloprid_compare, echo = FALSE, fig.cap = "*Figure 3. Comparison of imidacloprid concentrations measured by two methods. The blue line shows the fitted relationship between the two methods.*", fig.height = 5, fig.width = 5}
+print(p3)
+```
+
+```{r plot_imidacloprid_rpd, echo = FALSE, fig.cap = "*Figure 4. Relative percent differences between imidacloprid measured in the neonic and pesticide scheudles by site. Negative values indicate the pesticide results were > than the neonic results. The red line shows the mean RPD value across all samples.*", fig.height = 5, fig.width = 5}
+print(p4)
 ```
