@@ -1,0 +1,90 @@
+target_default: 40_pesticide_figs
+
+include:
+  - 30_reports.yml
+
+packages:
+  - knitr
+  - rmarkdown
+  - toxEval
+  - dplyr
+  - tidyr
+  - ggplot2
+  - yaml
+  - viridis
+  
+sources:
+  - 40_pesticide_figs/src/combo_graph_function.R
+  - 40_pesticide_figs/src/fig1_combo_graph.R
+  - 40_pesticide_figs/src/plot_tox_endpoints_manuscript.R
+  - 40_pesticide_figs/src/endpoint_graph.R
+  - 40_pesticide_figs/src/summary_figures.R
+  
+targets:
+  40_pesticide_figs:
+    depends: 
+      - figure/tox_bench_conc.png
+      - figure/tox_bench.png
+      - figure/endpoint.png
+      
+  # - summary figs by site, time, total conc. etc - #
+  summary_figs:
+    depends:
+      - figure/sum_conc_by_site.png
+      - figure/sum_conc_by_site_detects.png
+      - figure/sum_conc_by_site_month.png
+      - figure/sum_conc_through_time_by_site.png
+      - figure/sum_conc_by_month_site.png
+      - figure/ndetect_by_site_month.png
+      - figure/ndetect_by_month_site.png
+      - figure/ndetect_through_time_by_site.png
+      
+  sum_conc: 
+    command: sum_pest_conc(merged_dat)
+    
+  figure/sum_conc_by_site.png:
+    command: boxplot_bysite(sum_conc, target_name, detect_only = FALSE)
+    
+  figure/sum_conc_by_site_detects.png:
+    command: boxplot_bysite(sum_conc, target_name, detect_only = TRUE)
+    
+  figure/sum_conc_by_site_month.png:
+    command: boxplot_bysite_month(sum_conc, target_name)
+    
+  figure/sum_conc_through_time_by_site.png:
+    command: plot_throughtime_bysite(sum_conc, target_name)
+    
+  figure/sum_conc_by_month_site.png:  
+    command: boxplot_bymonth_site(sum_conc, target_name)
+    
+  figure/ndetect_by_site_month.png:
+    command: boxplot_ndetect_bysite_month(sum_conc, target_name)
+    
+  figure/ndetect_by_month_site.png:
+    command: boxplot_ndetect_bymonth_site(sum_conc, target_name) 
+    
+  figure/ndetect_through_time_by_site.png:
+    command: plot_nchem_throughtime_bysite(sum_conc, target_name)
+    
+  pesticide_sum_concentration_figs:
+    command: plot_sum_concentration()
+      
+  graph_data_tox:
+    command: graph_chem_data(chemicalSummary)
+    
+  graph_data_wq:
+    command: graph_chem_data(chemicalSummary_bench, sum_logic = FALSE)
+    
+  graph_data_conc:
+    command: graph_chem_data(chemicalSummary_conc)
+  
+  figure/tox_bench_conc.png:
+    command: graphData_combos(graph_data_tox, graph_data_wq, graph_data_conc, target_name)
+  
+  figure/tox_bench.png:
+    command: graphData_wq_tox(graph_data_tox, graph_data_wq, target_name)
+    
+  figure/endpoint.png:
+    command: endpoint_graph(target_name, chemicalSummary, AOP, I(0.001), I(10))
+
+    
