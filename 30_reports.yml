@@ -57,6 +57,8 @@ targets:
   method_comparison.md:
     depends:
       - glyphosate_clean
+      - pesticides_clean
+      - neonics_clean
     knitr:
       input: 30_reports/method_comparison.Rmd
     cleanup_level: purge
