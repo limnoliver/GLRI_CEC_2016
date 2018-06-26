@@ -14,10 +14,38 @@ merge_data <- function(tracking, pesticides_clean, neonics_clean, glyphosate_cle
   
   all_dat <- left_join(all_dat, tracking_sub, by = c('SiteID', 'sample_dt' = 'Date'))
   
-  all_dat_sum <- group_by(all_dat, SiteID, sample_dt) %>%
-    summarize(n = n())
-  
   return(all_dat)
+}
+
+remove_duplicate_chems <- function(merged_dat) {
+  # a priori remove chemicals that were measured at same site-date
+  # by two different methods -- e.g., imidacloprid, glyphosate
+  # imidacloprid is duplicated in every instance where there was the pesticide schedule + neonics measured
+  # so need to remove pcode = 68426 and source = pesticides_s2437
+  nodup_dat <- filter(merged_dat, !(pCode %in% '68426' & source %in% 'pesticides_s2437'))
+  
+  # check original NWIS data pull
+  # for remaining duplicates
+  
+  # choose first instance of glyphosate
+  # drop the atrazine with time stamp 2016-06-07 15:20:00 -- not sure where this came from, no other 
+  # results with that time stamp
+  # final thing: is to drop the full glyphosate analysis + degradate, use the immunoassay
+  dup_chems <- group_by(nodup_dat, SiteID, sample_dt, pCode) %>%
+    filter(n()>1)
+  
+  dup_chems_summary <- ungroup(dup_chems) %>%
+    group_by(pCode) %>%
+    select(pCode, SiteID, sample_dt) %>%
+    distinct()
+  
+  # find unique pcodes in duplicated vals
+  dup_pcodes <- unique(dup_chems$pCode)
+  dup_pcodes <- parameterCdFile[parameterCdFile$parameter_cd %in% dup_pcodes, ]
+  
+  # atrazine randomly duplicated on 6/7 from Maumee
+  # glyphosate + degradate are duplicated for Maumee on 2/2 
+  
 }
 
 remove_censor <- function(neonic_NWIS){
