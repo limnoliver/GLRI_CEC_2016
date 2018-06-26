@@ -64,6 +64,8 @@ p2 <- ggplot(glyph_compar, aes(x = `62722`, y = `62649`)) +
   labs(x = "Glyphosate conc. (full method)", y = "Aminomethylphosphonic acid conc. (full method)") +
   theme_bw()
 
+ 
+
 ```
 Glyphosate was measured in `r nrow(glyph_summary)` samples, `r length(which(!is.na(glyph_compar[,5])))` times by the "immuno" method and `r length(which(!is.na(glyph_compar[,4])))` times by the "full" method. However, there were only `r nrow(glyph_both)` instances where both methods were used on the same sample, which are depicted in the figure below. The immuno method had a method detection limit (MDL) of `r as.numeric(immuno_mdl)`, whereas the full method had an MDL of `r as.numeric(full_mdl)`. There were only 4 instances where both methods measured a value > MDL. 
 
