@@ -66,7 +66,7 @@ get_tracking_data <- function(get_tracking.config = "10_load_data/cfg/tracking_c
   # Making things right:
   tracking$SiteID[tracking$SiteID == "04157005"] <- "04157000"
   tracking <- filter(tracking, SampleTypeCode == "9")
-  tracking$Date[tracking$NWISRecordNumber == "01601472"] <- as.Date("2016-04-07")
+  #tracking$Date[tracking$NWISRecordNumber == "01601472"] <- as.Date("2016-04-07")
   tracking$Date[tracking$NWISRecordNumber == "01600121"] <- as.Date("2016-02-02")
   tracking$SiteID[tracking$SiteID == "4249000"] <- "04249000"
   tracking$Time[tracking$NWISRecordNumber == "01600388"] <- "10:20"
@@ -82,7 +82,7 @@ get_tracking_data <- function(get_tracking.config = "10_load_data/cfg/tracking_c
   tracking$Time[tracking$NWISRecordNumber == "01600484"] <- "11:00"
   tracking$Time[tracking$NWISRecordNumber == "01600973"] <- "11:00"
   tracking$Time[tracking$NWISRecordNumber == "01601028"] <- "12:00"
-  tracking$Date[tracking$NWISRecordNumber == "01601028"] <- as.Date("2016-05-10")
+  #tracking$Date[tracking$NWISRecordNumber == "01601028"] <- as.Date("2016-05-10")
   tracking$Time[tracking$NWISRecordNumber == "01601556"] <- "11:00"
   tracking$Time[tracking$NWISRecordNumber == "01601641"] <- "10:00"
   tracking$Time[tracking$NWISRecordNumber == "01600618"] <- "13:00"
