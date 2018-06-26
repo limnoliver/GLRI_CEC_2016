@@ -1,9 +1,5 @@
 clean_pesticides <- function(dat) {
-  # Milwaukee River has tracking date of 2016-04-07 but sampling date
-  # of 2016-04-05. Will change in data so as not to affect any other data that is merged
-  # with tracking
-  
-  dat$sample_dt[dat$SiteID %in% '04087170' & dat$sample_dt %in% as.Date('2016-04-05')] <- as.Date('2016-04-07')
+
   dat$source <- 'pesticides_s2437'
   return(dat)
 }
