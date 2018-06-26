@@ -65,7 +65,7 @@ get_tracking_data <- function(get_tracking.config = "10_load_data/cfg/tracking_c
   
   # Making things right:
   tracking$SiteID[tracking$SiteID == "04157005"] <- "04157000"
-  tracking <- filter(tracking, SampleTypeCode == "9")
+  #tracking <- filter(tracking, SampleTypeCode == "9")
   #tracking$Date[tracking$NWISRecordNumber == "01601472"] <- as.Date("2016-04-07")
   tracking$Date[tracking$NWISRecordNumber == "01600121"] <- as.Date("2016-02-02")
   tracking$SiteID[tracking$SiteID == "4249000"] <- "04249000"
