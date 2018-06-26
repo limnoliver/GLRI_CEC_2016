@@ -12,6 +12,7 @@ packages:
   - ggplot2
   - yaml
   - viridis
+  - lubridate
   
 sources:
   - 40_pesticide_figs/src/combo_graph_function.R
