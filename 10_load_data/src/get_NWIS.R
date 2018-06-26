@@ -20,14 +20,15 @@ get_NWIS <- function(tracking){
                    pCode = parm_cd,
                    value = result_va,
                    remark_cd, 
-                   samp_type_cd, 
+                   samp_type_cd,
+                   medium_cd,
                    sample_dt,
                    sample_tm)
   #Saginaw!!!
   df_sub$SiteID[df_sub$SiteID == "04157005"] <- "04157000"
   
-  df_sub <- filter(df_sub, samp_type_cd == '9') %>%
-    select(-samp_type_cd)
+  #df_sub <- filter(df_sub, samp_type_cd == '9') %>%
+  #  select(-samp_type_cd)
   
   return(df_sub)
   
