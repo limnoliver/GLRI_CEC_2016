@@ -7,10 +7,11 @@ library(toxEval)
 
 merge_data <- function(tracking, pesticides_clean, neonics_clean, glyphosate_clean){
 
-  tracking_sub <- filter(tracking, SampleTypeCode == 9 & MediumCode %in% 'WS') %>%
+  tracking_sub <- filter(tracking, MediumCode %in% 'WS') %>%
     select(-MediumCode, -SampleTypeCode, -(ToxCast:Passive), -pdate)
 
-  all_dat <- bind_rows(pesticides_clean, neonics_clean, glyphosate_clean)
+  all_dat <- bind_rows(pesticides_clean, neonics_clean, glyphosate_clean) %>%
+    filter(medium_cd %in% 'WS')
   
   all_dat <- left_join(all_dat, tracking_sub, by = c('SiteID', 'sample_dt' = 'Date'))
   
@@ -21,6 +22,24 @@ remove_duplicate_chems <- function(merged_dat) {
   # a priori remove chemicals that were measured at same site-date
   # by two different methods -- e.g., imidacloprid, glyphosate
   # imidacloprid is duplicated in every instance where there was the pesticide schedule + neonics measured
+  # per Michelle H.'s recommendation, we'll create a relationship between the two methods for imidacloprid
+  # use the neonic value when available, and use the estimated value when just 2437 data is available
+  
+  imidacloprid <- filter(merged_dat, pCode %in% 68426) %>%
+    filter(!(remark_cd %in% '<')) %>% #filter to only instances where both values were above DL
+    select(SiteID, Site, source, sample_dt, value) %>%
+    distinct() %>% # this is a temporary fix for the duplicated IHC sample
+    spread(key = source, value = value)
+  
+  mod <- lm(imidacloprid$neonic ~ imidacloprid$pesticides_s2437)
+  adjust_2437 <- as.numeric(mod$coefficients[2]) # on average, the neonic result is 0.48 that of s2437, 
+  # so will adjust s2437 by multiplying by 0.48
+  
+  imidacloprid <- mutate(imidacloprid, combined = ifelse(!(is.na(neonic)), neonic, pesticides_s2437*adjust_2437))
+  
+  # [LEFT OFF] now need to remove all imidacloprid from merged_dat, and add "combined" value back in.
+  
+  
   # so need to remove pcode = 68426 and source = pesticides_s2437
   nodup_dat <- filter(merged_dat, !(pCode %in% '68426' & source %in% 'pesticides_s2437'))
   
