@@ -63,7 +63,7 @@ pesticide_rj <- left_join(pesticide_summary, select(tracking_sub, Site, SiteID, 
 
 # look at pesticide data in NWIS that is not in tracking
 pesticide_nwis_no_track <- filter(pesticide_rj, is.na(NWISRecordNumber))
-
+pesticide_track_no_nwis <- filter(pesticide_j, is.na(n))
 ## glyphosates vs tracking ##
 
 # find all glyphosate pcodes
