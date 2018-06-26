@@ -8,16 +8,20 @@ conc_dat <- make('chemicalSummary_conc')
 all_chems <- as.character(unique(conc_dat$chnm))
 all_casrn <- as.character(unique(conc_dat$CAS))
 tracking <- make('tracking')
-NWIS <- make('NWIS')
+pesticides <- make('pesticides')
 neonic <- make('neonic')
+glyphosate <- make('glyphosate')
 
 # calculate how many compounds we should expect from NWIS pull
 schedule_pCodes <- make('schedule_pCodes') # 249 compounds in schedule
 exclude_pCodes <- make('pCodesExclude') # looks like all surrogates removed
 nwis_missing <- schedule_pCodes[which(!(schedule_pCodes$`Parameter Code` %in% unique(NWIS$pCode))), ] # 24 compounds missing from NWIS compared to schedule - okay, these are all surrogates and "Sample Volume"
 length(unique(NWIS$pCode)) #226 compounds, which is correct because 249 - 24 missing compounds = 225 compounds + glyphosate which added to pcode list
+# so when just pesticides = 225, glyphosate can be 1 or 3, neonics 6
+# possible options 225, 226, 228, 231, 232, 234
 
-# 
+test <- group_by(merged_dat, SiteID, sample_dt) %>%
+  summarize(n = n())
 
 nwis_pcodes <- nrow(schedule_pCodes) - length(exclude_pCodes)
 
