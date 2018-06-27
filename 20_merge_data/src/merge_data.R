@@ -123,38 +123,25 @@ get_special_cas <- function(){
   return(special_cas)
 }
 
-create_chemData <- function(neonic_NWIS, special_cas, pCodeInfo){
-
-  chem_data <- neonic_NWIS %>%
-    select(SiteID = site,
-           `Sample Date` = pdate,
+create_chemData <- function(reduced_dat,  pCodeInfo){
+  
+  dat_with_cas <- left_join(reduced_dat, pCodeInfo, by = c('pCode' = 'parameter_cd'))
+  
+  chem_data <- dat_with_cas %>%
+    select(SiteID,
+           `Sample Date` = sample_dt,
            Value = value,
            remark_cd,
-           CAS = chemical,
-           pCode) %>%
-    filter(!is.na(Value),
-           !is.na(CAS)) %>%
-    left_join(special_cas, by="CAS") %>%
-    left_join(select(pCodeInfo, pCode=parameter_cd, units=parameter_units), by="pCode") %>%
-    mutate(Value = if_else(is.na(units) | units == "ng/l",Value/1000,Value) ) %>%
-    select(-units)
+           CAS = casrn,
+           pCode, 
+           parameter_units) %>%
+    mutate(Value = if_else(parameter_units == "ng/l",Value/1000,Value)) %>%
+    select(-parameter_units)
 
-  chem_data$CAS[!is.na(chem_data$pCode) & chem_data$pCode == "68574"] <- "56611-54-2_68574"
-  # chem_data$CAS[!is.na(chem_data$pCode) & chem_data$pCode == "99960"] <- "1071-83-6_99960"
   
-  chem_data$CAS[chem_data$CAS == "Acetamiprid"] <- "135410-20-7"
-  chem_data$CAS[chem_data$CAS == "Thiamethoxam"] <- "153719-23-4"
-  chem_data$CAS[chem_data$CAS == "Thiacloprid"] <- "111988-49-9"
-  chem_data$CAS[chem_data$CAS == "Imidacloprid"] <- "138261-41-3_GLRI"
-  chem_data$CAS[chem_data$CAS == "Dinotefuran"] <- "165252-70-0"
-  chem_data$CAS[chem_data$CAS == "Clothianidin"] <- "210880-92-5"
-  
-  chem_data <- select(chem_data, -casrn, -Class) %>%
-    distinct()
+  chem_data <- distinct(chem_data) # currently this just gets rid of duplicated IHC values on 8/2
 
   return(chem_data)
-  
-  
 }
 
 
@@ -180,14 +167,15 @@ create_tox_chemInfo <- function(chem_data, special_cas, pCodeInfo, classes){
 
   chem_info$`Chemical Name` <- gsub(", water, filtered, recoverable, nanograms per liter","",chem_info$`Chemical Name`)
   
-  chem_info$`Chemical Name`[chem_info$CAS == "138261-41-3_GLRI"] <- "Imidacloprid"
-  chem_info$Class[chem_info$CAS == "138261-41-3_GLRI"] <- "Insecticide"
-  
-  chem_info$`Chemical Name`[chem_info$CAS == "56611-54-2_68574"] <- "Didemethyl hexazinone F"
-  chem_info$Class[chem_info$CAS == "56611-54-2_68574"] <- "Deg - Herbicide"
-  
-  chem_info$`Chemical Name`[chem_info$CAS == "1066-51-9"] <- "Aminomethylphosphonic acid"
-  chem_info$`Chemical Name`[chem_info$CAS == "1071-83-6"] <- "Glyphosate"
+  # this all unnecessary now that we took care of duplicate methods/measures
+  # chem_info$`Chemical Name`[chem_info$CAS == "138261-41-3_GLRI"] <- "Imidacloprid"
+  # chem_info$Class[chem_info$CAS == "138261-41-3_GLRI"] <- "Insecticide"
+  # 
+  # chem_info$`Chemical Name`[chem_info$CAS == "56611-54-2_68574"] <- "Didemethyl hexazinone F"
+  # chem_info$Class[chem_info$CAS == "56611-54-2_68574"] <- "Deg - Herbicide"
+  # 
+  # chem_info$`Chemical Name`[chem_info$CAS == "1066-51-9"] <- "Aminomethylphosphonic acid"
+  # chem_info$`Chemical Name`[chem_info$CAS == "1071-83-6"] <- "Glyphosate"
   # chem_info$`Chemical Name`[chem_info$CAS == "1071-83-6_99960"] <- "Glyphosate"
   
   chem_info <- distinct(chem_info)

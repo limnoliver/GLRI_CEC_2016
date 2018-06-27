@@ -26,14 +26,17 @@ targets:
   merged_dat: 
     command: merge_data(tracking, pesticides_clean, neonics_clean, glyphosate_clean)
     
+  reduced_dat:
+    command: remove_duplicate_chems(merged_dat)
+    
   special_cas:
     command: get_special_cas()
     
   filtered_censor:
-    command: remove_censor(merged_dat)
+    command: remove_censor(reduced_dat)
 
   chem_data: 
-    command: create_chemData(filtered_censor, special_cas, pCodeInfo)
+    command: create_chemData(filtered_censor, pCodeInfo)
     
   chem_info:
     command: create_tox_chemInfo(chem_data, special_cas, pCodeInfo, classes)
