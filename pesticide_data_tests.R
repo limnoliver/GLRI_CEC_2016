@@ -1,9 +1,7 @@
 # find unique dates by site
 # should be 12 per site
 
-dat <- make('chemicalSummary_conc')
-dat2 <- make('chem_data')
-dat3 <- make('neonic_NWIS')
+dat <- make('merged_dat')
 
 head(dat)
 
