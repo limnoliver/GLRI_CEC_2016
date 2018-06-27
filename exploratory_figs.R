@@ -4,13 +4,15 @@ library(dplyr)
 library(ggplot2)
 library(lubridate)
 
-conc_dat <- make('chemicalSummary_conc')
+#conc_dat <- make('chemicalSummary_conc')
 all_chems <- as.character(unique(conc_dat$chnm))
 all_casrn <- as.character(unique(conc_dat$CAS))
 tracking <- make('tracking')
 pesticides <- make('pesticides')
 neonic <- make('neonic')
 glyphosate <- make('glyphosate')
+
+merged_dat <- make('merged_dat')
 
 # calculate how many compounds we should expect from NWIS pull
 schedule_pCodes <- make('schedule_pCodes') # 249 compounds in schedule
