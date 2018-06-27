@@ -25,24 +25,41 @@ remove_duplicate_chems <- function(merged_dat) {
   # per Michelle H.'s recommendation, we'll create a relationship between the two methods for imidacloprid
   # use the neonic value when available, and use the estimated value when just 2437 data is available
   
-  imidacloprid <- filter(merged_dat, pCode %in% 68426) %>%
-    filter(!(remark_cd %in% '<')) %>% #filter to only instances where both values were above DL
-    select(SiteID, Site, source, sample_dt, value) %>%
+  imidacloprid <- filter(merged_dat, pCode %in% '68426') %>%
+    select(SiteID, Site, source, pCode, sample_dt, value) %>%
     distinct() %>% # this is a temporary fix for the duplicated IHC sample
     spread(key = source, value = value)
   
-  mod <- lm(imidacloprid$neonic ~ imidacloprid$pesticides_s2437)
+  imidacloprid_rmk <- filter(merged_dat, pCode %in% '68426') %>%
+    select(SiteID, Site, source, pCode, sample_dt, remark_cd) %>%
+    distinct() %>% # this is a temporary fix for the duplicated IHC sample
+    spread(key = source, value = remark_cd) %>%
+    rename(neonic_rmk = neonic, pesticides_s2437_rmk = pesticides_s2437)
+  
+  imidacloprid <- left_join(imidacloprid, imidacloprid_rmk)
+  
+  imidacloprid_adl <- filter(imidacloprid, !is.na(neonic) & !is.na(pesticides_s2437)) %>%
+    filter(!(neonic_rmk %in% '<') & !(pesticides_s2437_rmk %in% '<'))
+  
+  mod <- lm(imidacloprid_adl$neonic ~ imidacloprid_adl$pesticides_s2437)
   adjust_2437 <- as.numeric(mod$coefficients[2]) # on average, the neonic result is 0.48 that of s2437, 
   # so will adjust s2437 by multiplying by 0.48
   
-  imidacloprid <- mutate(imidacloprid, combined = ifelse(!(is.na(neonic)), neonic, pesticides_s2437*adjust_2437))
+  imidacloprid <- mutate(imidacloprid, combined = ifelse(!(is.na(neonic)), neonic, 
+                                                         ifelse(pesticides_s2437_rmk %in% "<", pesticides_s2437, pesticides_s2437*adjust_2437)))
   
+  imidacloprid <- mutate(imidacloprid, combined_rmk = ifelse(!is.na(neonic), neonic_rmk, pesticides_s2437_rmk))
+  
+  imidacloprid <- mutate(imidacloprid, source = ifelse(!is.na(neonic), 'neonic', 'pesticides_s2437'))
+  imidacloprid <- select(imidacloprid, SiteID, sample_dt, source, pCode, combined)
   # [LEFT OFF] now need to remove all imidacloprid from merged_dat, and add "combined" value back in.
+  fixed_imidacloprid <- left_join(imidacloprid, merged_dat, by = c('SiteID', 'sample_dt', 'pCode', 'source'))
   
-  
-  # so need to remove pcode = 68426 and source = pesticides_s2437
-  nodup_dat <- filter(merged_dat, !(pCode %in% '68426' & source %in% 'pesticides_s2437'))
-  
+  # now drop imidacloprid values that are above DL, and replace with fixed vals
+  fixed_dat <- filter(merged_dat, !((pCode %in% '68426') & !(remark_cd %in% '<'))) %>%
+    bind_rows(fixed_imidacloprid)
+    
+ 
   # check original NWIS data pull
   # for remaining duplicates
   
@@ -50,8 +67,11 @@ remove_duplicate_chems <- function(merged_dat) {
   # drop the atrazine with time stamp 2016-06-07 15:20:00 -- not sure where this came from, no other 
   # results with that time stamp
   # final thing: is to drop the full glyphosate analysis + degradate, use the immunoassay
-  dup_chems <- group_by(nodup_dat, SiteID, sample_dt, pCode) %>%
-    filter(n()>1)
+  dup_chems <- filter(fixed_dat, !(SiteID %in% "04092750" & sample_dt %in% as.Date('2016-08-02'))) %>% # temp fix for IHC site on 8/2 duplicate data that is being fixed on NWIS
+    group_by(SiteID, sample_dt, pCode) %>%
+    filter(n()>1) 
+  
+  dup_pcodes <- filter(parameterCdFile, parameter_cd %in% unique(dup_chems$pCode))
   
   dup_chems_summary <- ungroup(dup_chems) %>%
     group_by(pCode) %>%
