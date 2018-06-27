@@ -51,12 +51,14 @@ remove_duplicate_chems <- function(merged_dat) {
   imidacloprid <- mutate(imidacloprid, combined_rmk = ifelse(!is.na(neonic), neonic_rmk, pesticides_s2437_rmk))
   
   imidacloprid <- mutate(imidacloprid, source = ifelse(!is.na(neonic), 'neonic', 'pesticides_s2437'))
-  imidacloprid <- select(imidacloprid, SiteID, sample_dt, source, pCode, combined)
-  # [LEFT OFF] now need to remove all imidacloprid from merged_dat, and add "combined" value back in.
-  fixed_imidacloprid <- left_join(imidacloprid, merged_dat, by = c('SiteID', 'sample_dt', 'pCode', 'source'))
+  imidacloprid <- select(imidacloprid, SiteID, sample_dt, source, pCode, combined, combined_rmk) %>%
+    rename(value = combined, remark_cd = combined_rmk)
+  
+  # now need to remove all imidacloprid from merged_dat, and add "combined" value back in.
+  fixed_imidacloprid <- left_join(imidacloprid, select(merged_dat, -value, -remark_cd), by = c('SiteID', 'sample_dt', 'pCode', 'source'))
   
   # now drop imidacloprid values that are above DL, and replace with fixed vals
-  fixed_dat <- filter(merged_dat, !((pCode %in% '68426') & !(remark_cd %in% '<'))) %>%
+  fixed_dat <- filter(merged_dat, !(pCode %in% '68426')) %>%
     bind_rows(fixed_imidacloprid)
     
  
