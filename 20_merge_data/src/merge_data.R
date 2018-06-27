@@ -61,14 +61,15 @@ remove_duplicate_chems <- function(merged_dat) {
   fixed_dat <- filter(merged_dat, !(pCode %in% '68426')) %>%
     bind_rows(fixed_imidacloprid)
     
- 
-  # check original NWIS data pull
-  # for remaining duplicates
+  # drop the full glyphosate analysis + degradate, use the immunoassay
+  # eventually should estimate degradate based on glyphosate ~ degradate relationship - see Mahler's work on topic
+  glyphosate_drop <- c("62722", "62649")
   
-  # choose first instance of glyphosate
-  # drop the atrazine with time stamp 2016-06-07 15:20:00 -- not sure where this came from, no other 
-  # results with that time stamp
-  # final thing: is to drop the full glyphosate analysis + degradate, use the immunoassay
+  fixed_dat <- filter(fixed_dat, !(pCode %in% glyphosate_drop))
+  
+  # check fixed data for remaining duplicates
+  
+  # diagnostics:
   dup_chems <- filter(fixed_dat, !(SiteID %in% "04092750" & sample_dt %in% as.Date('2016-08-02'))) %>% # temp fix for IHC site on 8/2 duplicate data that is being fixed on NWIS
     group_by(SiteID, sample_dt, pCode) %>%
     filter(n()>1) 
@@ -80,12 +81,17 @@ remove_duplicate_chems <- function(merged_dat) {
     select(pCode, SiteID, sample_dt) %>%
     distinct()
   
-  # find unique pcodes in duplicated vals
-  dup_pcodes <- unique(dup_chems$pCode)
-  dup_pcodes <- parameterCdFile[parameterCdFile$parameter_cd %in% dup_pcodes, ]
+  # a single atrazine measurement randomly repeated on 6/7 from Maumee
+  # two different values - nothing else repeated at that site/date
+  # values are similar, just take first one, assume the second one is a replicate measure
   
-  # atrazine randomly duplicated on 6/7 from Maumee
-  # glyphosate + degradate are duplicated for Maumee on 2/2 
+  fixed_dat <- filter(fixed_dat, !(sample_dt %in% as.Date('2016-06-07') &
+                                     sample_tm %in% '11:20' & 
+                                     SiteID %in% '04193500' &
+                                     pCode %in% '65065'))
+  
+  return(fixed_dat)
+
   
 }
 
