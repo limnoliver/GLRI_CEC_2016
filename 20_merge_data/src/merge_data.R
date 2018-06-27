@@ -193,13 +193,15 @@ create_tox_siteInfo <- function(sites){
            dec_lon = dec_long_va,
            map_nm,
            station_nm) %>%
+    mutate(`Short Name` = as.character(`Short Name`)) %>%
     mutate(site_grouping = "All")
   
-  siteInfo$`Short Name`[is.na(siteInfo$`Short Name`)] <- siteInfo$map_nm[is.na(siteInfo$`Short Name`)]
-  siteInfo <- select(siteInfo, -map_nm)
+  siteInfo$`Short Name`[siteInfo$SiteID %in% '04027000'] <- 'Bad'
+  siteInfo$`Short Name`[siteInfo$SiteID %in% '04199500'] <- 'Vermillion'
+  siteInfo$`Short Name`[siteInfo$SiteID %in% '04249000'] <- 'Oswego'
   
-  siteInfo$`Short Name`[is.na(siteInfo$`Short Name`)] <- siteInfo$station_nm[is.na(siteInfo$`Short Name`)]
-  siteInfo <- select(siteInfo, -station_nm)
+  siteInfo <- select(siteInfo, -map_nm, -station_nm)
+  
   
   siteInfo$site_grouping[siteInfo$`Short Name` %in%  c("Bad","StLouis")] <- "Lake Superior"
   siteInfo$site_grouping[siteInfo$`Short Name` %in% c("Fox","Manitowoc","Milwaukee",
@@ -214,9 +216,9 @@ create_tox_siteInfo <- function(sites){
   
 create_toxExcel <- function(chem_data, chem_info, site_info, exclusions, file_out){
   
-  chem_data$CAS[chem_data$CAS == "56611-54-2_68574"] <- "56611-54-2"
+  #chem_data$CAS[chem_data$CAS == "56611-54-2_68574"] <- "56611-54-2"
   # chem_data$CAS[chem_data$CAS == "1071-83-6_99960"] <- "1071-83-6"
-  chem_data$CAS[chem_data$CAS == "138261-41-3_GLRI"] <- "138261-41-3"
+  #chem_data$CAS[chem_data$CAS == "138261-41-3_GLRI"] <- "138261-41-3"
 
   list_of_datasets <- list("Data" = chem_data, 
                            "Chemicals" = chem_info,
@@ -228,9 +230,9 @@ create_toxExcel <- function(chem_data, chem_info, site_info, exclusions, file_ou
 
 create_WQExcel <- function(chem_data, chem_info, site_info, exclusions, benchmarks, file_out){
   
-  chem_data$CAS[chem_data$CAS == "56611-54-2_68574"] <- "56611-54-2"
+  #chem_data$CAS[chem_data$CAS == "56611-54-2_68574"] <- "56611-54-2"
   # chem_data$CAS[chem_data$CAS == "1071-83-6_99960"] <- "1071-83-6"
-  chem_data$CAS[chem_data$CAS == "138261-41-3_GLRI"] <- "138261-41-3"
+  #chem_data$CAS[chem_data$CAS == "138261-41-3_GLRI"] <- "138261-41-3"
   
   benchmarks_new <- data.frame(CAS = chem_info$CAS, 
                            orig_name = chem_info$`Chemical Name`,
