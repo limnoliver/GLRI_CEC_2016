@@ -1,6 +1,7 @@
-sum_pest_conc <- function(merged_dat) {
-  
-  sum_chems <- merged_dat %>%
+sum_pest_conc <- function(reduced_dat, chemicalSummary_conc) {
+  dat <- select(reduced_dat, SiteID, pCode, value, remark_cd, sample_dt, source, State, Site, Glyphosate, Neonics) %>%
+    distinct()
+  sum_chems <- dat %>%
     #mutate(date_no_time = date(pdate)) %>%
     group_by(SiteID, sample_dt) %>%
     summarize(sum_conc = sum(value, na.rm = T), 
@@ -8,6 +9,21 @@ sum_pest_conc <- function(merged_dat) {
               n_chems = n(), 
               neonic_meas = ifelse('neonic' %in% source, TRUE, FALSE),
               n_detected = length(which(!(remark_cd %in% "<"))))
+  
+  sum_detected_chems <- filter(dat, !(remark_cd %in% "<")) %>%
+    group_by(pCode) %>%
+    summarise(n_detected = n(), 
+              mean_val = mean(value), 
+              median_val = median(value), 
+              min_val = min(value))
+  
+  sum_study <- ungroup(sum_chems) %>%
+    summarise_at(vars(sum_conc_detect, n_detected), funs(mean, median, min, max, sd))
+  
+    
+  sum_sites <- sum_chems %>%
+    group_by(SiteID) %>%
+    summarise_at(vars(sum_conc_detect, n_detected), funs(mean, median, min, max, sd))
   
   #test <- mutate(merged_dat, date_no_time = date(pdate)) %>%
   #  filter(SiteID %in% '04193500' & date_no_time %in% as.Date('2016-06-07'))
@@ -67,6 +83,11 @@ boxplot_bysite <- function(sum_conc, target_name, detect_only = TRUE) {
       theme(axis.text.x = element_text(angle = 45, h = 1)) +
       labs(y = 'Total pesticide concentration (ppb)') +
       scale_y_continuous(trans = 'log1p', breaks = c(0, 1, 5, 10, 20, 30, 40, 50))
+  }
+  
+  if (by_chem_group == TRUE) {
+    p <- p +
+      facet_wrap()
   }
   
   
