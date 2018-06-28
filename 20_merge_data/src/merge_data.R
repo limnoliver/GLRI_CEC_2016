@@ -95,10 +95,34 @@ remove_duplicate_chems <- function(merged_dat) {
   
 }
 
-remove_censor <- function(neonic_NWIS){
+calc_detect_limits <- function(reduced_dat){
   
-  # neonic_NWIS$value[neonic_NWIS$remark_cd == "<"] <- 0
-  # neonic_NWIS$value[is.na(neonic_NWIS$value)] <- 0
+  all_measured <- group_by(reduced_dat, pCode) %>%
+    summarise(n_all = n())
+  
+  all_detected <- filter(reduced_dat, !(remark_cd %in% "<")) %>%
+    group_by(pCode) %>%
+    summarise(n_detect = n())
+  
+  all_bdl <- filter(reduced_dat, remark_cd %in% "<") %>%
+    group_by(pCode) %>%
+    summarise(n_bdl = n())
+  
+  bdls <- filter(reduced_dat, remark_cd %in% "<") %>%
+    group_by(pCode) %>%
+    summarize_at(vars(value), funs(mean, median, min, max))
+  
+  bdl_summ <- left_join(all_measured, all_detected) %>%
+    left_join(all_bdl) %>%
+    left_join(bdls) %>%
+    mutate(n_detect = ifelse(is.na(n_detect), 0, n_detect))
+  
+  
+}
+remove_censor <- function(reduced_dat){
+  
+  reduced_dat$value[reduced_dat$remark_cd == "<"] <- 0
+  reduced_dat$value[is.na(reduced_dat$value)] <- 0
   
   # neonic_NWIS <- filter(neonic_NWIS, value != 0)
     
@@ -136,7 +160,8 @@ create_chemData <- function(reduced_dat,  pCodeInfo){
            pCode, 
            parameter_units) %>%
     mutate(Value = if_else(parameter_units == "ng/l",Value/1000,Value)) %>%
-    select(-parameter_units)
+    select(-parameter_units) %>%
+    filter(!is.na(CAS)) # get rid of chemicals without CAS number - not sure if we should do this? 
 
   
   chem_data <- distinct(chem_data) # currently this just gets rid of duplicated IHC values on 8/2
@@ -254,9 +279,9 @@ create_WQExcel <- function(chem_data, chem_info, site_info, exclusions, benchmar
 
 create_ConcExcel <- function(chem_data, chem_info, site_info, exclusions, file_out){
   
-  chem_data$CAS[chem_data$CAS == "56611-54-2_68574"] <- "56611-54-2"
+  #chem_data$CAS[chem_data$CAS == "56611-54-2_68574"] <- "56611-54-2"
   # chem_data$CAS[chem_data$CAS == "1071-83-6_99960"] <- "1071-83-6"
-  chem_data$CAS[chem_data$CAS == "138261-41-3_GLRI"] <- "138261-41-3"
+  #chem_data$CAS[chem_data$CAS == "138261-41-3_GLRI"] <- "138261-41-3"
   
   benchmarks <- data.frame(CAS = chem_info$CAS, 
                            orig_name = chem_info$`Chemical Name`,
