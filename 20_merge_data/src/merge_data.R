@@ -122,11 +122,11 @@ calc_detect_limits <- function(reduced_dat){
 remove_censor <- function(reduced_dat){
   
   reduced_dat$value[reduced_dat$remark_cd == "<"] <- 0
-  reduced_dat$value[is.na(reduced_dat$value)] <- 0
+  #reduced_dat$value[is.na(reduced_dat$value)] <- 0
   
   # neonic_NWIS <- filter(neonic_NWIS, value != 0)
     
-  return(neonic_NWIS)
+  return(reduced_dat)
   
 }
 
