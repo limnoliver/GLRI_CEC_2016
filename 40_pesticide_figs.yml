@@ -39,6 +39,7 @@ targets:
       - figure/ndetect_by_site_month.png
       - figure/ndetect_by_month_site.png
       - figure/ndetect_through_time_by_site.png
+      - figure/nchems_bysitedate.png
       
   sum_conc: 
     command: sum_pest_conc(merged_dat)
@@ -66,6 +67,9 @@ targets:
     
   figure/ndetect_through_time_by_site.png:
     command: plot_nchem_throughtime_bysite(sum_conc, target_name)
+    
+  figure/nchems_bysitedate.png:
+    command: plot_nchem_bysitedate(reduced_dat, target_name)
     
   pesticide_sum_concentration_figs:
     command: plot_sum_concentration()

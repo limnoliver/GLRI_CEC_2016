@@ -184,5 +184,16 @@ plot_nchem_throughtime_bysite <- function(sum_conc, target_name) {
   
 }
 
-
-# plot through time and facet by site
+plot_nchem_bysitedate <- function(reduced_dat, target_name) {
+  
+  count_dat <- group_by(reduced_dat, SiteID, pCode) %>%
+    summarise(count = n())
+  
+  missing_pcodes <- spread(count_dat, key = SiteID, value = count) %>%
+    rowwise() %>%
+    mutate(n_na = sum(is.na()))
+  
+  ggplot(count_dat, aes(x = SiteID, y = pCode)) +
+    geom_tile(aes(fill = factor(count))) 
+    
+}
