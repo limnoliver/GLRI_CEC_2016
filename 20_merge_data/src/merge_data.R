@@ -117,7 +117,7 @@ calc_detect_limits <- function(reduced_dat){
     left_join(bdls) %>%
     mutate(n_detect = ifelse(is.na(n_detect), 0, n_detect))
   
-  
+  return(bdl_summ)
 }
 remove_censor <- function(reduced_dat){
   
