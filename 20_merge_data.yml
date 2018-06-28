@@ -16,6 +16,7 @@ sources:
 targets:
   20_merge_data:
     depends: 
+      - chem_dls
       - data/pesticides.xlsx
       - data/pesticides_Conc.xlsx
       - data/pesticides_Bench.xlsx
@@ -31,6 +32,9 @@ targets:
     
   special_cas:
     command: get_special_cas()
+    
+  chem_dls:
+    command: calc_detect_limits(reduced_dat)
     
   filtered_censor:
     command: remove_censor(reduced_dat)
