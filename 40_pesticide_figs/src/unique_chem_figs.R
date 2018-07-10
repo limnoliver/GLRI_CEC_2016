@@ -1,4 +1,5 @@
 # number of unique chemicals through time by site
+reduced_dat <- make('reduced_dat')
 sites <- unique(reduced_dat$SiteID)
 
 n_unique_time <- setNames(data.frame(matrix(ncol = 3, nrow = 0)), c("SiteID", "sample_dt", "unique_on_date"))
@@ -31,10 +32,11 @@ n_unique_time <- group_by(n_unique_time, SiteID) %>%
 
 ggplot(n_unique_time, aes(x = sample_dt, y = unique_on_date)) +
   geom_line(aes(group = SiteID, color = SiteID)) +
+  labs(x = '', y = 'Unique chemicals detected') +
   theme_bw()
 
 n_after_first <- filter(n_unique_time, sample_no >1)
 ggplot(n_after_first, aes(sample_dt, y = n_added_on_date)) +
   geom_line(aes(group = SiteID, color = SiteID)) +
-  facet_wrap(~SiteID, ncol = 2) +
+  facet_wrap(~SiteID, ncol = 2, scales = 'free_y') +
   theme_bw()
