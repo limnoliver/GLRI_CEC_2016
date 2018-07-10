@@ -42,7 +42,7 @@ targets:
       - figure/nchems_bysitedate.png
       
   sum_conc: 
-    command: sum_pest_conc(merged_dat)
+    command: sum_pest_conc(reduced_dat, chems_missing_cas)
     
   figure/sum_conc_by_site.png:
     command: boxplot_bysite(sum_conc, target_name, detect_only = FALSE)
