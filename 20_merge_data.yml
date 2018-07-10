@@ -42,6 +42,9 @@ targets:
   chem_data: 
     command: create_chemData(filtered_censor, pCodeInfo)
     
+  chems_missing_cas:
+    command: find_missing_cas(reduced_dat, chem_data)
+    
   chem_info:
     command: create_tox_chemInfo(chem_data, special_cas, pCodeInfo, classes)
 

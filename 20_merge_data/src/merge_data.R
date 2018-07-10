@@ -161,7 +161,7 @@ create_chemData <- function(reduced_dat,  pCodeInfo){
            parameter_units) %>%
     mutate(Value = if_else(parameter_units == "ng/l",Value/1000,Value)) %>%
     select(-parameter_units) %>%
-    filter(!is.na(CAS)) # get rid of chemicals without CAS number - not sure if we should do this? 
+    filter(!is.na(CAS)) # get rid of chemicals without CAS number - not sure if/where we should do this? 
 
   
   chem_data <- distinct(chem_data) # currently this just gets rid of duplicated IHC values on 8/2
@@ -169,7 +169,15 @@ create_chemData <- function(reduced_dat,  pCodeInfo){
   return(chem_data)
 }
 
+find_missing_cas <- function(reduced_dat, chem_data) {
+  chems_all <- unique(reduced_dat$pCode)
+  chems_no_missing_cas <- unique(chem_data$pCode)
+  
+  chems_missing <- chems_all[-which(chems_all %in% chems_no_missing_cas)]
+  return(chems_missing)
+  
 
+}
 create_tox_chemInfo <- function(chem_data, special_cas, pCodeInfo, classes){
 
 
