@@ -20,6 +20,8 @@ sources:
   - 40_pesticide_figs/src/plot_tox_endpoints_manuscript.R
   - 40_pesticide_figs/src/endpoint_graph.R
   - 40_pesticide_figs/src/summary_figures.R
+  - 40_pesticide_figs/src/unique_chem_figs.R
+  - 40_pesticide_figs/src/generate_site_info_table.R
   
 targets:
   40_pesticide_figs:
@@ -39,10 +41,25 @@ targets:
       - figure/ndetect_by_site_month.png
       - figure/ndetect_by_month_site.png
       - figure/ndetect_through_time_by_site.png
-      - figure/nchems_bysitedate.png
-      
+      #- figure/nchems_bysitedate.png
+      - figure/cumulative_chems_time_bysite.png
+      - figure/new_chems_time_bysite.png
+      - figure/site_table.csv
+    
   sum_conc: 
     command: sum_pest_conc(reduced_dat, chems_missing_cas)
+    
+  unique_chems:
+    command: get_n_unique_chems(reduced_dat, sites)
+    
+  figure/site_table.csv:
+    command: gather_site_info(target_name, sites, sum_conc, unique_chems)
+    
+  figure/cumulative_chems_time_bysite.png:
+    command: plot_unique_chems(target_name, unique_chems, type = I('cumulative'))
+    
+  figure/new_chems_time_bysite.png:
+    command: plot_unique_chems(target_name, unique_chems, type = I('new'))
     
   figure/sum_conc_by_site.png:
     command: boxplot_bysite(sum_conc, target_name, detect_only = FALSE)
@@ -68,8 +85,8 @@ targets:
   figure/ndetect_through_time_by_site.png:
     command: plot_nchem_throughtime_bysite(sum_conc, target_name)
     
-  figure/nchems_bysitedate.png:
-    command: plot_nchem_bysitedate(reduced_dat, target_name)
+  #figure/nchems_bysitedate.png:
+  #  command: plot_nchem_bysitedate(reduced_dat, target_name)
     
   pesticide_sum_concentration_figs:
     command: plot_sum_concentration()
