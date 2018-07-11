@@ -22,6 +22,13 @@ get_sites <- function(tracking, file.sites){
 
   dfSites <- left_join(from_NWIS, sites, by=c("site_no"="USGS.station.number")) %>%
     rename(shortName = Site)
+  
+  dfSites$shortName <- as.character(dfSites$shortName)
+  dfSites$shortName[dfSites$station_nm %in% 'BAD RIVER NEAR ODANAH, WI'] <- "Bad"
+  dfSites$shortName[dfSites$station_nm %in% 'Vermilion River near Vermilion OH'] <- "Vermilion"
+  dfSites$shortName[dfSites$station_nm %in% 'OSWEGO RIVER AT LOCK 7, OSWEGO NY'] <- "Oswego"
+  
+  
 
   return(dfSites)
 }
