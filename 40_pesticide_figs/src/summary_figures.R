@@ -11,44 +11,46 @@ sum_pest_conc <- function(reduced_dat, chems_missing_cas) {
               neonic_meas = ifelse('neonic' %in% source, TRUE, FALSE),
               n_detected = length(which(!(remark_cd %in% "<"))))
   
-  # sum_detected_chems <- filter(dat, !(remark_cd %in% "<")) %>%
-  #   group_by(pCode) %>%
-  #   summarise(n_detected = n(), 
-  #             mean_val = mean(value), 
-  #             median_val = median(value), 
-  #             min_val = min(value))
+  sum_detected_chems <- filter(dat, !(remark_cd %in% "<")) %>%
+    group_by(pCode) %>%
+    summarise(n_detected = n(),
+              mean_val = mean(value),
+              median_val = median(value),
+              min_val = min(value))
+
+  sum_study <- ungroup(sum_chems) %>%
+    summarise_at(vars(sum_conc_detect, n_detected), funs(mean, median, min, max, sd))
   
-  # sum_study <- ungroup(sum_chems) %>%
-  #   summarise_at(vars(sum_conc_detect, n_detected), funs(mean, median, min, max, sd))
-  # 
-  #   
-  # sum_sites <- sum_chems %>%
-  #   group_by(SiteID) %>%
-  #   summarise_at(vars(sum_conc_detect, n_detected), funs(mean, median, min, max, sd))
-  # 
-  # #test <- mutate(merged_dat, date_no_time = date(pdate)) %>%
-  # #  filter(SiteID %in% '04193500' & date_no_time %in% as.Date('2016-06-07'))
-  # 
-  # 
-  # # basicaly get rid of single sample with n = 1 chem
-  # # need to fix at some point
-  # #sum_chems_subset <- filter(sum_chems, n_chems >220)
-  # sum_chems_subset_order <- group_by(sum_chems_subset, SiteID) %>%
-  #   summarize(median = median(sum_conc)) %>%
-  #   arrange(median) %>%
-  #   pull(SiteID)
-  # 
-  # sum_chems_subset_order_detect <- group_by(sum_chems_subset, SiteID) %>%
-  #   summarize(median = median(sum_conc_detect)) %>%
-  #   arrange(median) %>%
-  #   pull(SiteID)
-  # 
-  # # miscellaneous summaries used in past to detect issues in data:
-  # #names_chems = paste(chnm, collapse = ', '),
-  # #n_missing_chems = length(which(!(all_chems %in% chnm))),
-  # #names_missing_chems = paste(all_chems[which(!(all_chems %in% chnm))], collapse = ', ')  
-  # sum_chems_subset$SiteID_all <- factor(sum_chems_subset$SiteID, levels = sum_chems_subset_order)
-  # sum_chems_subset$SiteID_detected <- factor(sum_chems_subset$SiteID, levels = sum_chems_subset_order_detect)
+  
+  sum_sites <- sum_chems %>%
+    group_by(SiteID) %>%
+    summarise_at(vars(sum_conc_detect, n_detected), funs(mean, median, min, max, sd))
+  
+  #test <- mutate(merged_dat, date_no_time = date(pdate)) %>%
+  # filter(SiteID %in% '04193500' & date_no_time %in% as.Date('2016-06-07'))
+  
+  
+  # basicaly get rid of single sample with n = 1 chem
+  # need to fix at some point
+  #sum_chems_subset <- filter(sum_chems, n_chems >220)
+  
+   sum_chems_subset_order <- group_by(sum_chems, SiteID) %>%
+     summarize(median = median(sum_conc)) %>%
+     arrange(median) %>%
+     pull(SiteID)
+  
+  sum_chems_subset_order_detect <- group_by(sum_chems, SiteID) %>%
+    summarize(median = median(sum_conc_detect)) %>%
+    arrange(median) %>%
+    pull(SiteID)
+  
+  # miscellaneous summaries used in past to detect issues in data:
+  # names_chems = paste(chnm, collapse = ', ')
+  # n_missing_chems = length(which(!(all_chems %in% chnm)))
+  # names_missing_chems = paste(all_chems[which(!(all_chems %in% chnm))], collapse = ', ')
+  
+  sum_chems$SiteID_all <- factor(sum_chems$SiteID, levels = sum_chems_subset_order)
+  sum_chems$SiteID_detected <- factor(sum_chems$SiteID, levels = sum_chems_subset_order_detect)
   # 
   # 
   # site_summ <- group_by(sum_chems, SiteID) %>%
@@ -86,10 +88,10 @@ boxplot_bysite <- function(sum_conc, target_name, detect_only = TRUE) {
       scale_y_continuous(trans = 'log1p', breaks = c(0, 1, 5, 10, 20, 30, 40, 50))
   }
   
-  if (by_chem_group == TRUE) {
-    p <- p +
-      facet_wrap()
-  }
+  # if (by_chem_group == TRUE) {
+  #   p <- p +
+  #     facet_wrap()
+  # }
   
   
   ggsave(target_name, p, height = 4, width = 6)
