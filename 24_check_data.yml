@@ -1,0 +1,27 @@
+target_default: 24_check_data
+
+include:
+  - 20_merge_data.yml
+
+packages:
+  - dplyr
+  
+sources:
+  - 24_check_data/src/check_data.R
+  
+targets:
+  24_check_data:
+    depends: 
+      - missing_chems
+
+# assess chemicals that are randomly missing from pesticide schedule
+# are the important, based on frequency of detection? 
+  missing_chems: 
+    command: get_missing_chems(reduced_dat, special_cas)
+
+# assess detection rate of neonics so can explore what not having them in each
+# sample means
+  missing_neonics:
+    command: assess_neonics(reduced_dat, special_cas)
+    
+ 
