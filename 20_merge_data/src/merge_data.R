@@ -25,6 +25,9 @@ remove_duplicate_chems <- function(merged_dat) {
   # per Michelle H.'s recommendation, we'll create a relationship between the two methods for imidacloprid
   # use the neonic value when available, and use the estimated value when just 2437 data is available
   
+  # also handle chemicals that have seperate pCodes but the same cas number. This will cause issues later as many
+  # rely on unique casrns. 
+  
   imidacloprid <- filter(merged_dat, pCode %in% '68426') %>%
     select(SiteID, Site, source, pCode, sample_dt, value) %>%
     distinct() %>% # this is a temporary fix for the duplicated IHC sample
@@ -89,6 +92,24 @@ remove_duplicate_chems <- function(merged_dat) {
                                      sample_tm %in% '11:20' & 
                                      SiteID %in% '04193500' &
                                      pCode %in% '65065'))
+  
+  # now merge pcodes with cas numbers to find duplicate cas
+  # check for duplicates
+  dup_cas <- fixed_dat %>%
+    left_join(select(parameterCdFile, pCode = parameter_cd, casrn, parameter_nm)) %>%
+    filter(!is.na(casrn)) %>%
+    select(pCode, casrn, parameter_nm) %>%
+    distinct() %>%
+    group_by(casrn) %>%
+    summarize(count = n(), 
+              pCode = paste(pCode, collapse = ', ')) %>%
+    filter(count > 1)
+  
+  # only one casrn number is repeated
+  # this is for Demethyl hexazinone B (68566)/Didemethyl hexazinone F (68574)
+  # 68574 are all BDL, so 68566 is going to remain in dataset, will filter out 68574
+  
+  fixed_dat <- filter(fixed_dat, pCode != '68574')
   
   return(fixed_dat)
 
@@ -207,8 +228,12 @@ create_tox_chemInfo <- function(chem_data, special_cas, pCodeInfo, classes){
   # chem_info$`Chemical Name`[chem_info$CAS == "56611-54-2_68574"] <- "Didemethyl hexazinone F"
   # chem_info$Class[chem_info$CAS == "56611-54-2_68574"] <- "Deg - Herbicide"
   # 
-  # chem_info$`Chemical Name`[chem_info$CAS == "1066-51-9"] <- "Aminomethylphosphonic acid"
-  # chem_info$`Chemical Name`[chem_info$CAS == "1071-83-6"] <- "Glyphosate"
+  chem_info$`Chemical Name`[chem_info$CAS == "1066-51-9"] <- "Aminomethylphosphonic acid"
+  
+  # this needs to happen because glyphosate is in micrograms per liter. 
+  # be sure this gets taken care of somewhere. 
+  
+  chem_info$`Chemical Name`[chem_info$CAS == "1071-83-6"] <- "Glyphosate"
   # chem_info$`Chemical Name`[chem_info$CAS == "1071-83-6_99960"] <- "Glyphosate"
   
   chem_info <- distinct(chem_info)
@@ -249,7 +274,7 @@ create_tox_siteInfo <- function(sites){
   
 create_toxExcel <- function(chem_data, chem_info, site_info, exclusions, file_out){
   
-  #chem_data$CAS[chem_data$CAS == "56611-54-2_68574"] <- "56611-54-2"
+  chem_data$CAS[chem_data$CAS == "56611-54-2_68574"] <- "56611-54-2"
   # chem_data$CAS[chem_data$CAS == "1071-83-6_99960"] <- "1071-83-6"
   #chem_data$CAS[chem_data$CAS == "138261-41-3_GLRI"] <- "138261-41-3"
 
@@ -263,7 +288,7 @@ create_toxExcel <- function(chem_data, chem_info, site_info, exclusions, file_ou
 
 create_WQExcel <- function(chem_data, chem_info, site_info, exclusions, benchmarks, file_out){
   
-  #chem_data$CAS[chem_data$CAS == "56611-54-2_68574"] <- "56611-54-2"
+  chem_data$CAS[chem_data$CAS == "56611-54-2_68574"] <- "56611-54-2"
   # chem_data$CAS[chem_data$CAS == "1071-83-6_99960"] <- "1071-83-6"
   #chem_data$CAS[chem_data$CAS == "138261-41-3_GLRI"] <- "138261-41-3"
   
@@ -287,7 +312,7 @@ create_WQExcel <- function(chem_data, chem_info, site_info, exclusions, benchmar
 
 create_ConcExcel <- function(chem_data, chem_info, site_info, exclusions, file_out){
   
-  #chem_data$CAS[chem_data$CAS == "56611-54-2_68574"] <- "56611-54-2"
+  chem_data$CAS[chem_data$CAS == "56611-54-2_68574"] <- "56611-54-2"
   # chem_data$CAS[chem_data$CAS == "1071-83-6_99960"] <- "1071-83-6"
   #chem_data$CAS[chem_data$CAS == "138261-41-3_GLRI"] <- "138261-41-3"
   
