@@ -1,7 +1,7 @@
 target_default: 25_rank_data
 
 include:
-  - 20_merge_data.yml
+  - 24_check_data.yml
 
 packages:
   - dplyr
@@ -10,7 +10,7 @@ sources:
   - 25_rank_data/src/rank_data_fxns.R
   
 targets:
-  20_rank_data:
+  25_rank_data:
     depends: 
       - 
 
