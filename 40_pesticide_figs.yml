@@ -108,5 +108,3 @@ targets:
     
   figure/endpoint.png:
     command: endpoint_graph(target_name, chemicalSummary, AOP, I(0.001), I(10))
-
-    
