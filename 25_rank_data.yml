@@ -7,12 +7,45 @@ packages:
   - dplyr
   
 sources:
-  - 25_rank_data/src/rank_data_fxns.R
+  - 25_rank_data/src/site_dat_rankings.R
   
 targets:
   25_rank_data:
-    depends: 
-      - 
-
-  new_target: 
-    command: function()
+    depends:
+      - rank_site_n_chems
+      - rank_site_conc
+      - rank_site_EAR
+  
+  all_samples:
+    command: get_all_samples(chem_data)
+    
+  # Most impacted SITE (RANKINGS) (all sites)
+  # nchems: rankings based on mean # chems detected per sample, max # chems/sample, n unique chems detected
+  # conc: rankings based on mean and max conc of summed detected chems
+  # bench: rankings based on mean and max benchmark ratio
+  # EAR: rankings based summed max EAR by site
+  rank_site_n_chems: 
+    command: get_nchems_sites(chemicalSummary_conc, all_samples)
+    
+  rank_site_conc:
+    command: get_conc_sites(chemicalSummary_conc, all_samples)
+    
+  rank_site_EAR:
+    command: get_ear_sites(chemicalSummary, all_samples)
+    
+  rank_site_bench:
+    command:get_bench_sites(chemicalSummary_bench, all_samples)
+    
+  # Top CHEMICALS of concern (RANKINGS) (maybe top 5-10 from each stat?)
+  # ndetect: detection frequency (site and sample)
+  # conc: rankings based on mean and max conc of chem
+  # bench: rankings based on mean and max benchmark ratio of chem
+  # EAR: rankings based on mean of max EAR by chem 
+  
+  # TIMING of highest impact (RANKINGS) by month
+  # nchems: mean # chemicals across sites, unique chemicals relative to all other periods
+  # conc: mean, max, and min concentration across sites
+  # benchmark: mean, max and min concentrations across sites
+  # EAR: mean, min, max of max EAR by site
+  
+  
