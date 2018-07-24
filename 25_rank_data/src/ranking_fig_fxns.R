@@ -22,15 +22,21 @@ make_site_fig <- function(site_rankings) {
   # plot_dat <- filter(plot_dat, site != '04193500')
   vars <- unique(plot_dat$variable)
   p <- list()
-  for (i in 1:length(vars)) {
+  for (i in c(1, 3, 6, 8)) {
     temp_dat <- filter(plot_dat, variable == vars[i])
     p[[i]] <- ggplot(temp_dat, aes (x = site, y = value)) +
       geom_boxplot(aes(fill = max_rank)) +
       #facet_wrap(~variable, nrow = 4, scales = 'free_y') +
       scale_fill_gradient2(low = 'red', mid = 'white', high = 'blue',
-                           midpoint = 8) +
-      coord_cartesian(ylim = c(0, variable_dat$ymax_obs[variable_dat$variable == vars[i]])) +
-      labs(x = 'Site', y = vars[i], fill = "Site Rank")
+                           midpoint = 8.5, limits = c(1, 16)) +
+      coord_cartesian(ylim = c(0, variable_dat$ymax_quart[variable_dat$variable == vars[i]])) +
+      labs(x = '', y = vars[i], fill = "Site Rank") +
+      theme(axis.text.x = element_blank())
+    
+    if (i == 6)
+     p[[i]] <- p[[i]] +
+      theme(axis.text.x = element_text(angle = 90)) +
+      labs(x = 'Site')
   }
   # use precomputed statistics instead - see example in https://ggplot2.tidyverse.org/reference/geom_boxplot.html
   p <- ggplot(plot_dat, aes (x = site, y = value)) +
