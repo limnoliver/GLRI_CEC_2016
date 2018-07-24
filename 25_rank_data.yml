@@ -5,6 +5,7 @@ include:
 
 packages:
   - dplyr
+  - ggplot2
   
 sources:
   - 25_rank_data/src/site_dat_rankings.R
@@ -12,9 +13,7 @@ sources:
 targets:
   25_rank_data:
     depends:
-      - rank_site_n_chems
-      - rank_site_conc
-      - rank_site_EAR
+      - site_rankings
   
   all_samples:
     command: get_all_samples(chem_data)
@@ -34,8 +33,13 @@ targets:
     command: get_ear_sites(chemicalSummary, all_samples)
     
   rank_site_bench:
-    command:get_bench_sites(chemicalSummary_bench, all_samples)
+    command: get_bench_sites(chemicalSummary_bench, all_samples)
     
+  site_rankings:
+    command: bind_rows(rank_site_n_chems, rank_site_conc, rank_site_EAR, rank_site_bench)
+  
+  figure/site_rankings.png:
+    command: make_site_fig(site_rankings)
   # Top CHEMICALS of concern (RANKINGS) (maybe top 5-10 from each stat?)
   # ndetect: detection frequency (site and sample)
   # conc: rankings based on mean and max conc of chem
