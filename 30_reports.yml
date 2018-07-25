@@ -1,7 +1,7 @@
 target_default: 30_reports
 
 include:
-  - 24_check_data.yml
+  - 25_rank_data.yml
   
 packages:
   - knitr
