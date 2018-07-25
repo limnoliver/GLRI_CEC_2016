@@ -6,14 +6,17 @@ include:
 packages:
   - dplyr
   - ggplot2
+  - cowplot
   
 sources:
   - 25_rank_data/src/site_dat_rankings.R
+  - 25_rank_data/src/ranking_fig_fxns.R
   
 targets:
   25_rank_data:
     depends:
-      - site_rankings
+      - figure/site_rankings.png
+      - figure/site_rankings_tile.png
   
   all_samples:
     command: get_all_samples(chem_data)
@@ -39,7 +42,11 @@ targets:
     command: bind_rows(rank_site_n_chems, rank_site_conc, rank_site_EAR, rank_site_bench)
   
   figure/site_rankings.png:
-    command: make_site_fig(site_rankings)
+    command: make_site_fig(target_name, site_rankings, sites)
+    
+  figure/site_rankings_tile.png:
+    command: make_site_tile(target_name, site_rankings, sites)
+    
   # Top CHEMICALS of concern (RANKINGS) (maybe top 5-10 from each stat?)
   # ndetect: detection frequency (site and sample)
   # conc: rankings based on mean and max conc of chem

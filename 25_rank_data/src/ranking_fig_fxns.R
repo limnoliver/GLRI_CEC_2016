@@ -1,13 +1,35 @@
 # ranking figs
 
-make_site_fig <- function(site_rankings) {
-
+make_site_fig <- function(file_name, site_rankings, sites) {
+  
+  site_dat <- select(sites, site = site_no, landuse = `Dominant.land.use.`, shortName, 
+                     ag_total = `Ag..total`, Urban) %>%
+    mutate(landuse = ifelse(landuse == 'Wetland' | landuse == 'Forest', "Natural", landuse),
+           perc_ag_urban = ag_total + Urban)
+  
   plot_dat <- site_rankings
   plot_dat$variable <- factor(plot_dat$variable,
                               levels = c('n_detected', 'n_detected_new',
                                          'mean_conc', 'sum_conc',
                                          'mean_bench', 'max_bench',
                                          'mean_sumEAR', 'max_sumEAR'))
+  var_summary <- group_by(plot_dat, site, variable) %>%
+    summarize(y0 = quantile(value, 0.1),
+              y25 = quantile(value, 0.25),
+              y50 = median(value),
+              y75 = quantile(value, 0.75), 
+              y100 = quantile(value, 0.9), 
+              rank = mean(max_rank)) %>%
+    left_join(site_dat)
+  
+  var_summary$landuse <- factor(var_summary$landuse, levels = c('Natural','Urban', 'AgMix', 'Crops'))
+  var_summary <- arrange(var_summary, landuse, perc_ag_urban)
+  site_order <- unique(var_summary$shortName)
+  var_summary$shortName <- factor(var_summary$shortName, levels = site_order)
+  
+  var_ymax <- var_summary %>%
+    group_by(variable) %>%
+    summarize(ylim = max(y50)*1.2)
   
   variable_dat <- filter(plot_dat, site != '04193500') %>%
     group_by(site, variable) %>%
@@ -21,37 +43,111 @@ make_site_fig <- function(site_rankings) {
   
   # plot_dat <- filter(plot_dat, site != '04193500')
   vars <- unique(plot_dat$variable)
+  var_ylab <- c("No. chemicals detected", "No. chemicals unique to sample", "Sum Concentration", 
+                "Mean concentration", "Mean of sumEAR", "Max of sumEAR", 
+                "Mean benchmark ratio", "Max benchmark ratio")
   p <- list()
-  for (i in c(1, 3, 6, 8)) {
+  q <- list()
+  for (i in 1:length(vars)) {
     temp_dat <- filter(plot_dat, variable == vars[i])
-    p[[i]] <- ggplot(temp_dat, aes (x = site, y = value)) +
+    p[[i]] <- ggplot(temp_dat, aes(x = site, y = value)) +
       geom_boxplot(aes(fill = max_rank)) +
       #facet_wrap(~variable, nrow = 4, scales = 'free_y') +
       scale_fill_gradient2(low = 'red', mid = 'white', high = 'blue',
                            midpoint = 8.5, limits = c(1, 16)) +
       coord_cartesian(ylim = c(0, variable_dat$ymax_quart[variable_dat$variable == vars[i]])) +
-      labs(x = '', y = vars[i], fill = "Site Rank") +
+      labs(x = '', y = var_ylab[i], fill = "Site Rank") +
       theme(axis.text.x = element_blank())
+    
+    temp_dat <- filter(var_summary, variable == vars[[i]])
+    q[[i]] <- ggplot(temp_dat, aes(x = shortName)) +
+      geom_boxplot(aes(fill = rank, ymin = y0, lower = y25, middle = y50, upper = y75, ymax = y100),
+                   stat = 'identity') +
+      #facet_wrap(~variable, nrow = 4, scales = 'free_y') +
+      scale_fill_gradient2(low = 'red', mid = 'white', high = 'blue',
+                           midpoint = 8.5, limits = c(1, 16), breaks = c(1,4,8,12,16)) +
+      #coord_cartesian(ylim = c(0, var_ymax$ylim[var_ymax$variable == vars[i]])) +
+      labs(x = '', y = '', title = var_ylab[i], fill = "Site Rank") +
+      theme(axis.text.x = element_blank(),
+            plot.title = element_text(hjust = 0.05, vjust = 0.1, size = 16),
+            plot.margin = margin(0, 2, 0, 0))
     
     if (i == 6)
      p[[i]] <- p[[i]] +
       theme(axis.text.x = element_text(angle = 90)) +
       labs(x = 'Site')
   }
-  # use precomputed statistics instead - see example in https://ggplot2.tidyverse.org/reference/geom_boxplot.html
-  p <- ggplot(plot_dat, aes (x = site, y = value)) +
-    geom_boxplot(aes(fill = max_rank)) +
-    facet_wrap(~variable, nrow = 4, scales = 'free_y') +
-    scale_fill_gradient2(low = 'red', mid = 'white', high = 'blue',
-                        midpoint = 8)
   
-  p_dat <- ggplot_build(p)
+  # modify four figures to use for cowplot fig
+  q1 <- q[[1]] + theme(legend.position = c(0.4, .9),
+                       legend.direction = 'horizontal', 
+                       legend.key.height = unit(0.5, 'cm'),
+                       legend.margin = margin(5,7,5,5),
+                       legend.box.background = element_rect(color = 'black'))
+  q2 <- q[[3]] + theme(legend.position = 'none') +
+    scale_y_continuous(trans = 'log10')
+  q3 <- q[[8]] + theme(legend.position = 'none') +
+    scale_y_continuous(trans = 'log10')
+  q4 <- q[[6]] + theme(legend.position = 'none',
+                       axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)) +
+    scale_y_continuous(trans = 'log10')
+  
+  legend_plot <- q4 + theme(legend.position = 'bottom', 
+                            legend.key.height = unit(0.5, 'cm'),
+                            legend.box.margin = margin(-25,0,0,0), 
+                            legend.margin = margin(0,0,0,0), 
+                            legend.direction = 'horizontal')
+  
+  # if you want to go back to old figs, just uncomment the coord_cartesian line
+  # and get rid of transformation in plot post-processing.
+  # think if we use raw data instead of summary statistics, would look better in 
+  # log space.
+  legend_b <- get_legend(legend_plot)
+  qrow <- plot_grid(q1, q2, q3, q4, ncol = 1, rel_heights = c(1,1,1,1.3),
+                    align = 'v', axis = 'l')
+  
+  ggsave(file_name, qrow, height = 12, width = 9)
+}
 
-  for (i in 2:8) {
-    p_dat$layout$panel_scales_y[[i]]$range$range <- c(0, variable_dat$ymax[i])
-  }
-  print(p_dat)
-  test <- ggplot_gtable(p_dat)
-  print(test)
-  plot(test)
+make_site_tile <- function(file_name, site_rankings, sites) {
+  
+  site_dat <- select(sites, site = site_no, landuse = `Dominant.land.use.`, shortName, 
+                     ag_total = `Ag..total`, Urban) %>%
+    mutate(landuse = ifelse(landuse == 'Wetland' | landuse == 'Forest', "Natural", landuse),
+           perc_ag_urban = ag_total + Urban)
+  
+  plot_dat <- site_rankings
+  plot_dat$variable <- factor(plot_dat$variable,
+                              levels = c('n_detected', 'n_detected_new',
+                                         'mean_conc', 'sum_conc',
+                                         'mean_bench', 'max_bench',
+                                         'mean_sumEAR', 'max_sumEAR'))
+  levels(plot_dat$variable) <- c('No. chems detected', 'No. unique chems',
+                                 'Mean concentration', 'Sum concentration',
+                                 'Mean benchmark ratio', 'Max benchmark ratio',
+                                 'Mean sumEAR', 'Max sumEAR')
+  site_dat$landuse <- factor(site_dat$landuse, levels = rev(c('Natural','Urban', 'AgMix', 'Crops')))
+  site_dat <- arrange(site_dat, landuse, perc_ag_urban)
+  site_order <- unique(site_dat$shortName)
+  site_dat$shortName <- factor(site_dat$shortName, levels = site_order)
+  
+  # filter out specific vars that we don't want to use
+  plot_dat <- filter(plot_dat, variable %in% c('No. chems detected', 'Mean concentration',
+                                               'Mean benchmark ratio', 'Mean sumEAR'))
+  
+  plot_dat <- left_join(plot_dat, site_dat)
+  head(plot_dat)
+  long_plot_dat <- gather(plot_dat, key = rank_variable, value = rank_value, median_rank, max_rank) %>%
+    mutate(rank_variable = ifelse(rank_variable == 'max_rank', "Acute (max) rank", "Chronic (med) rank"))
+  
+  p <- ggplot(long_plot_dat) +
+    geom_tile(aes(y = shortName, x = variable, fill = rank_value), color = 'black') +
+    scale_fill_gradient2(low = 'red', mid = 'white', high = 'blue',
+                         midpoint = 8.5, limits = c(1, 16), breaks = c(1,4,8,12,16)) +
+    #facet_wrap(landuse~rank_variable, ncol = 2, scales = 'free_y') +
+    facet_grid(landuse~rank_variable, scales = 'free_y', space = 'free_y') +
+    labs(y = '', x = '', fill = "Rank") +
+    theme(axis.text.x = element_text(angle = 45, v = 1, h = 1))
+  
+  ggsave(file_name, p, height = 7, width = 6)
 }
