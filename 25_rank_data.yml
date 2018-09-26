@@ -11,12 +11,14 @@ packages:
 sources:
   - 25_rank_data/src/site_dat_rankings.R
   - 25_rank_data/src/ranking_fig_fxns.R
+  - 25_rank_data/src/chemical_rankings.R
   
 targets:
   25_rank_data:
     depends:
       - figure/site_rankings.png
       - figure/site_rankings_tile.png
+      - top_chems_metrics
   
   all_samples:
     command: get_all_samples(chem_data)
@@ -47,11 +49,31 @@ targets:
   figure/site_rankings_tile.png:
     command: make_site_tile(target_name, site_rankings, sites)
     
+  site_avg_rankings:
+    command: calc_avg_rankings(site_rankings, sites)
+    
+  figure/site_avg_rankings_disturbance.png:
+    command: plot_avg_rankings(target_name, site_avg_rankings, site_info)
+    
   # Top CHEMICALS of concern (RANKINGS) (maybe top 5-10 from each stat?)
   # ndetect: detection frequency (site and sample)
   # conc: rankings based on mean and max conc of chem
   # bench: rankings based on mean and max benchmark ratio of chem
   # EAR: rankings based on mean of max EAR by chem 
+  
+  top_chems:
+    command: select_top_chems(chemicalSummary_conc)
+    
+  chem_tox_hits:
+    command: calc_chem_tox_metrics(chemicalSummary)
+    
+  chem_wq_hits:
+    command: calc_chem_wq_metrics(chemicalSummary_bench)
+    
+  top_chems_metrics:
+    command: merge_top_chems_hits(chem_tox_hits, chem_wq_hits, top_chems)
+
+  
   
   # TIMING of highest impact (RANKINGS) by month
   # nchems: mean # chemicals across sites, unique chemicals relative to all other periods
