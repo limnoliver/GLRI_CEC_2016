@@ -131,6 +131,10 @@ get_ear_sites <- function(chemicalSummary, all_samples) {
     summarize(mean_sumEAR = mean(sum_ear),
               max_sumEAR = max(sum_ear))
   
+  # this likely underestimates effects, but summing likely overestimates
+  # mean might not make sense -- having a "low" value doesn't somehow offset a 
+  # high value. 
+  
   samples <- all_samples %>%
     mutate(date = as.POSIXct(date)) %>%
     filter()
@@ -231,4 +235,52 @@ merge_site_rankings <- function(nchems, conc, ear, bench) {
     gather(key = 'rank_')
   
   return(rankings)
+}
+
+calc_avg_rankings <- function(site_rankings, sites) {
+  unique_rank <- select(site_rankings, site, median_rank, max_rank, variable) %>%
+    distinct()
+  
+  median_rank <- select(unique_rank, -max_rank) %>%
+    spread(key = variable, value = median_rank)
+  
+  max_rank <- select(unique_rank, -median_rank) %>%
+    spread(key = variable, value = max_rank)
+  
+  library(matrixStats)
+  
+  ranks <- left_join(median_rank, max_rank, by = 'site') %>%
+    ungroup() %>%
+    mutate(avg_rank = rowMeans(select(.,`max_bench.x`:`sum_conc.y`)),
+           sum_rank = rowSums(select(.,`max_bench.x`:`sum_conc.y`)),
+            sd_rank = rowSds(as.matrix(select(.,`max_bench.x`:`sum_conc.y`))))
+  
+  ranks_site <- select(ranks, site, avg_rank, sd_rank) %>%
+    left_join(sites, by = c('site' = 'site_no')) %>%
+    mutate(disturbance_index = `Ag..crops` + Urban, 
+           natural_index = Forest + `Water..wetland`) %>%
+    mutate(dist_diff_index = disturbance_index - natural_index)
+  
+  return(ranks_site)
+  
+}
+
+plot_avg_rankings <- function(outfile, ranking_dat, sites) {
+  
+  dat <- left_join(ranking_dat, sites, by = c('site' = 'SiteID'))
+ 
+   p <- ggplot(dat, aes(y = avg_rank, x = disturbance_index, label = `Short Name`)) +
+    geom_point(aes(color = `Dominant.land.use.`), size = 2) + 
+    geom_errorbar(aes(ymin = avg_rank - sd_rank, 
+                      ymax = avg_rank + sd_rank, 
+                      color = `Dominant.land.use.`), width = 1.5) +
+     #geom_label(check_overlap = T, hjust = -0.1, nudge_x = 0.3) +
+     ggrepel::geom_label_repel(data = dat, aes(color = `Dominant.land.use.`), show.legend = F, size = 2) +
+    theme_bw() +
+    labs(x = "Watershed Disturbance Index (% Crop + % Urban)", 
+         y = 'Average (sd) rank across metrics\n(1 = most impacted by pesticides)',
+         color = "Dominant land use") +
+    scale_x_continuous(limits = c(0,100))
+  
+  ggsave(outfile, p, height = 4, width = 8)
 }
