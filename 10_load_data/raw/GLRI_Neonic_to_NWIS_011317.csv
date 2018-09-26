@@ -1,0 +1,153 @@
+Sample,Site,USGS Site ID,Date,Time,Proposed New Time,Medium Code,Sample Type,Type,Volume (L),Acetamiprid ,Clothianidin ,Dinotefuran ,Imidacloprid ,Thiacloprid ,Thiamethoxam ,imidacloprid-d4 (suurrogate % recovery)
+WS3577,"Cuyahoga R. @ Independence, OH",4208000,10/1/2015,15:10,15:15,WS,9,Env,0.94,,,,14.2,,,74
+WS3578,Saginaw R @ Saginaw,4157000,10/6/2015,11:02,11:07,WSQ,2,Field Blank,0.77,,,,,,,81.2
+WS3579,Saginaw R @ Saginaw,4157000,10/6/2015,11:10,11:15,WS,9,Env,1,,-2.5,,2.6,,,71.1
+WS3580,"River Rouge @ Detroit, MI",4166500,9/30/2015,12:40,12:45,WS,9,Env,0.98,,,,5.3,,,70.5
+WS3581,"Genessee River @ Ford St, NY",4231600,10/6/2015,14:09,14:14,WSQ,2,Field Blank,0.965,,,,,,,93.7
+WS3582,"Genessee River @ Ford St, NY",4231600,10/6/2015,14:30,14:35,WS,9,Env,0.887,,,,,,,78.3
+WS3583,Indiana Harbor Canal @ East Chicago,4092750,10/6/2015,12:58,13:03,WSQ,2,Field Blank,0.99,,,,,,,91.4
+WS3584,Indiana Harbor Canal @ East Chicago,4092750,10/6/2015,14:00,14:05,WS,9,Env,0.995,,,,-2.4,,,78.4
+WS3599,Manitowoc R @ Manitowoc,4085427,10/6/2015,14:40,14:45,WS,9,Env,0.969,,5.3,,,,6.5,81.7
+WS3600,Manitowoc R @ Manitowoc,4085427,10/6/2015,14:00,14:05,WSQ,2,Field Blank,0.9,,,,,,,77.5
+WS3602,"Maumee R. @ Waterville, OH",4193500,10/13/2015,11:19,11:24,WSQ,2,Field Blank,0.95,,,,,,,107.7
+WS3603,"Maumee R. @ Waterville, OH",4193500,10/13/2015,11:20,11:25,WS,9,Env,0.94,,11.9,,5.1,,,71.5
+WS3604,"St. Joseph R @ Niles, MI",4101500,10/13/2015,12:15,12:20,WS,9,Env,0.93,,,,,,,76.6
+WS3605,"Grand R. nr Eastmanville, MI",4119400,10/14/2015,11:25,11:30,WS,9,Env,0.94,,,,5.2,,,83.8
+WS3608,"Bad River nr Odanah, WI",4027000,10/15/2015,11:10,11:15,WS,9,Env,0.94,,,,,,,83.3
+WS3631,"Bad River nr Odanah, WI",4027000,11/2/2015,11:00,11:05,WS,9,Env,0.73,,,,,,,80.9
+WS3647,Indiana Harbor Canal @ East Chicago,4092750,11/3/2015,14:00,14:05,WS,9,Env,0.82,,,,3.8,,,76.6
+WS3651,"St. Joseph R @ Niles, MI",4101500,11/3/2015,11:40,11:45,WS,9,Env,0.99,,,,,,,90.6
+WS3652,"Grand R. nr Eastmanville, MI",4119400,11/4/2015,10:30,10:35,WS,9,Env,0.96,,,,4.4,,,94.2
+WS3653,"Genessee River @ Ford St, NY",4231600,11/4/2015,16:20,16:25,WS,9,Env,0.94,,,,,,,105.2
+WS3654,"Cuyahoga R. @ Independence, OH",4208000,11/5/2015,8:40,8:45,WS,9,Env,0.9,,,,9,,,104.4
+WS3655,"Maumee R. @ Waterville, OH",4193500,11/4/2015,11:20,11:25,WS,9,Env,0.95,,9.1,,4.5,,,106.4
+WS3656,"River Rouge @ Detroit, MI",4166500,11/9/2015,13:30,13:35,WS,9,Env,0.92,,,,5.2,,,92.4
+WS3669,Manitowoc R @ Manitowoc,4085427,11/10/2015,14:45,14:50,WS,9,Env,1,,-3.5,,,,-2.4,91.8
+WS3670,Saginaw R @ Saginaw,4157000,11/12/2015,12:10,12:15,WS,9,Env,0.925,,-2.9,,,,,91.8
+WS3685,"Bad River nr Odanah, WI",4027000,12/2/2015,14:00,14:05,WS,9,Env,0.81,,,,,,,107.4
+WS3686,"Grand R. nr Eastmanville, MI",4119400,12/2/2015,11:55,12:00,WS,9,Env,0.875,,,,3.4,,,95.5
+WS3687,"St. Joseph R @ Niles, MI",4101500,12/1/2015,12:10,12:15,WS,9,Env,0.93,,,,,,,115.6
+WS3688,"Maumee R. @ Waterville, OH",4193500,12/2/2015,12:20,12:25,WS,9,Env,0.92,,9,,8.2,,-2.7,116.2
+WS3689,"Cuyahoga R. @ Independence, OH",4208000,12/2/2015,9:10,9:15,WS,9,Env,0.887,,,,7.9,,,83.2
+WS3690,Indiana Harbor Canal @ East Chicago,4092750,12/7/2015,13:30,13:35,WS,9,Env,0.907,,,,,,,106.7
+WS3691,"River Rouge @ Detroit, MI",4166500,12/8/2015,13:10,13:15,WS,9,Env,0.93,,,,,,,96.9
+WS3692,Manitowoc R @ Manitowoc,4085427,12/7/2015,14:40,14:45,WS,9,Env,0.909,,7.2,,,,5.4,101.4
+WS3693,"Genessee River @ Ford St, NY",4231600,12/8/2015,10:00,10:05,WS,9,Env,0.986,,,,,,,109.1
+WS3694,"Saginaw R @ Saginaw, MI",4157000,12/10/2015,12:10,12:15,WS,9,Env,0.945,,-2.3,,,,,114.1
+WS3719,Indiana Harbor Canal @ East Chicago,4092750,1/5/2016,14:30,14:35,WS,9,Env,1,,,,-2,,,118.5
+WS3720,"River Rouge @ Detroit, MI",4166500,1/5/2016,14:05,14:10,WS,9,Env,0.86,,,,-2.5,,,107
+WS3724,"Genessee River @ Ford St, NY",4231600,1/4/2016,15:00,15:05,WS,9,Env,0.875,,,,,,,112.5
+WS3725,"Bad River nr Odanah, WI",4027000,1/6/2016,11:00,11:05,WS,9,Env,0.96,,,,,,,98.2
+WS3726,"Cuyahoga R. @ Independence, OH",4208000,1/6/2016,11:40,11:45,WS,9,Env,0.95,,,,4.6,,5.1,104.6
+WS3727,"Maumee R. @ Waterville, OH",4193500,1/7/2016,11:20,11:25,WS,9,Env,0.9,,25.4,,7.3,,-3.3,98.5
+WS3728,Manitowoc R @ Manitowoc,4085427,1/5/2016,15:10,15:15,WS,9,Env,0.98,,6.7,,,,,119.3
+WS3746,"Saginaw R @ Saginaw, MI",4157000,1/20/2016,12:10,12:15,WS,9,Env,1,,5.1,,,,,76.2
+WS3751,"St. Joseph R @ Niles, MI",4101500,1/20/2016,11:25,11:30,WS,9,Env,0.96,,-3.7,,,,,75.2
+WS3752,"Grand R. nr Eastmanville, MI",4119400,1/21/2016,10:30,10:35,WS,9,Env,0.94,,6.6,,8,,,76.9
+WS3768,Indiana Harbor Canal @ East Chicago,4092750,2/2/2016,12:00,12:05,WS,9,Env,0.89,,,,5.4,,,120.8
+WS3769,"Cuyahoga R. @ Independence, OH",4208000,2/1/2016,12:10,12:15,WS,9,Env,0.835,,,,8.9,,5.6,79.2
+WS3770,"Bad River nr Odanah, WI",4027000,2/1/2016,13:30,13:35,WS,9,Env,0.92,,,,,,,93.8
+WS3771,"St. Joseph R @ Niles, MI",4101500,2/2/2016,11:40,11:45,WS,9,Env,0.9,,,,,,,102.3
+WS3772,"Maumee R. @ Waterville, OH",4193500,2/2/2016,13:20,13:25,WS,9,Env,0.945,,18.1,,7.2,,3.5,87.2
+WS3773,"Genessee River @ Ford St, NY",4231600,2/2/2016,16:45,16:50,WS,9,Env,0.835,,,,,,-2.9,88.6
+WS3774,"Grand R. nr Eastmanville, MI",4119400,2/3/2016,11:35,11:40,WS,9,Env,0.88,,-3,,5.1,,,75.7
+WS3787,"River Rouge @ Detroit, MI",4166500,2/9/2016,14:10,14:15,WS,9,Env,0.9,,,,5.5,,,81.6
+WS3788,"Saginaw R @ Saginaw, MI",4157000,2/10/2016,12:10,12:15,WS,9,Env,1,,7.5,,-2,,3.7,80.2
+WS3789,Manitowoc R @ Manitowoc,4085427,2/9/2016,16:21,16:26,WS,9,Env,0.96,,-3.3,,,,4,88.1
+WS3815,"River Rouge @ Detroit, MI",4166500,3/2/2016,13:40,13:45,WS,9,Env,0.96,,,,8.5,,,85
+WS3833,"Maumee R. @ Waterville, OH",4193500,3/3/2016,10:20,10:25,WS,9,Env,0.92,,28.7,,9.6,,4.9,71.5
+WS3834,"Cuyahoga R. @ Independence, OH",4208000,3/3/2016,8:55,9:00,WS,9,Env,0.9,,,,5,,,77.1
+WS3835,"Genessee River @ Ford St, NY",4231600,3/7/2016,13:00,13:05,WS,9,Env,0.915,,,,,,,91.9
+WS3836,"Bad River nr Odanah, WI",4027000,3/7/2016,12:15,12:20,WS,9,Env,0.9,,,,,,,81.4
+WS3837,"Saginaw R @ Saginaw, MI",4157000,3/7/2016,11:40,11:45,WS,9,Env,1,,4.8,,,,,98.1
+WS3840,Indiana Harbor Canal @ East Chicago,4092750,3/8/2016,12:30,12:35,WS,9,Env,0.94,,,,,,,73.6
+WS3849,"St. Joseph R @ Niles, MI",4101500,3/8/2016,12:10,12:15,WS,9,Env,0.907,,6.4,,,,,91.9
+WS3850,"Grand R. nr Eastmanville, MI",4119400,3/9/2016,10:10,10:15,WS,9,Env,0.907,,-3.2,,,,,71.4
+WS3851,Manitowoc R @ Manitowoc,4085427,3/8/2016,13:49,13:54,WS,9,Env,0.91,,8.4,,,,,79.6
+WS3856,"Genessee River @ Ford St, NY",4231600,4/4/2016,14:00,14:05,WS,9,Env,0.285,,,,,,,89.4
+WS3857,Indiana Harbor Canal @ East Chicago,4092750,4/4/2016,14:00,14:05,WS,9,Env,0.97,,-2.2,,-3.6,,,73.7
+WS3858,"River Rouge @ Detroit, MI",4166500,4/4/2016,13:10,13:15,WS,9,Env,0.875,,-3.8,,7.6,,,87.4
+WS3859,"Saginaw R @ Saginaw, MI",4157000,4/5/2016,11:10,11:15,WS,9,Env,0.935,,11.7,,-3.3,,,82.1
+WS3860,"Bad River nr Odanah, WI",4027000,4/5/2016,13:45,13:50,WS,9,Env,0.95,,,,,,,77.2
+WS3861,"Cuyahoga R. @ Independence, OH",4208000,4/6/2016,14:10,14:15,WS,9,Env,0.91,,,,6.2,,,79.8
+WS3875,Manitowoc R @ Manitowoc,4085427,4/5/2016,14:16,14:21,WS,9,Env,0.94,,8.6,,,,-2.9,80.2
+WS3876,"Maumee R. @ Waterville, OH",4193500,4/4/2016,11:20,11:25,WS,9,Env,0.9,,53,,21.4,,12.2,84.4
+WS3877,"St. Joseph R @ Niles, MI",4101500,4/12/2016,11:05,11:10,WS,9,Env,0.965,,7.9,,,,,85.2
+WS3878,"Grand R. nr Eastmanville, MI",4119400,4/13/2016,9:40,9:45,WS,9,Env,0.94,,6.4,,4,,,74.7
+WS3923,"Bad River nr Odanah, WI",4027000,5/2/2016,12:00,12:05,WS,9,Env,0.89,,,,,,,78.2
+WS3928,Indiana Harbor Canal @ East Chicago,4092750,5/2/2016,13:30,13:35,WS,9,Env,0.99,,,,4,,,71.1
+WS3931,"Cuyahoga R. @ Independence, OH",4208000,5/3/2016,9:40,9:45,WS,9,Env,0.95,,4.3,,11.6,,,72.1
+WS3932,"Maumee R. @ Waterville, OH",4193500,5/3/2016,12:20,12:25,WS,9,Env,0.98,,117.1,,34.5,,46.4,74
+WS3933,"Genessee River @ Ford St, NY",4231600,5/4/2016,8:30,8:35,WS,9,Env,0.81,,-3.2,,,,-3.3,77.8
+WS3939,"Grand R. nr Eastmanville, MI",4119400,5/4/2016,9:40,9:45,WS,9,Env,0.9,,7.9,,7.4,,,86.4
+WS3940,"St. Joseph R @ Niles, MI",4101500,5/3/2016,11:00,11:05,WS,9,Env,0.895,,13.8,,,,-3,88.1
+WS3941,Manitowoc R @ Manitowoc,4085427,5/3/2016,14:16,14:21,WS,9,Env,0.93,,5.7,,,,3.4,86.5
+WS3971,"River Rouge at Detroit, MI",4166500,5/10/2016,12:10,12:15,WS,9,Env,0.88,,-3.7,,8.3,,,81.8
+WS3972,"Saginaw R at Saginaw, MI",4157000,5/11/2016,10:10,10:15,WS,9,Env,0.89,,9.1,,,,-3.3,72.2
+WS4067,Cuyahoga R. @ Independence,4208000,6/2/2016,9:40,9:45,WS,9,Env,0.88,,,,19.5,,,90.7
+WS4072,"Bad River nr Odanah, WI",4027000,6/7/2016,12:15,12:20,WS,9,Env,0.98,,,,,,,74.7
+WS4073,Indiana Harbor Canal @ East Chicago,4092750,6/7/2016,11:30,11:35,WS,9,Env,0.86,,,,,,,74.3
+WS4074,"Maumee R. @ Waterville, OH",4193500,6/7/2016,11:20,11:25,WS,9,Env,0.95,,32.3,,9.8,,-2.8,79.4
+WS4081,"Genessee River @ Ford St, NY",4231600,6/7/2016,8:15,8:20,WS,9,Env,0.815,,,,,,,83.6
+WS4082,"St. Joseph R @ Niles, MI",4101500,6/7/2016,11:10,11:15,WS,9,Env,0.93,,,,,,,73.7
+WS4083,"Grand R. nr Eastmanville, MI",4119400,6/8/2016,9:50,9:55,WS,9,Env,0.875,,,,5.3,,,74.4
+WS4093,Manitowoc R @ Manitowoc,4085427,6/7/2016,14:50,14:55,WS,9,Env,1.005,,3.9,,,,-2.4,73.5
+WS4130,"River Rouge at Detroit, MI",4157000,6/14/2016,12:00,12:05,WS,9,Env,0.9,,,,21.8,,,97
+WS4131,"Saginaw R at Saginaw, MI",4157000,6/15/2016,9:40,9:45,WS,9,Env,0.975,,5.3,,4.7,,,96.5
+WS4172,"Bad River nr Odanah, WI",4027000,7/6/2016,11:00,11:05,WS,9,Env,0.89,,,,,,,74.9
+WS4173,Cuyahoga R. @ Independence,4208000,7/7/2016,9:10,9:15,WS,9,Env,0.915,,,,31.9,,,77.2
+WS4174,Cuyahoga R. @ Independence,4208000,7/7/2016,9:10,9:15,WSQ,7,Rep,0.95,,,,33.6,,,82.2
+WS4175,"Maumee R. @ Waterville, OH",4193500,7/5/2016,11:20,11:25,WS,9,Env,0.925,,225.6,,102.8,,74.8,76
+WS4176,Manitowoc R @ Manitowoc,4085427,7/5/2016,15:26,15:31,WS,9,Env,0.96,,4.8,,,,-2.7,88
+WS4177,Manitowoc R @ Manitowoc,4085427,7/5/2016,15:26,15:31,WSQ,7,Rep,0.985,,4.8,,,,-3.1,91.2
+WS4180,"Genessee River @ Ford St, NY",4231600,7/6/2016,8:15,8:20,WS,9,Env,0.91,,,,,,,93.4
+WS4205,Indiana Harbor Canal @ East Chicago,4092750,7/13/2016,12:00,12:05,WS,9,Env,1,,,,4.8,,,84.8
+WS4206,Indiana Harbor Canal @ East Chicago,4092750,7/13/2016,12:00,12:05,WSQ,7,Rep,0.95,,,,5.4,,,87.3
+WS4207,"St. Joseph R @ Niles, MI",4101500,7/12/2016,12:25,12:30,WS,9,Env,0.88,,3.3,,,,,89.7
+WS4208,"Grand R. nr Eastmanville, MI",4119400,7/13/2016,9:40,9:45,WS,9,Env,0.955,,,,17.4,,,81.8
+WS4227,"Saginaw R at Saginaw, MI",4157000,7/20/2016,11:20,11:25,WS,9,Env,0.97,,5.1,,8,,,89.9
+WS4228,"Saginaw R at Saginaw, MI",4157000,7/20/2016,11:20,11:25,WSQ,7,Rep,0.88,,5.1,,8.2,,,83.5
+WS4229,"River Rouge at Detroit, MI",4166500,7/19/2016,12:40,12:45,WS,9,Env,0.88,,,,97.9,,,78.7
+WS4287,Cuyahoga R. @ Independence,4208000,8/1/2016,16:40,16:45,WS,9,Env,0.89,,,4.7,49.3,,,99.1
+WS4288,"Genessee River @ Ford St, NY",4231600,8/2/2016,7:15,7:20,WS,9,Env,0.89,,,,,,,87.4
+WS4289,"Maumee R. @ Waterville, OH",4193500,8/2/2016,10:20,10:25,WS,9,Env,0.97,,65.7,,23.1,,5.2,90.9
+WS4290,Indiana Harbor Canal @ East Chicago,4092750,8/2/2016,13:00,13:25,WS,9,Env,0.98,,,,10.1,,,94.8
+WS4306,"Bad River nr Odanah, WI",4027000,8/3/2016,11:45,11:50,WS,9,Env,0.85,,,,,,,78.1
+WS4307,"Saginaw R at Saginaw, MI",4157000,8/3/2016,10:10,10:15,WS,9,Env,0.89,,11.1,,13.8,,9.6,73.3
+WS4308,"River Rouge at Detroit, MI",4166500,8/2/2016,12:10,12:15,WS,9,Env,0.865,,,,152.7,,,79
+WS4325,Manitowoc R @ Manitowoc,4085427,8/2/2016,13:18,13:23,WS,9,Env,0.98,,7.9,,-2.4,,7.6,95.2
+WS4344,"St. Joseph R @ Niles, MI",4101500,8/9/2016,11:00,11:04,WS,9,Env,0.955,7,,,,,,97.5
+WS4345,"Grand R. nr Eastmanville, MI",4119400,8/10/2016,9:30,9:35,WS,9,Env,1,11.8,,,7.4,,,74.2
+WS4421,"Bad River nr Odanah, WI",4027000,9/6/2016,11:30,11:35,WS,9,Env,0.87,,,,,,,98.5
+WS4422,"Genessee River @ Ford St, NY",4231600,9/6/2016,17:30,17:35,WS,9,Env,0.84,,,,,,,92.3
+WS4423,Cuyahoga R. @ Independence,4208000,9/6/2016,14:10,14:15,WS,9,Env,0.81,,,,21,,,74.3
+WS4424,Indiana Harbor Canal @ East Chicago,4092750,9/7/2016,13:15,13:20,WS,9,Env,0.93,,,,6.9,,,83
+WS4425,"Maumee R. @ Waterville, OH",4193500,9/7/2016,8:20,8:25,WS,9,Env,0.96,,13.1,,11.6,,,79.3
+WS4433,Manitowoc R @ Manitowoc,4085427,9/6/2016,13:47,13:52,WS,9,Env,0.985,,-3.6,,,,,82.3
+WS4436,"Grand R. nr Eastmanville, MI",4119400,9/14/2016,9:10,9:15,WS,9,Env,0.94,,6.1,,8.2,,,92.6
+WS4437,"St. Joseph R @ Niles, MI",4101500,9/13/2016,10:25,10:30,WS,9,Env,0.92,,20.6,,-3.4,,,82.1
+WS4452,"River Rouge at Detroit, MI",4166500,9/20/2016,12:40,12:45,WS,9,Env,0.93,,,,17.6,,,88.2
+WS4453,"Saginaw R at Saginaw, MI",4157000,9/21/2016,10:10,10:15,WS,9,Env,0.995,,-3.6,,6.1,,,98.8
+WS3921,Beaver Creek,,5/1/2016,9:44,,,,Env,1,,65.7,,24.9,,11.7,86.7
+WS3922,Grand Rapids Marina,,5/1/2016,10:50,,,,Env,1,,23.7,,10.4,,4.9,73.9
+WS3914,Toledo WWTP outfall,,5/1/2016,8:05,,,,Field Blank,1,,,,,,,79.9
+WS3919,Perrysburg,,5/2/2016,9:25,,,,Env,0.905,,41,,16.9,,7,76.1
+WS3917,Farnsworth Metro Park,,5/2/2016,11:00,,,,Env,0.99,,25,,12.2,,5.3,82.5
+WS3942,Upstream of Swan Creek,,5/3/2016,10:30,,,,Env,0.96,,23.5,,10.1,,5.5,75.5
+WS3920,Swan Creek,,5/3/2016,9:45,,,,Env,1,,27.8,,13.6,,4.7,78.6
+WS3913,Upstream of Toledo WWTP,,5/4/2016,9:45,,,,Env,1,,84,,26.5,,28.4,73.8
+WS3915,Toledo WWTP outfall,,5/4/2016,10:18,,,,Env,1.005,,23.6,,16,,4.6,82.2
+WS3916,"USEPA-MED Lake Superior Water, Duluth, MN",,5/1/2016,9:00,,,,Field Control,1,,,,,,,73.3
+WS3918,"USEPA-MED Lake Superior Water, Duluth, MN Field Control Set 2 ",,5/4/2016,9:10,,,,Field Control,1,,,,,,,74.1
+WS3934,"USEPA-MED Lake Superior Water, Duluth, MN",,5/3/2016,9:31,,,,Lab Control,1,,,,,,,77.6
+WS4138,Toledo WWTP outfall,,6/12/2016,7:55,,,,,1.025,,,,,,,96.9
+WS4139,Beaver Creek,,6/12/2016,9:03,,,,,0.98,,48.4,,32.2,,40.9,88.4
+WS4140,Grand Rapids Marina,,6/12/2016,10:36,,,,,1,,278.2,,159.8,,126.2,76.8
+WS4141,Farnsworth Metro Park,,6/13/2016,10:23,,,,,1.04,,332.7,,212.6,,122.8,79.8
+WS4142,Swan Creek,,6/14/2016,10:02,,,,,1,,76.4,,40.2,,41.4,90.5
+WS4143,Upstream of Swan Creek,,6/14/2016,10:39,,,,,1,,38.6,,21.5,,11.8,83.4
+WS4144,Upstream of Toledo WWTP,,6/15/2016,7:17,,,,,0.985,,32.1,,14.5,,5.9,98.8
+WS4145,Toledo WWTP outfall,,6/15/2016,7:34,,,,,1,,31.7,,16.2,,5,91.7
+WS4134,Lake Superior (465019092001201),,6/16/2016,9:55,,,,,1.058,,,,,,,88.3
+WS4137,"USEPA-MED Lake Superior Water, Duluth, MN",,6/17/2016,7:50,,,,,0.99,,,,,,,75.9
+WS4146,"USEPA-MED Lake Superior Water, Duluth, MN",,6/15/2016,7:35,,,,,1,,,,,,,90.6
