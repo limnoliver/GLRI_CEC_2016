@@ -99,10 +99,21 @@ boxplot_bysite <- function(sum_conc, target_name, detect_only = TRUE) {
   
 }
 
-boxplot_bysite_month <- function(sum_conc, target_name) {
+boxplot_bysite_month <- function(sum_conc, target_name, site_dat) {
+  
+  dat <- left_join(sum_conc, site_dat, by = 'SiteID')
+  
+  ordered_names <- dat %>%
+    ungroup() %>%
+    select(`Short Name`, SiteID_detected) %>%
+    arrange(SiteID_detected) %>%
+    distinct()
+  
+  dat$`Short Name` <- factor(dat$`Short Name`, levels = ordered_names$`Short Name`)
+
   
   month.cols<-c(viridis(6, begin=.2, end=.99), rev(magma(6, begin=.2, end=.95)))
-  p_month <- ggplot(sum_conc, aes(x = SiteID_detected, y = sum_conc_detect_ppb)) +
+  p_month <- ggplot(dat, aes(x = `Short Name`, y = sum_conc_detect_ppb)) +
     geom_boxplot(outlier.shape = NA) +
     #geom_dotplot(binaxis='y', stackdir='center', dotsize=1) +
     geom_jitter(aes(shape=neonic_meas, color = month), position=position_jitter(0.15), alpha = 0.7, size = 1.5) +
@@ -119,10 +130,19 @@ boxplot_bysite_month <- function(sum_conc, target_name) {
   
 }
 
-boxplot_ndetect_bysite_month <- function(sum_conc, target_name) {
+boxplot_ndetect_bysite_month <- function(sum_conc, target_name, site_dat) {
+  dat <- left_join(sum_conc, site_dat, by = 'SiteID')
+  
+  ordered_names <- dat %>%
+    ungroup() %>%
+    select(`Short Name`, SiteID_detected) %>%
+    arrange(SiteID_detected) %>%
+    distinct()
+  
+  dat$`Short Name` <- factor(dat$`Short Name`, levels = ordered_names$`Short Name`)
   
   month.cols<-c(viridis(6, begin=.2, end=.99), rev(magma(6, begin=.2, end=.95)))
-  p_month <- ggplot(sum_conc, aes(x = SiteID_detected, y = n_detected)) +
+  p_month <- ggplot(dat, aes(x = `Short Name`, y = n_detected)) +
     geom_boxplot(outlier.shape = NA) +
     #geom_dotplot(binaxis='y', stackdir='center', dotsize=1) +
     geom_jitter(aes(shape=neonic_meas, color = month), position=position_jitter(0.15), alpha = 0.7, size = 1.5) +
@@ -139,13 +159,23 @@ boxplot_ndetect_bysite_month <- function(sum_conc, target_name) {
   
 }
 
-boxplot_bymonth_site <- function(sum_conc, target_name) {
+boxplot_bymonth_site <- function(sum_conc, target_name, site_dat) {
+  
+  dat <- left_join(sum_conc, site_dat, by = 'SiteID')
+  
+  ordered_names <- dat %>%
+    ungroup() %>%
+    select(`Short Name`, SiteID_detected) %>%
+    arrange(SiteID_detected) %>%
+    distinct()
+  
+  dat$`Short Name` <- factor(dat$`Short Name`, levels = ordered_names$`Short Name`)
   
   site.cols<- inferno(16, begin=0.4, end=.9, direction = -1)
-  p <- ggplot(sum_conc, aes(x = month, y = sum_conc_detect_ppb)) +
+  p <- ggplot(dat, aes(x = month, y = sum_conc_detect_ppb)) +
     geom_boxplot(outlier.shape = NA) +
     #geom_dotplot(binaxis='y', stackdir='center', dotsize=1) +
-    geom_jitter(aes(color = SiteID_detected, size = n_detected), position=position_jitter(0.15), alpha = 0.4) +
+    geom_jitter(aes(color = `Short Name`, size = n_detected), position=position_jitter(0.15), alpha = 0.4) +
     scale_color_manual(values = site.cols, name = 'Sites (ranked low to high \nmedian concentration)') +
     #scale_shape_manual(values = c(17, 16), name = 'Neonics measured') +
     scale_size_continuous(range = c(0.7, 5), breaks = c(0, 5, 10, 20, 40, 60), name = '# chemicals detected') +
@@ -160,13 +190,22 @@ boxplot_bymonth_site <- function(sum_conc, target_name) {
   
 }
 
-boxplot_ndetect_bymonth_site <- function(sum_conc, target_name) {
+boxplot_ndetect_bymonth_site <- function(sum_conc, target_name, site_dat) {
+  dat <- left_join(sum_conc, site_dat, by = 'SiteID')
+  
+  ordered_names <- dat %>%
+    ungroup() %>%
+    select(`Short Name`, SiteID_detected) %>%
+    arrange(SiteID_detected) %>%
+    distinct()
+  
+  dat$`Short Name` <- factor(dat$`Short Name`, levels = ordered_names$`Short Name`)
   
   site.cols<- inferno(16, begin=0.2, end=.9, direction = -1)
-  p <- ggplot(sum_conc, aes(x = month, y =n_detected)) +
+  p <- ggplot(dat, aes(x = month, y =n_detected)) +
     geom_boxplot(outlier.shape = NA) +
     #geom_dotplot(binaxis='y', stackdir='center', dotsize=1) +
-    geom_jitter(aes(color = SiteID_detected, size = sum_conc_detect_ppb), position=position_jitter(0.15), alpha = 0.4) +
+    geom_jitter(aes(color = `Short Name`, size = sum_conc_detect_ppb), position=position_jitter(0.15), alpha = 0.4) +
     scale_color_manual(values = site.cols, name = 'Sites (ranked low to high \nmedian concentration)') +
     #scale_shape_manual(values = c(17, 16), name = 'Neonics measured') +
     scale_size_continuous(range = c(0.7, 7), breaks = c(0, 1, 5, 10, 20, 40), name = 'Concentration of detected \npesticides (ppb)') +
@@ -180,11 +219,22 @@ boxplot_ndetect_bymonth_site <- function(sum_conc, target_name) {
   
 }
 
-plot_throughtime_bysite <- function(sum_conc, target_name) {
-  p2 <- ggplot(sum_conc, aes(x = sample_dt, y = sum_conc_detect_ppb)) +
+plot_throughtime_bysite <- function(sum_conc, target_name, site_dat) {
+  
+  dat <- left_join(sum_conc, site_dat, by = 'SiteID')
+  
+  ordered_names <- dat %>%
+    ungroup() %>%
+    select(`Short Name`, SiteID_detected) %>%
+    arrange(SiteID_detected) %>%
+    distinct()
+  
+  dat$`Short Name` <- factor(dat$`Short Name`, levels = ordered_names$`Short Name`)
+  
+  p2 <- ggplot(dat, aes(x = sample_dt, y = sum_conc_detect_ppb)) +
     geom_point(aes(size = n_detected), alpha = 0.5) +
     scale_size_continuous(range = c(0.7, 5), breaks = c(0, 5, 10, 20, 40, 60), name = '# chemicals detected') +
-    facet_wrap(~SiteID_detected, ncol = 2, scales = 'free_y') +
+    facet_wrap(~`Short Name`, ncol = 2, scales = 'free_y') +
     theme_bw() +
     labs(x = '', y = 'Total pesticide concentration (ppb)') +
     scale_y_continuous(expand = expand_scale(mult = c(.15, .25))) +
@@ -194,11 +244,22 @@ plot_throughtime_bysite <- function(sum_conc, target_name) {
   
 }
 
-plot_nchem_throughtime_bysite <- function(sum_conc, target_name) {
-  p2 <- ggplot(sum_conc, aes(x = sample_dt, y = n_detected)) +
+plot_nchem_throughtime_bysite <- function(sum_conc, target_name, site_dat) {
+  
+  dat <- left_join(sum_conc, site_dat, by = 'SiteID')
+  
+  ordered_names <- dat %>%
+    ungroup() %>%
+    select(`Short Name`, SiteID_detected) %>%
+    arrange(SiteID_detected) %>%
+    distinct()
+  
+  dat$`Short Name` <- factor(dat$`Short Name`, levels = ordered_names$`Short Name`)
+  
+  p2 <- ggplot(dat, aes(x = sample_dt, y = n_detected)) +
     geom_point(aes(size = sum_conc_detect_ppb), alpha = 0.5) +
     scale_size_continuous(range = c(1, 6), breaks = c(0, 5, 10, 20, 40), name = 'Concentration of detected \nchemicals (ppb)') +
-    facet_wrap(~SiteID_detected, ncol = 2, scales = 'free_y') +
+    facet_wrap(~`Short Name`, ncol = 2, scales = 'free_y') +
     theme_bw() +
     labs(x = '', y = 'Number of pesticides detected') +
     scale_y_continuous(expand = expand_scale(mult = c(.15, .25))) +

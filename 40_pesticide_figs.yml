@@ -68,22 +68,22 @@ targets:
     command: boxplot_bysite(sum_conc, target_name, detect_only = TRUE)
     
   figure/sum_conc_by_site_month.png:
-    command: boxplot_bysite_month(sum_conc, target_name)
+    command: boxplot_bysite_month(sum_conc, target_name, site_info)
     
   figure/sum_conc_through_time_by_site.png:
     command: plot_throughtime_bysite(sum_conc, target_name)
     
   figure/sum_conc_by_month_site.png:  
-    command: boxplot_bymonth_site(sum_conc, target_name)
+    command: boxplot_bymonth_site(sum_conc, target_name, site_info)
     
   figure/ndetect_by_site_month.png:
-    command: boxplot_ndetect_bysite_month(sum_conc, target_name)
+    command: boxplot_ndetect_bysite_month(sum_conc, target_name, site_info)
     
   figure/ndetect_by_month_site.png:
-    command: boxplot_ndetect_bymonth_site(sum_conc, target_name) 
+    command: boxplot_ndetect_bymonth_site(sum_conc, target_name, site_info) 
     
   figure/ndetect_through_time_by_site.png:
-    command: plot_nchem_throughtime_bysite(sum_conc, target_name)
+    command: plot_nchem_throughtime_bysite(sum_conc, target_name, site_info)
     
   #figure/nchems_bysitedate.png:
   #  command: plot_nchem_bysitedate(reduced_dat, target_name)
