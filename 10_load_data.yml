@@ -18,6 +18,8 @@ sources:
   - 10_load_data/src/get_tracking.R
   - 10_load_data/src/get_schedules.R
   - 10_load_data/src/get_AOPs.R
+  - 10_load_data/src/process_raw_bench.R
+  - 10_load_data/src/get_chem_info.R
 
 targets:
   10_load_data:
@@ -29,12 +31,15 @@ targets:
       - glyphosate
       - NWIS
       - owc
+      - 10_load_data/benchmarks.csv
       - classes
       - schedules
       - schedule_pCodes
       - benchmarks
+      - benchmarks_hbs
       - exclusions
       - AOP
+      - chem_crosswalk
       
   tracking:
     command: get_tracking_data('10_load_data/cfg/tracking_config.yaml')
@@ -55,6 +60,9 @@ targets:
   pCodesExclude:
     command: get_pCode_exclude("10_load_data/pCodes_Exclude.txt")
 
+  chem_crosswalk:
+    command: get_chem_info('10_load_data/raw/pesticides_s2437_analyte_info.csv')
+  
   classes: 
     command: get_csv("10_load_data/chemical_classes.csv")
     
@@ -79,8 +87,17 @@ targets:
   owc:
     command: filter_owc(NWIS, schedule_pCodes)
     
+  10_load_data/benchmarks.csv:
+    command: process_benchmarks(in_file = '10_load_data/raw/20180305_EPA_ALBenchmarks.csv', out_file = target_name)
+    
+  10_load_data/hbs_levels.csv:
+    command: process_hsbls(in_pesticides = '10_load_data/raw/20180312_hbsl_data_pesticides.csv', in_degradates = '10_load_data/raw/20180312_hbsl_data_pesticide_degradates.csv', out_file = target_name)
+  
   benchmarks:
     command: get_csv("10_load_data/benchmarks.csv")
+    
+  benchmarks_hbs:
+    command: get_csv("10_load_data/hbs_levels.csv")
     
   pCodeInfo:
     command: get_pCode(NWIS)
