@@ -1,0 +1,34 @@
+target_default: 22_merge_data_deg_test
+
+include:
+  - 20_merge_data.yml
+
+packages:
+  - dplyr
+  - tidyr
+  - readr
+  - dataRetrieval
+  - openxlsx
+  
+sources:
+  - 22_merge_data_deg_test/src/merge_data_fix_degs.R
+  
+targets:
+  22_merge_data_deg_test:
+    depends: 
+      - chemicalSummary_deg_meto
+      - chemicalSummary_deg_acet
+      - chemicalSummary_conc_deg_meto
+      - chemicalSummary_conc_deg_acet
+
+  chemicalSummary_deg_meto:
+    command: get_chem_sum_deg("data/pesticides.xlsx", chem_crosswalk, metolachlor = TRUE)
+    
+  chemicalSummary_deg_acet:
+    command: get_chem_sum_deg("data/pesticides.xlsx", chem_crosswalk, metolachlor = FALSE)
+
+  chemicalSummary_conc_deg_meto:
+    command: merge_deg_parents(chemicalSummary_conc, chem_crosswalk, metolachlor = TRUE)
+    
+  chemicalSummary_conc_deg_acet:
+    command: merge_deg_parents(chemicalSummary_conc, chem_crosswalk, metolachlor = FALSE)
