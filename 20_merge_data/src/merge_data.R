@@ -140,6 +140,7 @@ calc_detect_limits <- function(reduced_dat){
   
   return(bdl_summ)
 }
+
 remove_censor <- function(reduced_dat){
   
   reduced_dat$value[reduced_dat$remark_cd == "<"] <- 0
@@ -150,6 +151,7 @@ remove_censor <- function(reduced_dat){
   return(reduced_dat)
   
 }
+
 
 get_special_cas <- function(){
   special_cas <- data.frame(casrn = c("135410-20-7",
@@ -343,7 +345,7 @@ get_chem_sum <- function(data_file){
   ACClong <- get_ACC(tox_list$chem_info$CAS)
   ACClong <- remove_flags(ACClong)
   
-  cleaned_ep <- clean_endPoint_info(endPointInfo)
+  cleaned_ep <- clean_endPoint_info(toxEval::end_point_info)
   filtered_ep <- filter_groups(cleaned_ep)
   
   chemicalSummary <- get_chemical_summary(tox_list, ACClong, filtered_ep)
