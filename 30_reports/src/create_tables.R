@@ -6,7 +6,7 @@ library(tidyr)
 get_siteTables <- function(chemicalSummary, chem_info, site_info, AOP, file_out){
   browser()
   chemicalSummary <- chemicalSummary %>%
-    left_join(select(endPointInfo, 
+    left_join(select(end_point_info, 
                      endPoint=assay_component_endpoint_name,
                      subFamily=intended_target_family_sub,
                      gene_symbol=intended_target_gene_symbol), by="endPoint") %>%

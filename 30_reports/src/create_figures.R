@@ -320,7 +320,7 @@ plot_genes <- function(file_out, chem_info, chem_data, site_info, exclusions, AO
   ACClong <- get_ACC(chem_info$CAS)
   ACClong <- remove_flags(ACClong)
   
-  cleaned_ep <- clean_endPoint_info(endPointInfo)
+  cleaned_ep <- clean_endPoint_info(end_point_info)
   filtered_ep <- filter_groups(cleaned_ep, groupCol = "intended_target_gene_symbol")
 
   chemicalSummary <- get_chemical_summary(tox_list = NULL,
