@@ -1,0 +1,48 @@
+target_default: 21_merge_data_dl
+
+include:
+  - 20_merge_data.yml
+
+packages:
+  - dplyr
+  - tidyr
+  - readr
+  - dataRetrieval
+  - openxlsx
+  
+sources:
+  - 20_merge_data/src/merge_data.R
+  
+targets:
+  21_merge_data_dl:
+    depends: 
+      - data/pesticides_dl.xlsx
+      - data/pesticides_Conc_dl.xlsx
+      - data/pesticides_Bench_dl.xlsx
+      - chemicalSummary_dl
+      - chemicalSummary_bench_dl
+      - chemicalSummary_conc_dl
+    
+  chem_data_dl:
+    command: create_chemData(reduced_dat, pCodeInfo)
+    
+  chem_info_dl:
+    command: create_tox_chemInfo(chem_data_dl, special_cas, pCodeInfo, classes)
+    
+  data/pesticides_dl.xlsx:
+    command: create_toxExcel(chem_data_dl, chem_info_dl, site_info, exclusions, target_name)
+    
+  data/pesticides_Conc_dl.xlsx:
+    command: create_ConcExcel(chem_data_dl, chem_info_dl, site_info, exclusions, target_name)
+    
+  data/pesticides_Bench_dl.xlsx:
+    command: create_WQExcel(chem_data_dl, chem_info_dl, site_info, exclusions, benchmarks, target_name)
+
+  chemicalSummary_dl:
+    command: get_chem_sum("data/pesticides_dl.xlsx")
+
+  chemicalSummary_bench_dl:
+    command: get_chem_bench("data/pesticides_Bench_dl.xlsx")
+
+  chemicalSummary_conc_dl:
+    command: get_conc_summary("data/pesticides_Conc_dl.xlsx")
