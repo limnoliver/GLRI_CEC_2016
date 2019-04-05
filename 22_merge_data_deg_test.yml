@@ -1,7 +1,7 @@
 target_default: 22_merge_data_deg_test
 
 include:
-  - 20_merge_data.yml
+  - 21_merge_data_dl.yml
 
 packages:
   - dplyr
@@ -32,3 +32,6 @@ targets:
     
   chemicalSummary_conc_deg_acet:
     command: merge_deg_parents(chemicalSummary_conc, chem_crosswalk, metolachlor = FALSE)
+    
+  graph_data_deg_parent:
+    command: summarize_deg_parents()

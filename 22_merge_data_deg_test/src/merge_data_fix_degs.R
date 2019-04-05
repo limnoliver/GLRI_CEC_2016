@@ -13,6 +13,20 @@ get_chem_sum_deg <- function(data_file, parents, metolachlor){
   # crosswalk between missing chems and parent compounds
   missing_parents <- left_join(missing, select(parents, CAS, MlWt, parent_pesticide))
   
+  # fix missing parent_pesticide vals
+  missing_parents$parent_pesticide[missing_parents$`Chemical Name` == 'Acetochlor sulfinylacetic acid'] <- 'Acetochlor'
+  missing_parents$parent_pesticide[missing_parents$`Chemical Name` == 'Fipronil amide'] <- 'Fipronil'
+  missing_parents$parent_pesticide[missing_parents$`Chemical Name` == 'Glyphosate'] <- 'Glyphosate'
+  
+  # find out how many sites/samples have missing chem
+  missing_sample_counts <- tox_list$chem_data %>%
+    filter(CAS %in% missing$CAS) %>%
+    group_by(CAS) %>%
+    summarize(sample_count = n(),
+              site_count = length(unique(SiteID)))
+  
+ 
+  
   if (metolachlor == TRUE) {
     missing_parents$parent_pesticide[missing_parents$parent_pesticide == 'Acetochlor/Metolachlor '] <- 'Metolachlor'
   } else {
@@ -51,18 +65,29 @@ merge_deg_parents <- function(conc_dat, parents, metolachlor) {
   
   chems_parents <- filter(parents, CAS %in% chems)
   
-  chems_parents$parent_pesticide[chems_parents$parent_pesticide == 'Acetochlor/Metolachlor'] <- ifelse(metolachlor, 'Metolachlor', 'Acetochlor')
+  conc_dat_parent <- left_join(conc_dat, select(chems_parents, CAS, parent_pesticide))
+  
+  conc_dat_parent$parent_pesticide[conc_dat_parent$parent_pesticide %in% 'Acetochlor/Metolachlor'] <- ifelse(metolachlor, 'Metolachlor', 'Acetochlor')
 
-  conc_dat_parent <- left_join(conc_dat, select(parents, CAS, parent_pesticide))
+  
   
   return(conc_dat_parent)
 }
 
 plot_parent_deg <- function(conc_dat) {
-  head(conc_dat)
+  meto <- select(conc_dat, -CAS) %>%
+    filter(parent_pesticide == 'Metolachlor') %>%
+    tidyr::spread(key = chnm, value = EAR)
+  
+  ggplot(meto, aes(x = ))
+  ggplot(meto, aes(x = shortName, y = EAR)) +
+    geom_boxplot(aes(fill = chnm)) +
+    scale_y_log10()
+      
   
   library(ggplot2)
   
+  head(conc_dat)
   par_deg <- conc_dat %>%
     select(chnm, parent_pesticide) %>%
     distinct() %>%
@@ -82,5 +107,5 @@ plot_parent_deg <- function(conc_dat) {
     coord_flip() +
     scale_y_log10() +
     theme(strip.text.x = element_blank(),
-          axis.text.x = element_text(size = 8))
+          axis.text.y = element_text(size = 6))
 }
