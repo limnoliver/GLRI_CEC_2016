@@ -22,7 +22,7 @@ targets:
       - chemicalSummary_conc_deg_acet
 
   chemicalSummary_deg_meto:
-    command: get_chem_sum_deg("data/pesticides.xlsx", chem_crosswalk, metolachlor = TRUE)
+    command: get_chem_sum_deg(data_file = "data/pesticides.xlsx", parents = chem_crosswalk, metolachlor = TRUE)
     
   chemicalSummary_deg_acet:
     command: get_chem_sum_deg("data/pesticides.xlsx", chem_crosswalk, metolachlor = FALSE)
