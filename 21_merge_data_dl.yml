@@ -23,11 +23,8 @@ targets:
       - chemicalSummary_bench_dl
       - chemicalSummary_conc_dl
     
-  chem_data_dl:
-    command: create_chemData(reduced_dat, pCodeInfo)
-    
   chem_info_dl:
-    command: create_tox_chemInfo(chem_data_dl, special_cas, pCodeInfo, classes)
+    command: create_tox_chemInfo(chem_data_dl, special_cas, pCodeInfo, classes_fixed)
     
   data/pesticides_dl.xlsx:
     command: create_toxExcel(chem_data_dl, chem_info_dl, site_info, exclusions, target_name)

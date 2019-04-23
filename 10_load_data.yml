@@ -20,6 +20,7 @@ sources:
   - 10_load_data/src/get_AOPs.R
   - 10_load_data/src/process_raw_bench.R
   - 10_load_data/src/get_chem_info.R
+  - 10_load_data/src/fix_classes.R
 
 targets:
   10_load_data:
@@ -65,6 +66,9 @@ targets:
   
   classes: 
     command: get_csv("10_load_data/chemical_classes.csv")
+    
+  classes_fixed:
+    command: fix_classes(classes)
     
   schedules:
     command: c(I("2437"), I("4433"))
