@@ -3,7 +3,7 @@ get_chem_sum_deg <- function(data_file, parents, metolachlor){
   tox_list <- create_toxEval(data_file)
   tox_list$chem_data <- filter(tox_list$chem_data, Value != 0)
   
-  ACClong <- get_ACC(tox_list$chem_info$CAS)
+  ACClong <- get_ACC(unique(tox_list$chem_info$CAS))
   ACClong <- remove_flags(ACClong)
   
   # find chems that are not in toxCast
@@ -12,11 +12,7 @@ get_chem_sum_deg <- function(data_file, parents, metolachlor){
   
   # crosswalk between missing chems and parent compounds
   missing_parents <- left_join(missing, select(parents, CAS, MlWt, parent_pesticide))
-  
-  # fix missing parent_pesticide vals
-  missing_parents$parent_pesticide[missing_parents$`Chemical Name` == 'Acetochlor sulfinylacetic acid'] <- 'Acetochlor'
-  missing_parents$parent_pesticide[missing_parents$`Chemical Name` == 'Fipronil amide'] <- 'Fipronil'
-  missing_parents$parent_pesticide[missing_parents$`Chemical Name` == 'Glyphosate'] <- 'Glyphosate'
+
   
   # find out how many sites/samples have missing chem
   missing_sample_counts <- tox_list$chem_data %>%
@@ -45,7 +41,11 @@ get_chem_sum_deg <- function(data_file, parents, metolachlor){
     replace_data <- filter(ACClong, chnm %in% temp_parent) %>%
       mutate(CAS = missing_parents$CAS[i],
              chnm = missing_parents$`Chemical Name`[i],
-             MlWt = missing_parents$MlWt[i])
+             # account for change on MlWt. Acc is calculated as ACC*MolWt of parent,
+             # so need to divide by parent and multiply by degradate MlWt
+             ACC_value = ACC_value*(missing_parents$MlWt[i]/MlWt)) %>%
+      mutate(MlWt = missing_parents$MlWt[i])
+             
     
     fixed_deg <- bind_rows(fixed_deg, replace_data)
   }
@@ -57,6 +57,12 @@ get_chem_sum_deg <- function(data_file, parents, metolachlor){
   filtered_ep <- filter_groups(cleaned_ep)
   
   chemicalSummary <- get_chemical_summary(tox_list, ACClong, filtered_ep)
+  
+  chemicalSummary <- left_join(chemicalSummary, select(parents, CAS, parent_pesticide)) %>%
+    mutate(parent_pesticide = as.character(parent_pesticide))
+  
+  chemicalSummary$parent_pesticide[is.na(chemicalSummary$parent_pesticide)] <- as.character(chemicalSummary$chnm[is.na(chemicalSummary$parent_pesticide)])
+  
   return(chemicalSummary)
 }
 
