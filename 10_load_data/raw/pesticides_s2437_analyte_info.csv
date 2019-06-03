@@ -1,0 +1,272 @@
+Pesticide compound,USGS Parameter code,Analyte ID,Reporting units,MDL (ng/L),LRL (ng/L),Lab Code,CASRN,Molecular weight,Molecular formula,Analytical use,Chemical class,Analytical method group,Pesticide group,Qualifier code,New USGS analyte,,SMILES
+"1H-1,2,4-Triazole ",68498,68498LCM60,ng/L,11,22,9030,116421-29-5,69.1,C2H3N3,Degradate,conazole,fungicide,Propiconazole,E,Yes,,[nH]1cncn1
+2-(1-hydroxyethyl)-6-methylaniline (HEMA),68611,68611LCM60,ng/L,47,94,9030,196611-19-5,151.2,C9H13NO,Degradate,chloroacetanilide,acetanilide & amide,Acetochlor/Metolachlor,E,Yes,,CC1=CC=CC(C(C)O)=C1N
+2-(2-ethyl-6-methyl-phenyl)aminopropan-1-ol,68595,68595LCM60,ng/L,2,5,9030,61520-53-4,193.3,C12H19NO,Degradate,chloroacetanilide,acetanilide & amide,Metolachlor,A,No,,CC(NC1=C(C)C=CC=C1CC)CO
+2-Amino-N-isopropylbenzamide,68503,68503LCM60,ng/L,2,4,9030,30391-89-0,178.2,C10H14N2O,Degradate,"n-heterocycle, thiadiazine degradate",acid,Bentazone,A,No,,CC(C)NC(=O)c1ccccc1N
+2-Aminobenzimidazole,68502,68502LCM60,ng/L,4,9,9030,934-32-7,133.2,C7H7N3,Degradate,benzimidazole,fungicide,Benomyl,A,Yes,,Nc1[nH]c2ccccc2n1
+"2-Chloro-2,6-diethylacetanilide",68525,68525LCM60,ng/L,2,5,9030,6967-29-9,225.7,C12H16ClNO,Degradate,acetanilide degradate,acetanilide & amide,Alachlor,A,No,,CCc1cccc(CC)c1NC(=O)CCl
+2-Chloro-N-(2-ethyl-6-methylphenyl)acetamide,68521,68521LCM60,ng/L,2,5,9030,32428-71-0,211.7,C11H14ClNO,Degradate,chloroacetanilide degradate,acetanilide & amide,Acetochlor/Metolachlor,A,No,,O=C(Nc1c(cccc1CC)C)CCl
+2-Hydroxy-4-isopropylamino-6-amino-s-triazine,68659,68659LCM60,ng/L,2,4,9030,19988-24-0,169.2,C6H11N5O,Degradate,triazine,triazine,Atrazine,A,No,,O=C\1/N=C(/N)NC(=N/1)/NC(C)C
+2-Hydroxy-6-ethylamino-4-amino-s-triazine,68656,68656LCM60,ng/L,3,6,9030,7313-54-4,155.2,C5H9N5O,Degradate,triazine,triazine,Atrazine,A,No,,CCNC1=NC(=O)N=C(N)N1
+2-Hydroxyatrazine,68660,68660LCM60,ng/L,4,8,9030,2163-68-0,197.2,C8H15N5O,Degradate,triazine,triazine,Atrazine,A,No,,CCNC1=NC(=O)N=C(NC(C)C)N1
+"2,3,3-trichloroprop-2-ene-1-SA",68691,68691LCM60,ng/L,27,54,9031,65600-62-6,225.5,C3H3Cl3O3S,Degradate,sulfonic acid ester,carbamate & thiocarbamate,Triallate,A,Yes,,Cl/C(CS(=O)(O)=O)=C(Cl)/Cl
+"2,4-D",68500,68500LCM60,ng/L,31,62,9031,94-75-7,221,C8H6Cl2O3,Pesticide,chlorophenoxy acid,acid,"2,4-D",A,No,,OC(COc1c(Cl)cc(Cl)cc1)=O
+3-Hydroxycarbofuran,68508,68508LCM60,ng/L,8,16,9030,16655-82-6,237.3,C12H15NO4,Degradate,carbamate,carbamate & thiocarbamate,Carbofuran,E,No,,O=C(NC)Oc1c(OC(C)(C)C2O)c2ccc1
+3-Ketocarbofuran,68509,68509LCM60,ng/L,88,176,9030,16709-30-1,235.2,C12H13NO4,Degradate,carbamate,carbamate & thiocarbamate,Carbofuran,D,No,,O=C(NC)Oc1c(OC(C)(C)C2=O)c2ccc1
+3-Phenoxybenzoic acid,68873,68873LCM60,ng/L,30,61,9031,3739-38-6,213.2,C13H9O3-,Degradate,benzoic acid,pyrethroid & phenylpyrazine,Permethrin,A,Yes,,OC(c1cc(Oc2ccccc2)ccc1)=O
+"3,4-Dichlorophenylurea",68226,68226LCM60,ng/L,72,144,9030, 2327-02-8,205,C7H6Cl2N2O,Degradate,urea,sulfonylurea & urea,Diuron,A,No,,NC(=O)Nc1ccc(Cl)c(Cl)c1
+4-(Hydroxymethyl)pendimethalin,68511,68511LCM60,ng/L,106,213,9031,56750-76-6,297.3,C13H19N3O5,Degradate,dinitroaniline,miscellaneous,Pendimethalin,A,No,,CCC(Nc1c([N+]([O-])=O)c(C)c(CO)cc1[N+]([O-])=O)CC
+4-Chlorobenzylmethyl sulfoxide,68514,68514LCM60,ng/L,2,4,9030,-,188.7,C8H9ClOS,Degradate,thiocarbamate,carbamate & thiocarbamate,thiobencarb,A,Yes,,CS(Cc1ccc(Cl)cc1)=O
+4-Hydroxy molinate,68515,68515LCM60,ng/L,3,7,9030,66747-12-4,203.3,C9H17NO2S,Degradate,thiocarbamate,carbamate & thiocarbamate,Molinate,A,Yes,,O=C(N1CCCC(CC1)O)SCC
+4-Hydroxy-tert-fluometuron,68619,68619LCM60,ng/L,10,20,9030,cga236431,220.1,C8H7F3N2O2,Degradate,urea,sulfonylurea & urea,Fluometuron,A,Yes,,NC(Nc1cc(C(F)(F)F)c(O)cc1)=O
+4-Hydroxychlorothalonil,68336,68336LCM60,ng/L,49,98,9031,28343-61-5,245.9,C8HCl3N2O,Degradate,polychlorinated aromatic degradate,fungicide,Chlorothalonil,A,No,,Oc1c(Cl)c(Cl)c(C#N)c(Cl)c1C#N
+4-Hydroxyhexazinone A,68517,68517LCM60,ng/L,1,3,9030,72576-13-7,268.3,C12H20N4O3,Degradate,triazine-dione,triazine,Hexazinone,A,Yes,,CN(C)C1=NC(=O)N(C2CCC(O)CC2)C(=O)N1C
+7-Hydroxycarbofuran,68518,68518LCM60,ng/L,250,500,9030,1563-38-8,164.2,C10H12O2,Degradate,carbamate,carbamate & thiocarbamate,Carbofuran,D,No,,Oc1c(OC(C)(C)C2)c2ccc1
+Acephate,68519,68519LCM60,ng/L,5,10,9030,30560-19-1,183.2,C4H10NO3PS,Pesticide,organophosphate,organophosphate,Acephate,A,Yes,,COP(NC(C)=O)(SC)=O
+Acetochlor,68520,68520LCM60,ng/L,5,10,9030,34256-82-1,269.8,C14H20ClNO2,Pesticide,chloroacetanilide,acetanilide & amide,Acetochlor,A,No,,CCOCN(C(=O)CCl)c1c(C)cccc1CC
+Acetochlor OA,68522,68522LCM60,ng/L,45,90,9031,194992-44-4,265.3,C14H19NO4,Degradate,acetanilide degradate - oxanilic acid,acetanilide & amide,Acetochlor,A,No,,O=C(N(C1=C(CC)C=CC=C1C)COCC)C(O)=O
+Acetochlor SA,68523,68523LCM60,ng/L,50,100,9031,187022-11-3,315.4,C14H21NO5S,Degradate,acetanilide degradate - sulfonic acid,acetanilide & amide,Acetochlor,A,No,,O=S(CC(N(C1=C(CC)C=CC=C1C)COCC)=O)(O)=O
+Acetochlor SAA,68524,68524LCM60,ng/L,88,176,9031,-,341.4,C16H23NO5S,Degradate,acetanilide degradate - sulfynilacetic acid,acetanilide & amide,Acetochlor,A,No,,O=C(CS(C(O)=O)=O)N(c1c(CC)cccc1C)COCC
+Alachlor,65064,65064LCM60,ng/L,4,9,9030,15972-60-8,269.8,C14H20ClNO2,Pesticide,chloroacetanilide,acetanilide & amide,Alachlor,A,No,,CCc1cccc(CC)c1N(COC)C(=O)CCl
+Alachlor OA,68526,68526LCM60,ng/L,42,84,9031,171262-17-2,265.3,C14H19NO4,Degradate,acetanilide degradate - oxanilic acid,acetanilide & amide,Alachlor,A,No,,O=C(N(C1=C(CC)C=CC=C1CC)COC)C(O)=O
+Alachlor SA,68871,68871LCM60,ng/L,100,200,9031,142363-53-9,315.4,C14H21NO5S,Degradate,acetanilide degradate - sulfonic acid,acetanilide & amide,Alachlor,A,No,,CCc1cccc(CC)c1N(COC)C(=O)C[S](O)(=O)=O
+Alachlor SAA,68527,68527LCM60,ng/L,84,169,9031,494847-34-1,341.1,C16H23NO5S,Degradate,chloroacetanilide degradate,acetanilide & amide,Alachlor,A,No,,CCC1=CC=CC(CC)=C1N(C(CS(CC(O)=O)=O)=O)COC
+Aldicarb,68528,68528LCM60,ng/L,4,8,9030,116-06-3,190.3,C7H14N2O2S,Pesticide,carbamate,carbamate & thiocarbamate,Aldicarb,A,No,,CNC(=O)O\N=C\C(C)(C)SC
+Aldicarb sulfone,68529,68529LCM60,ng/L,10,20,9030,1646-88-4,222.3,C7H14N2O4S,Degradate,carbamate degradate - sulfone,carbamate & thiocarbamate,Aldicarb,A,No,,CC([S](=O)(=O)C)(/C=N/OC(=O)NC)C
+Aldicarb sulfoxide,68530,68530LCM60,ng/L,1,3,9030,1646-87-3,206.3,C7H14N2O3S,Degradate,carbamate degradate - sulfoxide,carbamate & thiocarbamate,Aldicarb,A,No,,CC([S](=O)C)(/C=N/OC(=O)NC)C
+Ametryn,68533,68533LCM60,ng/L,1,3,9030,834-12-8,227.3,C9H17N5S,Pesticide,triazine,triazine,Ametryn,A,No,,CCNc1nc(SC)nc(NC(C)C)n1
+Aminopyralid,68534,68534LCM60,ng/L,250,500,9030,150114-71-9,207,C6H4Cl2N2O2,Pesticide,miscellaneous,miscellaneous,Aminopyralid,D,Yes,,Clc1c(nc(Cl)cc1N)C(=O)O
+Ammelide,68535,68535LCM60,ng/L,37,75,9031,645-93-2,128.1,C3H4N4O2,Degradate,triazine,triazine,Atrazine,D,Yes,,NC1=NC(=O)NC(=O)N1
+Asulam,68536,68536LCM60,ng/L,14,28,9030,3337-71-1,230.2,C8H10N2O4S,Pesticide,carbamate,carbamate & thiocarbamate,Asulam,E,Yes,,C1=C(C=CC(=C1)N)[S](=O)(NC(=O)OC)=O
+Atrazine,65065,65065LCM60,ng/L,2,5,9030,1912-24-9,215.7,C8H14ClN5,Pesticide,triazine,triazine,Atrazine,A,No,,CCNc1nc(Cl)nc(NC(C)C)n1
+Azinphos-methyl,65066,65066LCM60,ng/L,4,8,9030,86-50-0,317.3,C10H12N3O3PS2,Pesticide,organophosphate,organophosphate,Azinphos-methyl,A,No,,COP(OC)(SCN1N=Nc2c(C1=O)cccc2)=S
+Azinphos-methyl oxon,68211,68211LCM60,ng/L,7,15,9030,961-22-8,301.3,C10H12N3O4PS,Degradate,organothiophosphate,organophosphate,Azinphos-methyl ,A,No,,COP(OC)(SCN1N=Nc2c(C1=O)cccc2)=O
+Azoxystrobin,66589,66589LCM60,ng/L,1,3,9030,131860-33-8,403.4,C22H17N3O5,Pesticide,strobin,fungicide,Azoxystrobin,A,No,,CO\C=C(C(=O)OC)/c1ccccc1Oc2cc(Oc3ccccc3C#N)ncn2
+Bentazon,68538,68538LCM60,ng/L,5,10,9031,25057-89-0,240.3,C10H12N2O3S,Pesticide,"n-heterocycle, thiadiazine",acid,Bentazone,A,No,,CC(N1C(c2c(NS1(=O)=O)cccc2)=O)C
+Bifenazate,68540,68540LCM60,ng/L,5,10,9030,149877-41-8,300.4,C17H20N2O3,Pesticide,miscellaneous,miscellaneous,Bifenazate,D,Yes,,COc1c(NNC(OC(C)C)=O)cc(c2ccccc2)cc1
+Bifenazate diazene,68541,68541LCM60,ng/L,2,4,9030,149878-40-0,300.4,C17H20N2O3,Degradate,miscellaneous,miscellaneous,Bifenazate,D,Yes,,COc1c(/N=N/C(OC(C)C)=O)cc(c2ccccc2)cc1
+Bifenthrin,65067,65067LCM60,ng/L,9,19,9030,82657-04-3,422.9,C23H22ClF3O2,Pesticide,pyrethroid,pyrethroid & phenylpyrazine,Bifenthrin,E,No,,Cc1c(c2ccccc2)cccc1COC(C3C(C3(C)C)/C=C(C(F)(F)F)\Cl)=O
+Bromacil,68542,68542LCM60,ng/L,3,6,9030,314-40-9,261.1,C9H13BrN2O2,Pesticide,uracil,miscellaneous,Bromacil,A,No,,CCC(C)N1C(=O)NC(=C(Br)C1=O)C
+Bromoxynil,68543,68543LCM60,ng/L,39,79,9031,1689-84-5,276.9,C7H3Br2NO,Pesticide,"phenol, hydroxybenzonitrile",acid,Bromoxynil,A,No,,Oc1c(Br)cc(C#N)cc1Br
+Butralin,68545,68545LCM60,ng/L,2,5,9030,33629-47-9,295.3,C14H21N3O4,Pesticide,dinitroaniline,miscellaneous,Butralin,E,Yes,,CCC(Nc1c([N+]([O-])=O)cc(C(C)(C)C)cc1[N+]([O-])=O)C
+Butylate,65068,65068LCM60,ng/L,3,6,9030,2008-41-5,217.4,C11H23NOS,Pesticide,thiocarbamate,carbamate & thiocarbamate,Butylate,A,No,,O=C(N(CC(C)C)CC(C)C)SCC
+Carbaryl,65069,65069LCM60,ng/L,3,6,9030,63-25-2,201.2,C12H11NO2,Pesticide,carbamate,carbamate & thiocarbamate,Carbaryl,A,No,,O=C(NC)Oc(ccc1)c2c1cccc2
+Carbendazim,68548,68548LCM60,ng/L,1,3,9030,10605-21-7,191.2,C9H9N3O2,Degradate,benzimidazole,fungicide,Benomyl,E,Yes,,COC(=O)Nc1[nH]c2ccccc2n1
+Carbofuran,65070,65070LCM60,ng/L,2,4,9030,1563-66-2,221.3,C12H15NO3,Pesticide,carbamate,carbamate & thiocarbamate,Carbofuran,A,No,,O=C(NC)Oc1c(OC(C)(C)C2)c2ccc1
+Carboxy molinate,68549,68549LCM60,ng/L,11,22,9030,66747-13-5,217.3,C9H15NO3S,Degradate,thiocarbamate,carbamate & thiocarbamate,Molinate,A,Yes,,O=C(N1CCCCCC1)SCC(O)=[o]
+Chlorimuron-ethyl,68872,68872LCM60,ng/L,4,8,9030,90982-32-4,414.8,C15H15ClN4O6S,Pesticide,sulfonylurea,sulfonylurea & urea,Chlorimuron-ethyl,A,No,,CCOC(c1c(S(=O)(NC(Nc2nc(OC)cc(Cl)n2)=O)=O)cccc1)=O
+Chlorosulfonamide acid,68551,68551LCM60,ng/L,37,75,9031,130-45-0,239.6,C5H6ClN3O4S,Degradate,sulfonylurea,sulfonylurea & urea,Halosulfuron-methyl,E,Yes,,OC(C1=C(S(=O)(N)=O)N(C)N=C1Cl)=O
+Chlorpyrifos,65072,65072LCM60,ng/L,2,4,9030,2921-88-2,350.6,C9H11Cl3NO3PS,Pesticide,organothiophosphate,organophosphate,Chlorpyrifos,A,No,,CCOP(OCC)(Oc1c(Cl)cc(Cl)c(Cl)n1)=S
+Chlorpyrifos oxon,68216,68216LCM60,ng/L,2,4,9030,5598-15-2,334.5,C9H11Cl3NO4P,Degradate,organophosphate,organophosphate,Chlorpyrifos,A,No,,CCOP(OCC)(Oc1c(Cl)cc(Cl)c(Cl)n1)=O
+Chlorsulfuron,61678,61678LCM60,ng/L,25,50,9030,64902-72-3,357.8,C12H12ClN5O4S,Pesticide,sulfonylurea,sulfonylurea & urea,Chlorsulfuron,A,No,,COc1nc(NC(NS(=O)(c2c(Cl)cccc2)=O)=O)nc(C)n1
+cis-Cyhalothric acid,68553,68553LCM60,ng/L,43,86,9031,68127-59-3,242.6,C9H10ClF3O2,Degradate,pyrethroid,pyrethroid & phenylpyrazine,Bifenthrin; lambda-cyhalothrin; Tefluthrin,A,Yes,,CC1(C)[C@@H](\C=C(/Cl)C(F)(F)F)[C@H]1C(O)=O
+cis-Permethrin,68769,68769LCM60,ng/L,1,2,9030,61949-76-6,391.3,C21H20Cl2O3,Pesticide,pyrethroid,pyrethroid & phenylpyrazine,Permethrin,A,No,,Cl/C(Cl)=C/[C@H]1[C@H](C1(C)C)C(OCc2cc(Oc3ccccc3)ccc2)=O
+Cyanazine,66592,66592LCM60,ng/L,8,16,9030,21725-46-2,240.7,C9H13ClN6,Pesticide,triazine,triazine,Cyanazine,A,No,,CCNc1nc(Cl)nc(NC(C)(C)C#N)n1
+Dacthal monoacid,68560,68560LCM60,ng/L,250,500,9031,887-54-7,317.9,C9H4Cl4O4,Degradate,chlorobenzoic acid ester,acid,Dacthal,E,No,,COC(c1c(Cl)c(Cl)c(C(O)=O)c(Cl)c1Cl)=O
+Dechlorofipronil,68561,68561LCM60,ng/L,2,4,9031,-,402.7,C12H5ClF6N4OS,Degradate,phenylpyrazole,pyrethroid & phenylpyrazine,Fipronil,A,Yes,,NC1=C(S(C(F)(F)F)=O)C(C#N)=NN1c2c(Cl)cc(C(F)(F)F)cc2
+Dechlorometolachlor,68562,68562LCM60,ng/L,1,2,9030,126605-22-9,249.3,C15H23NO2,Degradate,chloroacetanilide degradate,acetanilide & amide,Metolachlor,A,No,,O=C(C)N(C(C)COC)c1c(CC)cccc1C
+Deethylatrazine,68552,68552LCM60,ng/L,5,11,9030,6190-65-4,187.6,C6H10ClN5,Degradate,triazine,triazine,Atrazine,A,No,,CC(C)Nc1nc(N)nc(Cl)n1
+Deiodo flubendiamide,68563,68563LCM60,ng/L,2,4,9030,-,556.5,C23H23F7N2O4S,Degradate,miscellaneous,miscellaneous,Flubendiamide,A,Yes,,O=C(c1c(C(NC(C)(CS(=O)(C)=O)C)=O)cccc1)Nc2c(C)cc(C(C(F)(F)F)(C(F)(F)F)F)cc2
+Deisopropyl prometryn,68564,68564LCM60,ng/L,1,3,9030,4147-57-3,199.3,C7H13N5S,Degradate,triazine,triazine,Prometryn,A,No,,CSc1nc(N)nc(NC(C)C)n1
+Deisopropylatrazine,68550,68550LCM60,ng/L,10,20,9030,1007-28-9,173.6,C5H8ClN5,Degradate,triazine,triazine,Atrazine,A,No,,CCNc1nc(N)nc(Cl)n1
+Deisopropyliprodione,68565,68565LCM60,ng/L,250,500,9031, 79076-80-5,288.1,C10H7Cl2N3O3,Degradate,dicarboximide,fungicide,Iprodione,D,Yes,,NC(=O)N1CC(=O)N(C1=O)c2cc(Cl)cc(Cl)c2
+Demethyl fluometuron,68591,68591LCM60,ng/L,1,2,9030,3032-40-4,218.2,C9H9F3N2O,Degradate,urea,sulfonylurea & urea,Fluometuron,A,No,,CNC(=O)Nc1cccc(c1)C(F)(F)F
+Demethyl hexazinone B,68566,68566LCM60,ng/L,1,3,9030,56611-54-2,238.3,C11H18N4O2,Degradate,triazine-dione,triazine,Hexazinone,A,Yes,,CNC1=NC(=O)N(C2CCCCC2)C(=O)N1C
+Demethyl norflurazon,68567,68567LCM60,ng/L,2,4,9030,23576-24-1,289.6,C11H7ClF3N3O,Degradate,pyridazinone,miscellaneous,Norflurazon,A,No,,NC1=C(C(N(c2cc(C(F)(F)F)ccc2)N=C1)=O)Cl
+Desulfinylfipronil,66607,66607LCM60,ng/L,2,4,9031,205650-65-3,389.1,C12H4Cl2F6N4,Degradate,phenylpyrazole,pyrethroid & phenylpyrazine,Fipronil,A,No,,NC1=C(C(F)(F)F)C(C#N)=NN1C2=C(Cl)C=C(C(F)(F)F)C=C2Cl
+Desulfinylfipronil amide,68570,68570LCM60,ng/L,4,9,9031,-,407.1,C12H6Cl2F6N4O,Degradate,phenylpyrazole,pyrethroid & phenylpyrazine,Fipronil,A,No,,NC1=C(C(F)(F)F)C(C(N)=O)=NN1C2=C(Cl)C=C(C(F)(F)F)C=C2Cl
+Diazinon,65078,65078LCM60,ng/L,1,3,9030,333-41-5,304.3,C12H21N2O3PS,Pesticide,organothiophosphate,organophosphate,Diazinon,A,No,,CCOP(OCC)(Oc1nc(C(C)C)nc(C)c1)=S
+Diazinon oxon,68236,68236LCM60,ng/L,2,4,9030,962-58-3,288.3,C12H21N2O4P,Degradate,organophosphate,organophosphate,Diazinon,E,No,,CCOP(OCC)(Oc1nc(C(C)C)nc(C)c1)=O
+Dicamba,68571,68571LCM60,ng/L,250,500,9031,1918-00-9,221,C8H6Cl2O3,Pesticide,chlorobenzoic acid,acid,Dicamba,E,No,,COc1c(C(O)=O)c(Cl)ccc1Cl
+Dichlorvos,68572,68572LCM60,ng/L,26,52,9030,62-73-7,221,C4H7Cl2O4P,Degradate,organophosphate,organophosphate,Naled,A,No,,COP(OC)(O/C=C(Cl)/Cl)=O
+Dicrotophos,68573,68573LCM60,ng/L,2,4,9030,141-66-2,237.2,C8H16NO5P,Pesticide,organophosphate,organophosphate,Dicrotophos,A,No,,COP(OC)(O/C(C)=C/C(N(C)C)=O)=O
+Didealkylatrazine,68547,68547LCM60,ng/L,12,24,9030,3397-62-4,145.6,C3H4ClN5,Degradate,triazine,triazine,Atrazine,A,No,,Nc1nc(N)nc(Cl)n1
+Diflubenzuron,68576,68576LCM60,ng/L,3,6,9030,35367-38-5,310.7,C14H9ClF2N2O2,Pesticide,benzoylurea,sulfonylurea & urea,Diflubenzuron,A,Yes,,Fc1cccc(F)c1C(=O)NC(=O)Nc2ccc(Cl)cc2
+Diflufenzopyr,68577,68577LCM60,ng/L,44,88,9031,109293-97-2,334.3,C15H12F2N4O3,Pesticide,urea; Semicarbazone,sulfonylurea & urea,Diflufenzopyr,A,Yes,,C\C(=N/NC(=O)Nc1cc(F)cc(F)c1)c2ncccc2C(O)=O
+Diketonitrile isoxaflutole,68578,68578LCM60,ng/L,31,62,9031,143701-75-1,359.3,C15H12F3NO4S,Degradate,isoxazole degradate,miscellaneous,Isoxaflutole,A,Yes,,O=C(c1c(S(C)(=O)=O)cc(C(F)(F)F)cc1)C(C(C2CC2)=O)C#N
+Dimethenamid,68580,68580LCM60,ng/L,1,3,9030,87674-68-8,275.8,C12H18ClNO2S,Pesticide,amide,acetanilide & amide,Dimethenamid,A,No,,COCC(C)N(C(=O)CCl)c1c(C)scc1C
+Dimethenamid OA,68581,68581LCM60,ng/L,42,85,9031,-,271.3,C12H17NO4S,Degradate,amide degradate - oxanilic acid,acetanilide & amide,Dimethenamid,A,No,,CC1=CSC(C)=C1N(C(C(O)=O)=O)C(COC)C
+Dimethenamid SA,68582,68582LCM60,ng/L,39,79,9031,205939-58-8,321.4,C12H19NO5S2,Degradate,amide degradate - sulfonic acid,acetanilide & amide,Dimethenamid,A,No,,CC1=CSC(C)=C1N(C(CS(=O)(O)=O)=O)C(COC)C
+Dimethenamid SAA,68583,68583LCM60,ng/L,94,189,9031,-,347.5,C14H21NO5S2,Degradate,amide,acetanilide & amide,Dimethenamid,A,Yes,,CC1=CSC(C)=C1N(C(CS(CC(O)=O)=O)=O)C(COC)C
+Dimethoate,66596,66596LCM60,ng/L,1,3,9030,60-51-5,229.3,C5H12NO3PS2,Pesticide,organothiophosphate,organophosphate,Dimethoate,A,No,,CNC(CSP(OC)(OC)=S)=O
+Dimethoate oxon,68661,68661LCM60,ng/L,1,2,9030,1113-02-6,213.2,C5H12NO4PS,Degradate,organothiophosphate,organophosphate,Dimethoate,A,Yes,,O=C(CSP(OC)(OC)=O)NC
+Disulfoton,67595,67595LCM60,ng/L,6,13,9030,298-04-4,274.4,C8H19O2PS3,Pesticide,organothiophosphate,organophosphate,Disulfoton,A,No,,S=P(OCC)(SCCSCC)OCC
+Disulfoton oxon,68586,68586LCM60,ng/L,1,2,9030,126-75-0,258.3,C8H19O3PS2,Degradate,organothiophosphate,organophosphate,Disulfoton,A,Yes,,O=P(OCC)(SCCSCC)OCC
+Disulfoton oxon sulfone,68588,68588LCM60,ng/L,3,7,9030,2496-91-5,290.3,C8H19O5PS2,Degradate,organothiophosphate,organophosphate,Disulfoton,A,Yes,,O=P(OCC)(SCCS(CC)(=O)=O)OCC
+Disulfoton oxon sulfoxide,68587,68587LCM60,ng/L,3,7,9030,2496-92-6,274.3,C8H19O4PS2,Degradate,organothiophosphate,organophosphate,Disulfoton,A,Yes,,O=P(OCC)(SCCS(CC)=O)OCC
+Disulfoton sulfone,68589,68589LCM60,ng/L,4,9,9030,2497-06-5,306.4,C8H19O4PS3,Degradate,organothiophosphate,organophosphate,Disulfoton,A,No,,CCOP(OCC)(SCCS(=O)(CC)=O)=S
+Disulfoton sulfoxide,68590,68590LCM60,ng/L,2,4,9030,2497-07-6,290.4,C8H19O3PS3,Degradate,organothiophosphate,organophosphate,Disulfoton,A,No,,CCOP(OCC)(SCCS(CC)=O)=S
+Diuron,66598,66598LCM60,ng/L,2,5,9030,330-54-1,233.1,C9H10Cl2N2O,Pesticide,urea,sulfonylurea & urea,Diuron,A,No,,CN(C)C(=O)Nc1ccc(Cl)c(Cl)c1
+EPTC,65080,65080LCM60,ng/L,103,206,9030,759-94-4,189.3,C9H19NOS,Pesticide,thiocarbamate,carbamate & thiocarbamate,EPTC,A,No,,CCCN(C(SCC)=O)CCC
+EPTC R248722,68594,68594LCM60,ng/L,2,4,9030,-,205.3,C9H19NO2S,Degradate,thiocarbamate,carbamate & thiocarbamate,EPTC,A,Yes,,CCCN(C(SCC)=O)C(O)CC
+Ethoprop,68596,68596LCM60,ng/L,2,5,9030,13194-48-4,242.3,C8H19O2PS2,Pesticide,organothiophosphate,organophosphate,Ethoprop,A,No,,CCCSP(OCC)(SCCC)=O
+Etoxazole,68598,68598LCM60,ng/L,1,2,9030,153233-91-1,359.4,C21H23F2NO2,Pesticide,diphenyl oxazoline ,miscellaneous,Etoxazole,A,Yes,,CCOc1cc(ccc1C2COC(=N2)c3c(F)cccc3F)C(C)(C)C
+Famoxadone,67609,67609LCM60,ng/L,30,60,9030,131807-57-3,374.4,C22H18N2O4,Pesticide,oxazolidinedione ,fungicide,Famoxadone,E,No,,CC1(OC(=O)N(Nc2ccccc2)C1=O)c3ccc(Oc4ccccc4)cc3
+Fenamiphos,68599,68599LCM60,ng/L,1,2,9030,22224-92-6,303.4,C13H22NO3PS,Pesticide,organophosphate,organophosphate,Fenamiphos,A,No,,CCOP(NC(C)C)(Oc1cc(C)c(SC)cc1)=O
+Fenamiphos sulfone,68600,68600LCM60,ng/L,2,5,9030,31972-44-8,335.4,C13H22NO5PS,Degradate,organophosphate,organophosphate,Fenamiphos,A,No,,CCOP(NC(C)C)(Oc1cc(C)c(S(C)(=O)=O)cc1)=O
+Fenamiphos sulfoxide,68601,68601LCM60,ng/L,2,5,9030,31972-43-7,319.4,C13H22NO4PS,Degradate,organophosphate,organophosphate,Fenamiphos,A,No,,CCOP(NC(C)C)(Oc1cc(C)c(S(C)=O)cc1)=O
+Fenbutatin oxide,68602,68602LCM60,ng/L,10,20,9030,13356-08-6,1052.7,C60H78OSn2,Pesticide,organotin,miscellaneous,Fenbutatin oxide,E,Yes,,O(|[Sn](CC(C)(C)c1ccccc1)(CC(C)(C)c2ccccc2)CC(C)(C)c3ccccc3)|[Sn](CC(C)(C)c4ccccc4)(CC(C)(C)c5ccccc5)CC(C)(C)c6ccccc6
+Fentin,68603,68603LCM60,ng/L,8,16,9030,668-34-8,350,C18H15Sn,Pesticide,organotin,fungicide,Fentin,A,Yes,,O|[Sn](c1ccccc1)(c2ccccc2)c3ccccc3
+Fipronil,66604,66604LCM60,ng/L,2,4,9031,120068-37-3,437.1,C12H4Cl2F6N4OS,Pesticide,phenylpyrazole,pyrethroid & phenylpyrazine,Fipronil,A,No,,C1=C(C(F)(F)F)C=C(C(=C1Cl)[N]2C(=C([S](C(F)(F)F)=O)C(=N2)C#N)N)Cl
+Fipronil amide,68604,68604LCM60,ng/L,4,9,9031,-,455.2,C12H6Cl2F6N4O2S,Degradate,phenylpyrazole,pyrethroid & phenylpyrazine,Fipronil,A,Yes,,FC(F)(F)S(=O)c2c(nn(c1c(Cl)cc(cc1Cl)C(F)(F)F)c2N)C(=O)N
+Fipronil sulfide,66610,66610LCM60,ng/L,2,4,9031,120067-83-6,421.1,C12H4Cl2F6N4S,Degradate,phenylpyrazole,pyrethroid & phenylpyrazine,Fipronil,A,No,,NC1=C(SC(F)(F)F)C(C#N)=NN1C2=C(Cl)C=C(C(F)(F)F)C=C2Cl
+Fipronil sulfonate,68605,68605LCM60,ng/L,48,96,9031,209248-72-6,401.1,C11H4Cl2F3N4O3S,Degradate,phenylpyrazole,pyrethroid & phenylpyrazine,Fipronil,A,Yes,,NC1=C(S(=O)(O)=O)C(C#N)=NN1c2c(Cl)cc(C(F)(F)F)cc2Cl
+Fipronil sulfone,66613,66613LCM60,ng/L,2,4,9031,120068-36-2,453.1,C12H4Cl2F6N4O2S,Degradate,phenylpyrazole,pyrethroid & phenylpyrazine,Fipronil,A,No,,NC1=C(S(=O)(C(F)(F)F)=O)C(C#N)=NN1c2c(Cl)cc(C(F)(F)F)cc2Cl
+Flubendiamide,68606,68606LCM60,ng/L,2,5,9031,272451-65-7,682.4,C23H22F7IN2O4S,Pesticide,miscellaneous,miscellaneous,Flubendiamide,A,Yes,,C1=C(C(F)(C(F)(F)F)C(F)(F)F)C=CC(=C1C)NC(=O)C2=C(C(=O)NC(C[S](=O)(=O)C)(C)C)C(=CC=C2)I
+Flumetsulam,61679,61679LCM60,ng/L,8,17,9030,98967-40-9,325.3,C12H9F2N5O2S,Pesticide,triazolopyrimidine,miscellaneous,Flumetsulam,E,No,,Cc1nc2n(N=C(S(=O)(Nc3c(F)cccc3F)=O)N=2)cc1
+Flumiclorac-pentyl,68607,68607LCM60,ng/L,2,5,9030,87546-18-7,423.9,C21H23ClFNO5,Pesticide,phthalimide,miscellaneous,flumiclorac-pentyl,D,Yes,,CCCCCOC(COc1c(Cl)cc(F)c(N2C(C3=C(C2=O)CCCC3)=O)c1)=O
+Fluometuron,68608,68608LCM60,ng/L,1,3,9030,2164-17-2,232.2,C10H11F3N2O,Pesticide,urea,sulfonylurea & urea,Fluometuron,A,No,,CN(C)C(=O)Nc1cccc(c1)C(F)(F)F
+Fonofos,65084,65084LCM60,ng/L,5,11,9030,944-22-9,246.3,C10H15OPS2,Pesticide,organothiophosphate,organophosphate,Fonofos,A,No,,CCOP(CC)(Sc1ccccc1)=S
+Formetanate,68609,68609LCM60,ng/L,1,3,9030,22259-30-9,221.3,C11H15N3O2,Pesticide,carbamate,carbamate & thiocarbamate,Formetanate,D,Yes,,O=C(NC)Oc1cc(/N=C/N(C)C)ccc1
+Halosulfuron-methyl,61680,61680LCM60,ng/L,11,22,9030,100784-20-1,434.8,C13H15ClN6O7S,Pesticide,sulfonylurea,sulfonylurea & urea,Halosulfuron-methyl,A,No,,COC(C1=C(S(=O)(NC(Nc2nc(OC)cc(OC)n2)=O)=O)N(C)N=C1Cl)=O
+Hexazinone,65085,65085LCM60,ng/L,1,3,9030,51235-04-2,252.3,C12H20N4O2,Pesticide,triazine-dione,triazine,Hexazinone,A,No,,CN(C)C1=NC(=O)N(C2CCCCC2)C(=O)N1C
+Hexazinone TP C,68612,68612LCM60,ng/L,1,2,9030,72585-88-7,254.3,C11H18N4O3,Degradate,triazine-dione,triazine,Hexazinone,A,Yes,,CNC1=NC(=O)N(C2CCC(O)CC2)C(=O)N1C
+Hexazinone TP D,68613,68613LCM60,ng/L,100,200,9031,30243-77-7,225.2,10H15N3O3,Degradate,triazine-dione,triazine,Hexazinone,E,Yes,,O=C1NC(N(C(N1C)=O)C2CCCCC2)=O
+Hexazinone TP E,68614,68614LCM60,ng/L,38,76,9031,72576-14-8,241.2,C10H15N3O4,Degradate,triazine-dione,triazine,Hexazinone,A,Yes,,CN1C(=O)NC(=O)N(C2CCC(O)CC2)C1=O
+Hexazinone TP F,68574,68574LCM60,ng/L,5,10,9030,-,224.3,C10H16N4O2,Degradate,triazine-dione,triazine,Hexazinone,A,Yes,,NC1=NC(N(C(N1C)=O)C2CCCCC2)=O
+Hexazinone TP G,68713,68713LCM60,ng/L,11,22,9030,-,224.3,C10H16N4O2,Degradate,triazine-dione,triazine,Hexazinone,A,Yes,,O=C(N(C(N1)=O)C2CCCCC2)N=C1NC
+Hydroxy mono demethyl fluometuron,68617,68617LCM60,ng/L,5,10,9030,-,234.2,C9H9F3N2O2,Degradate,urea,sulfonylurea & urea,Fluometuron,A,Yes,,O=C(Nc1cc(C(F)(F)F)c(O)cc1)NC
+Hydroxyacetochlor,68615,68615LCM60,ng/L,4,9,9030,60090-47-3,251.3,C14H21NO3,Degradate,chloroacetanilide degradate,acetanilide & amide,Acetochlor,A,No,,CCC1=CC=CC(C)=C1N(C(CO)=O)COCC
+Hydroxyalachlor,68616,68616LCM60,ng/L,4,8,9030,56681-55-1,251.3,C14H21NO3,Degradate,chloroacetanilide degradate,acetanilide & amide,Alachlor,A,No,,CCc1cccc(CC)c1N(COC)C(=O)CO
+Hydroxydiazinon,68618,68618LCM60,ng/L,5,11,9030,29820-16-4,320.3,C12H21N2O4PS,Degradate,organothiophosphate,organophosphate,Diazinon,A,Yes,,S=P(OCC)(Oc1cc(C)nc(C(C)(C)O)n1)OCC
+Hydroxyfluometuron,68620,68620LCM60,ng/L,4,8,9030,-,248.2,C10H11F3N2O2,Degradate,urea,sulfonylurea & urea,Fluometuron,A,Yes,,O=C(Nc1cc(C(F)(F)F)c(O)cc1)N(C)C
+Hydroxymetolachlor,68622,68622LCM60,ng/L,1,2,9030,131068-72-9,265.4,C15H23NO3,Degradate,chloroacetanilide degradate,acetanilide & amide,Metolachlor,A,No,,CC(COC)N(C(CO)=O)C1=C(CC)C=CC=C1C
+Hydroxyphthalazinone,68623,68623LCM60,ng/L,23,46,9030,-,177.2,C8H7N3O2,Degradate,urea; Semicarbazone,sulfonylurea & urea,Diflufenzopyr,A,Yes,,O=C1c2c(C(CO)=NN1)nccc2
+Hydroxysimazine,68624,68624LCM60,ng/L,1,3,9030,2599-11-3,183.2,C7H13N5O,Degradate,triazine,triazine,Simazine,A,No,,CCNC1=NC(=O)N=C(NCC)N1
+Hydroxytebuthurion,68621,68621LCM60,ng/L,5,11,9030,59962-54-8,244.3,C9H16N4O2S,Degradate,urea,sulfonylurea & urea,Tebuthiuron,A,Yes,,CN(C(=O)NCO)c1sc(nn1)C(C)(C)C
+Imazamox,68625,68625LCM60,ng/L,14,28,9030,114311-32-9,305.3,C15H19N3O4,Pesticide,imidazolinone,miscellaneous,Imazamox,A,Yes,,COCc1cc(C(O)=O)c(C2=NC(C(C)C)(C(N2)=O)C)nc1
+Imazaquin,61682,61682LCM60,ng/L,9,19,9030,81335-37-7,311.3,C17H17N3O3,Pesticide,imidazolinone,miscellaneous,Imazaquin,A,No,,CC(C1(N=C(c(n2)c(C(O)=O)cc3c2cccc3)NC1=O)C)C
+Imazethapyr,61683,61683LCM60,ng/L,10,20,9030,81335-77-5,289.3,C15H19N3O3,Pesticide,imidazolinone,miscellaneous,Imazethapyr,A,No,,CCc1cc(C(O)=O)c(C2=NC(C(C)C)(C(N2)=O)C)nc1
+Imidacloprid,68426,68426LCM60,ng/L,5,11,9030,138261-41-3,255.7,C9H10ClN5O2,Pesticide,neonicotinoid,miscellaneous,Imidacloprid,A,No,,[O-][N+](NC1=NCCN1Cc2cnc(Cl)cc2)=O
+Indoxacarb,68627,68627LCM60,ng/L,4,8,9030,173584-44-6,527.8,C22H17ClF3N3O7,Pesticide,oxadiazine ,miscellaneous,Indoxacarb,A,Yes,,COC(=O)N(C(=O)N1CO[C@]2(Cc3cc(Cl)ccc3C2=N1)C(=O)OC)c4ccc(OC(F)(F)F)cc4
+Iprodione,66617,66617LCM60,ng/L,1000,2000,9031,36734-19-7,330.2,C13H13Cl2N3O3,Pesticide,dicarboximide,fungicide,Iprodione,D,No,,CC(C)NC(=O)N1CC(=O)N(C1=O)c2cc(Cl)cc(Cl)c2
+Isoxaflutole,68632,68632LCM60,ng/L,6,13,9030,141112-29-0,359.3,C15H12F3NO4S,Pesticide,isoxazole,miscellaneous,Isoxaflutole,A,No,,CS(=O)(c1c(C(c2c(C3CC3)onc2)=O)ccc(C(F)(F)F)c1)=O
+Isoxaflutole acid RPA 203328,68633,68633LCM60,ng/L,4,9,9031,142994-06-7,268.2,C9H7F3O4S,Degradate,isoxazole degradate,miscellaneous,Isoxaflutole,A,Yes,,FC(F)(c1cc(S(C)(=O)=O)c(C(O)=O)cc1)F
+Kresoxim-methyl,67670,67670LCM60,ng/L,2,5,9030,143390-89-0,313.3,C18H19NO4,Pesticide,strobin,fungicide,Kresoxim-methyl,A,No,,CO\N=C(C(=O)OC)/c1ccccc1COc2ccccc2C
+Lactofen,68638,68638LCM60,ng/L,1,3,9030,77501-63-4,461.8,C19H15ClF3NO7,Pesticide,diphenyl eher,miscellaneous,Lactofen,E,Yes,,Clc2cc(ccc2Oc1cc(C(=O)OC(C(=O)OCC)C)c([N+]([O-])=O)cc1)C(F)(F)F
+Linuron,68639,68639LCM60,ng/L,3,6,9030,330-55-2,249.1,C9H10Cl2N2O2,Pesticide,urea,sulfonylurea & urea,Linuron,A,No,,CON(C)C(=O)Nc1ccc(Cl)c(Cl)c1
+Malaoxon,68240,68240LCM60,ng/L,1,3,9030,1634-78-2,314.3,C10H19O7PS,Degradate,organothiophosphate,organophosphate,Malathion,A,No,,CCOC(CC(C(OCC)=O)SP(OC)(OC)=O)=O
+Malathion,65087,65087LCM60,ng/L,2,6,9030,121-75-5,330.4,C10H19O6PS2,Pesticide,organothiophosphate,organophosphate,Malathion,A,No,,CCOC(CC(C(OCC)=O)SP(OC)(OC)=S)=O
+MCPA,68641,68641LCM60,ng/L,48,95,9031,94-74-6,200.6,C9H9ClO3,Pesticide,chlorophenoxy acid,acid,MCPA,A,No,,Cc1c(OCC(O)=O)ccc(Cl)c1
+Metalaxyl,68437,68437LCM60,ng/L,3,6,9030,57837-19-1,279.3,C15H21NO4,Pesticide,substituted dimethyl aniline,fungicide,Metalaxyl,A,No,,COCC(=O)N(C(C)C(=O)OC)c1c(C)cccc1C
+Metconazole,66620,66620LCM60,ng/L,2,5,9030,125116-23-6,319.8,C17H22ClN3O,Pesticide,conazole,fungicide,Metconazole,A,No,,CC1(C)CCC(Cc2ccc(Cl)cc2)C1(O)Cn3cncn3
+Methamidophos,68644,68644LCM60,ng/L,1,3,9030,10265-92-6,141.1,C2H8NO2PS,Pesticide,organothiophosphate,organophosphate,Methamidophos,A,Yes,,COP(N)(SC)=O
+Methidathion,65088,65088LCM60,ng/L,5,10,9030,950-37-8,302.3,C6H11N2O4PS3,Pesticide,organothiophosphate,organophosphate,Methidathion,A,No,,COC1=NN(C(S1)=O)CSP(OC)(OC)=S
+Methomyl,68645,68645LCM60,ng/L,1,3,9030,16752-77-5,162.2,C5H10N2O2S,Pesticide,carbamate,carbamate & thiocarbamate,Methomyl,A,No,,O=C(NC)O/N=C(C)/SC
+Methomyl oxime,68646,68646LCM60,ng/L,39,78,9030,13749-94-5,105.2,C3H7NOS,Degradate,carbamate degradate - oxime,carbamate & thiocarbamate,Methomyl,A,No,,O/N=C(C)/SC
+Methoxyfenozide,68647,68647LCM60,ng/L,1,2,9030,161050-58-4,368.5,C22H28N2O3,Pesticide,diacylhydrazine ,miscellaneous,Methoxyfenozide,A,Yes,,COc1cccc(C(=O)NN(C(=O)c2cc(C)cc(C)c2)C(C)(C)C)c1C
+Metolachlor,65090,65090LCM60,ng/L,4,9,9030,51218-45-2,283.8,C15H22ClNO2,Pesticide,chloroacetanilide,acetanilide & amide,Metolachlor,A,No,,CCc1cccc(C)c1N(C(C)COC)C(=O)CCl
+Metolachlor hydroxy morpholinone,68649,68649LCM60,ng/L,3,7,9030,61520-54-5,249.3,C14H19NO3,Degradate,chloroacetanilide,acetanilide & amide,Metolachlor,A,Yes,,CC(COC1O)N(C1=O)C2=C(CC)C=CC=C2C
+Metolachlor OA,68650,68650LCM60,ng/L,74,149,9031,152019-73-3,279.3,C15H21NO4,Degradate,acetanilide degradate - oxanilic acid,acetanilide & amide,Metolachlor,A,No,,O=C(N(C1=C(CC)C=CC=C1C)C(COC)C)C(O)=O
+Metolachlor SA,68651,68651LCM60,ng/L,34,68,9031,171118-09-5,329.4,C15H23NO5S,Degradate,acetanilide degradate - sulfonic acid,acetanilide & amide,Metolachlor,A,No,,O=S(CC(N(C1=C(CC)C=CC=C1C)C(COC)C)=O)(O)=O
+Metribuzin,68652,68652LCM60,ng/L,10,20,9030,21087-64-9,214.3,C8H14N4OS,Pesticide,triazinone,triazine,Metribuzin,A,No,,CSC1=NN=C(C(=O)N1N)C(C)(C)C
+Metribuzin DA,68568,68568LCM60,ng/L,4,9,9030,35045-02-4,199.3,C8H13N3OS,Degradate,triazine-dione,triazine,Metribuzin,A,Yes,,CSC1=NC(=O)C(=NN1)C(C)(C)C
+Metribuzin DADK,68569,68569LCM60,ng/L,100,200,9031,52236-30-3,169.2,C7H11N3O2,Degradate,triazine-dione,triazine,Metribuzin,A,Yes,,CC(C)(C)C1=NNC(=O)NC1=O
+Metribuzin DK,68653,68653LCM60,ng/L,100,200,9031,56507-37-0,184.2,C7H12N4O2,Degradate,triazine-dione,triazine,Metribuzin,A,Yes,,CC(C)(C)C1=NNC(=O)N(N)C1=O
+Molinate,65091,65091LCM60,ng/L,9,18,9030,2212-67-1,187.3,C9H17NOS,Pesticide,thiocarbamate,carbamate & thiocarbamate,Molinate,A,No,,CCSC(N1CCCCCC1)=O
+Myclobutanil,66632,66632LCM60,ng/L,3,7,9030,88671-89-0,288.8,C15H17ClN4,Pesticide,conazole,fungicide,Myclobutanil,A,No,,CCCCC(Cn1cncn1)(C#N)c2ccc(Cl)cc2
+"N-(3,4-Dichlorophenyl)-N-methylurea",68231,68231LCM60,ng/L,2,5,9030,3567-62-2,219.1,C8H8Cl2N2O,Degradate,urea,sulfonylurea & urea,Diuron,A,No,,CNC(=O)Nc1ccc(Cl)c(Cl)c1
+Naled,68654,68654LCM60,ng/L,15,30,9030,300-76-5,380.8,C4H7Br2Cl2O4P,Pesticide,organophosphate,organophosphate,Naled,E,No,,COP(OC)(OC(C(Cl)(Br)Cl)Br)=O
+Nicosulfuron,61685,61685LCM60,ng/L,7,14,9030,111991-09-4,410.4,C15H18N6O6S,Pesticide,sulfonylurea,sulfonylurea & urea,Nicosulfuron,A,No,,COc1nc(NC(NS(=O)(c2c(C(N(C)C)=O)cccn2)=O)=O)nc(OC)c1
+Norflurazon,67685,67685LCM60,ng/L,2,4,9030,27314-13-2,303.7,C12H9ClF3N3O,Pesticide,pyridazinone,miscellaneous,Norflurazon,A,No,,CNC1=C(C(N(c2cc(C(F)(F)F)ccc2)N=C1)=O)Cl
+Novaluron,68655,68655LCM60,ng/L,4,9,9030,116714-46-6,492.7,C17H9ClF8N2O4,Pesticide,benzoylurea,sulfonylurea & urea,Novaluron,E,Yes,,FC(OC(F)(F)F)C(F)(F)Oc1ccc(NC(=O)NC(=O)c2c(F)cccc2F)cc1Cl
+O-Ethyl-O-methyl-S-propyl phosphorothioate,68597,68597LCM60,ng/L,2,5,9030,76960-87-7,198.2,C6H15O3PS,Degradate,organophosphate,organophosphate,Ethoprop,A,No,,O=P(OC)(SCCC)OCC
+O-Ethyl-S-methyl-S-propyl phosphorodithioate,68657,68657LCM60,ng/L,2,4,9030,76936-72-6,214.3,C6H15O2PS2,Degradate,organophosphate,organophosphate,Ethoprop,A,Yes,,O=P(SC)(SCCC)OCC
+O-Ethyl-S-propyl phosphorothioate,68658,68658LCM60,ng/L,32,64,9030,31110-62-0,184.2,C5H13O3PS,Degradate,organophosphate,organophosphate,Ethoprop,A,Yes,,O=P(O)(SCCC)OCC
+Orthosulfamuron,68662,68662LCM60,ng/L,3,6,9030,213464-77-8,424.4,C16H20N6O6S,Pesticide,sulfonylurea,sulfonylurea & urea,Orthosulfamuron,A,Yes,,O=C(NS(=O)(Nc1c(C(N(C)C)=O)cccc1)=O)Nc2nc(OC)cc(OC)n2
+Oryzalin,68663,68663LCM60,ng/L,5,11,9031,19044-88-3,346.4,C12H18N4O6S,Pesticide,dinitroaniline,miscellaneous,Oryzalin,A,No,,CCCN(c1c([N+]([O-])=O)cc(S(N)(=O)=O)cc1[N+]([O-])=O)CCC
+Oxamyl,68664,68664LCM60,ng/L,1,2,9030,23135-22-0,219.3,C7H13N3O3S,Pesticide,carbamate,carbamate & thiocarbamate,Oxamyl,A,No,,O=C(N(C)C)/C(SC)=N\OC(NC)=O
+Oxamyl oxime,68665,68665LCM60,ng/L,1,2,9030,30558-43-1,162.2,C5H10N2O2S,Degradate,carbamate degradate - oxime,carbamate & thiocarbamate,Oxamyl,A,No,,O=C(/C(SC)=N\O)N(C)C
+Oxyfluorfen,65093,65093LCM60,ng/L,250,500,9030,42874-03-3,361.7,C15H11ClF3NO4,Pesticide,diphenyl ether,miscellaneous,Oxyfluorfen,E,No,,CCOc1c([N+]([O-])=O)ccc(Oc2c(Cl)cc(C(F)(F)F)cc2)c1
+Paraoxon,68666,68666LCM60,ng/L,2,4,9030,311-45-5,275.2,C10H14NO6P,Degradate,organothiophosphate,organophosphate,Parathion-ethyl,A,No,,O=P(OCC)(Oc1ccc([N+]([O-])=O)cc1)OCC
+Paraoxon-methyl,68648,68648LCM60,ng/L,9,19,9030,950-35-6,247.1,C8H10NO6P,Degradate,organothiophosphate,organophosphate,Parathion-methyl,A,No,,COP(OC)(Oc1ccc([N+]([O-])=O)cc1)=O
+Parathion-methyl,65089,65089LCM60,ng/L,250,500,9030,298-00-0,263.2,C8H10NO5PS,Pesticide,organothiophosphate,organophosphate,Parathion-methyl,E,No,,COP(OC)(Oc1ccc([N+]([O-])=O)cc1)=S
+Pendimethalin,65098,65098LCM60,ng/L,1,3,9030,40487-42-1,281.3,C13H19N3O4,Pesticide,dinitroaniline,miscellaneous,Pendimethalin,A,No,,CCC(Nc1c([N+]([O-])=O)c(C)c(C)cc1[N+]([O-])=O)CC
+Phorate,68668,68668LCM60,ng/L,3,6,9030,298-02-2,260.4,C7H17O2PS3,Pesticide,organothiophosphate,organophosphate,Phorate,A,No,,CCOP(OCC)(SCSCC)=S
+Phorate oxon,68669,68669LCM60,ng/L,2,4,9030,2600-69-3,244.3,C7H17O3PS2,Degradate,organothiophosphate,organophosphate,Phorate,A,No,,CCOP(OCC)(SCSCC)=O
+Phorate oxon sulfone,68670,68670LCM60,ng/L,10,20,9030,2588-06-9,276.3,C7H17O5PS2,Degradate,organothiophosphate,organophosphate,Phorate,A,Yes,,CCOP(OCC)(SCS(CC)(=O)=O)=O
+Phorate oxon sulfoxide,68671,68671LCM60,ng/L,3,7,9030,2588-05-8,260.3,C7H17O4PS2,Degradate,organothiophosphate,organophosphate,Phorate,A,Yes,,CCOP(OCC)(SCS(CC)=O)=O
+Phorate sulfone,68672,68672LCM60,ng/L,4,9,9030,2588-04-7,292.4,C7H17O4PS3,Degradate,organothiophosphate,organophosphate,Phorate,A,No,,CCOP(OCC)(SCS(CC)(=O)=O)=S
+Phorate sulfoxide,68673,68673LCM60,ng/L,2,5,9030,2588-03-6,276.4,C7H17O3PS3,Degradate,organothiophosphate,organophosphate,Phorate,A,No,,CCOP(OCC)(SCS(CC)=O)=S
+Phosmet,65101,65101LCM60,ng/L,10,20,9030,732-11-6,317.3,C11H12NO4PS2,Pesticide,organothiophosphate,organophosphate,Phosmet,E,No,,COP(OC)(SCN1C(c2c(C1=O)cccc2)=O)=S
+Phosmet oxon,68674,68674LCM60,ng/L,10,21,9030,3735-33-9,301.3,C11H12NO5PS,Degradate,organothiophosphate,organophosphate,Phosmet,D,No,,COP(OC)(SCN1C(c2c(C1=O)cccc2)=O)=O
+Phthalazinone,68675,68675LCM60,ng/L,3,6,9030,-,161.2,C8H7N3O,Degradate,urea; Semicarbazone,sulfonylurea & urea,Diflufenzopyr,A,Yes,,OC1=NN=C(C)C2=NC=CC=C21
+Piperonyl butoxide,65102,65102LCM60,ng/L,2,4,9030,51-03-6,338.4,C19H30O5,Pesticide,miscellaneous,pyrethroid & phenylpyrazine,Piperonyl butoxide,A,No,,CCCCOCCOCCOCc1c(CCC)cc2c(OCO2)c1
+Profenofos,68676,68676LCM60,ng/L,1,3,9030,41198-08-7,373.6,C11H15BrClO3PS,Pesticide,organothiophosphate,organophosphate,Profenofos,A,No,,CCCSP(OCC)(Oc1c(Cl)cc(Br)cc1)=O
+Prometon,67702,67702LCM60,ng/L,2,4,9030,1610-18-0,225.3,C10H19N5O,Pesticide,triazine,triazine,Prometon,A,No,,COc1nc(NC(C)C)nc(NC(C)C)n1
+Prometryn,65103,65103LCM60,ng/L,1,2,9030,7287-19-6,241.4,C10H19N5S,Pesticide,triazine,triazine,Prometryn,A,No,,CSc1nc(NC(C)C)nc(NC(C)C)n1
+Pronamide,67706,67706LCM60,ng/L,2,4,9030,23950-58-5,256.1,C12H11Cl2NO,Pesticide,amide,acetanilide & amide,Pronamide,A,No,,CC(C)(NC(=O)c1cc(Cl)cc(Cl)c1)C#C
+Propanil,66641,66641LCM60,ng/L,5,11,9030,709-98-8,218.1,C9H9Cl2NO,Pesticide,acetanilide,acetanilide & amide,Propanil,A,No,,CCC(=O)Nc1ccc(Cl)c(Cl)c1
+Propargite,68677,68677LCM60,ng/L,1,2,9030,2312-35-8,350.5,C19H26O4S,Pesticide,sulfite ester,miscellaneous,Propargite,A,No,,CC(C)(c1ccc(OC2CCCCC2OS(OCC#C)=O)cc1)C
+Propazine,68678,68678LCM60,ng/L,2,4,9030,139-40-2,229.7,C9H16ClN5,Pesticide,triazine,triazine,Propazine,A,No,,CC(C)Nc1nc(Cl)nc(NC(C)C)n1
+Propiconazole,66643,66643LCM60,ng/L,3,6,9030,60207-90-1,342.2,C15H17Cl2N3O2,Pesticide,conazole,fungicide,Propiconazole,A,No,,CCCC1COC(Cn2cncn2)(O1)c3ccc(Cl)cc3Cl
+Propoxur,68679,68679LCM60,ng/L,2,4,9030,114-26-1,209.2,C11H15NO3,Pesticide,carbamate,carbamate & thiocarbamate,Propoxur,A,No,,O=C(NC)Oc1c(OC(C)C)cccc1
+Prosulfuron,61687,61687LCM60,ng/L,5,10,9030,94125-34-5,419.4,C15H16F3N5O4S,Pesticide,sulfonylurea,sulfonylurea & urea,Prosulfuron,A,No,,COc1nc(NC(NS(=O)(c2c(CCC(F)(F)F)cccc2)=O)=O)nc(C)n1
+Pymetrozine,68680,68680LCM60,ng/L,1,2,9030,123312-89-0,217.2,C10H11N5O,Pesticide,pyridine azomethines,miscellaneous,Pymetrozine,A,Yes,,CC1=NNC(=O)N(C1)\N=C\c2cccnc2
+Pyraclostrobin,66646,66646LCM60,ng/L,1,3,9030,175013-18-0,387.8,C19H18ClN3O4,Pesticide,strobin,fungicide,Pyraclostrobin,A,No,,CON(C(=O)OC)c1ccccc1COc2ccn(n2)c3ccc(Cl)cc3
+Pyridaben,68682,68682LCM60,ng/L,1,3,9030,96489-71-3,364.9,C19H25ClN2OS,Pesticide,pyridazinone,miscellaneous,Pyridaben,A,Yes,,CC(C)(C)N1N=CC(=C(Cl)C1=O)SCc2ccc(cc2)C(C)(C)C
+Pyrimidinol,68505,68505LCM60,ng/L,10,20,9030,2814-20-2,152.2,C8H12N2O,Degradate,organothiophosphate,organophosphate,Diazinon,A,Yes,,Oc1cc(C)nc(C(C)C)n1
+Pyriproxyfen,68683,68683LCM60,ng/L,1,3,9030,95737-68-1,321.4,C20H19NO3,Pesticide,hormone mimic,miscellaneous,Pyriproxyfen,A,Yes,,CC(COc1ccc(Oc2ccccc2)cc1)Oc3ccccn3
+sec-Acetochlor-OA,68684,68684LCM60,ng/L,26,52,9031,152019-74-4,207.2,C11H13NO3,Degradate,chloroacetanilide,acetanilide & amide,Acetochlor/Metolachlor,A,Yes,,O=C(NC1=C(CC)C=CC=C1C)C(O)=O
+sec-Alachlor-OA,68685,68685LCM60,ng/L,68,135,9031,-,221.3,C12H15NO3,Degradate,chloroacetanilide,acetanilide & amide,Alachlor,A,Yes,,O=C(NC1=C(CC)C=CC=C1CC)C(O)=O
+Siduron,68686,68686LCM60,ng/L,2,5,9030,1982-49-6,232.3,C14H20N2O,Pesticide,urea,sulfonylurea & urea,Siduron,A,No,,CC1CCCCC1NC(=O)Nc2ccccc2
+Simazine,65105,65105LCM60,ng/L,5,10,9030,122-34-9,201.7,C7H12ClN5,Pesticide,triazine,triazine,Simazine,A,No,,CCNc1nc(Cl)nc(NCC)n1
+Sulfentrazone,68687,68687LCM60,ng/L,5,11,9031,122836-35-5,387.2,C11H10Cl2F2N4O3S,Pesticide,triazalone,sulfonylurea & urea,Sulfentrazone,A,Yes,,O=S(=O)(Nc2c(Cl)cc(Cl)c(N1/N=C(\N(C1=O)C(F)F)C)c2)C
+Sulfometuron-methyl,68688,68688LCM60,ng/L,2,4,9030,74222-97-2,364.4,C15H16N4O5S,Pesticide,sulfonylurea,sulfonylurea & urea,Sulfometuron-methyl,A,No,,COC(c1c(S(=O)(NC(Nc2nc(C)cc(C)n2)=O)=O)cccc1)=O
+Sulfosulfuron,68689,68689LCM60,ng/L,4,9,9030,141776-32-1,470.5,C16H18N6O7S2,Pesticide,sulfonylurea,sulfonylurea & urea,Sulfosulfuron,A,Yes,,CCS(=O)(C1N=C2C=CC=CN2C1S(=O)(NC(Nc3nc(OC)cc(OC)n3)=O)=O)=O
+Sulfosulfuron ethyl sulfone,68690,68690LCM60,ng/L,1,3,9030,-,210.3,C9H10N2O2S,Degradate,urea,sulfonylurea & urea,Sulfosulfuron ,A,Yes,,CCS(=O)(C1=CN2C=CC=CC2=N1)=O
+Tebuconazole,66649,66649LCM60,ng/L,2,5,9030,107534-96-3,307.8,C16H22ClN3O,Pesticide,conazole,fungicide,Tebuconazole ,A,No,,CC(C)(C)C(O)(CCc1ccc(Cl)cc1)Cn2cncn2
+Tebufenozide,68692,68692LCM60,ng/L,1,2,9030,112410-23-8,352.5,C22H28N2O2,Pesticide,diacylhydrazine,miscellaneous,Tebufenozide,A,Yes,,CCc1ccc(cc1)C(=O)NN(C(=O)c2cc(C)cc(C)c2)C(C)(C)C
+Tebupirimfos,68693,68693LCM60,ng/L,1,2,9030,96182-53-5,318.4,C13H23N2O3PS,Pesticide,organothiophosphate,organophosphate,Tebupirimfos,A,No,,CCOP(OC(C)C)(Oc1cnc(C(C)(C)C)nc1)=S
+Tebupirimfos oxon,68694,68694LCM60,ng/L,1,2,9030,-,302.3,C13H23N2O4P,Degradate,organophosphate,organophosphate,Tebupirimfos,A,Yes,,CCOP(OC(C)C)(Oc1cnc(C(C)(C)C)nc1)=O
+Tebuthiuron,68695,68695LCM60,ng/L,1,3,9030,34014-18-1,228.3,C9H16N4OS,Pesticide,urea,sulfonylurea & urea,Tebuthiuron,A,No,,CNC(=O)N(C)c1sc(nn1)C(C)(C)C
+Tebuthiuron TP 104,68575,68575LCM60,ng/L,3,6,9030,-,214.3,C8H14N4OS,Degradate,urea,sulfonylurea & urea,Tebuthiuron,A,Yes,,NC(N(C)c1nnc(C(C)(C)C)s1)=O
+Tebuthiuron TP 106,68714,68714LCM60,ng/L,38,76,9030,-,200.3,C7H12N4OS,Degradate,urea,sulfonylurea & urea,Tebuthiuron,A,Yes,,NC(Nc1nnc(C(C)(C)C)s1)=O
+Tebuthiuron TP 108,68696,68696LCM60,ng/L,5,10,9030,39222-73-6,157.2,C6H11N3S,Degradate,urea,sulfonylurea & urea,Tebuthiuron,A,Yes,,CC(C)(C)c1sc(N)nn1
+Tebuthiuron TP 109 (OH),68697,68697LCM60,ng/L,8,17,9030,-,260.3,C9H16N4O3S,Degradate,urea,sulfonylurea & urea,Tebuthiuron,A,Yes,,O=C(N(c1nnc(C(C)(C)CO)s1)C)NCO
+Terbacil,68698,68698LCM60,ng/L,10,21,9030,5902-51-2,216.7,C9H13ClN2O2,Pesticide,uracil,miscellaneous,Terbacil,A,No,,CC1=C(Cl)C(=O)N(C(=O)N1)C(C)(C)C
+Terbufos,68699,68699LCM60,ng/L,2,4,9030,13071-79-9,288.4,C9H21O2PS3,Pesticide,organothiophosphate,organophosphate,Terbufos,A,No,,CCOP(OCC)(SCSC(C)(C)C)=S
+Terbufos oxon,68700,68700LCM60,ng/L,2,4,9030,56070-14-5,272.4,C9H21O3PS2,Degradate,organothiophosphate,organophosphate,Terbufos,A,Yes,,O=P(OCC)(SCSC(C)(C)C)OCC
+Terbufos oxon sulfone,68701,68701LCM60,ng/L,5,11,9030,56070-15-6,304.4,C9H21O5PS2,Degradate,organothiophosphate,organophosphate,Terbufos,A,No,,O=P(OCC)(SCS(=O)(C(C)(C)C)=O)OCC
+Terbufos oxon sulfoxide,68702,68702LCM60,ng/L,2,4,9030,56165-57-2,288.4,C9H21O4PS2,Degradate,organothiophosphate,organophosphate,Terbufos,A,Yes,,O=P(OCC)(SCS(C(C)(C)C)=O)OCC
+Terbufos sulfone,68703,68703LCM60,ng/L,5,11,9030,56070-16-7,320.4,C9H21O4PS3,Degradate,organothiophosphate,organophosphate,Terbufos,A,No,,CCOP(OCC)(SCS(=O)(C(C)(C)C)=O)=S
+Terbufos sulfoxide,68704,68704LCM60,ng/L,1,3,9030,10548-10-4,304.4,C9H21O3PS3,Degradate,organothiophosphate,organophosphate,Terbufos,A,No,,S=P(OCC)(SCS(C(C)(C)C)=O)OCC
+Terbuthylazine,66651,66651LCM60,ng/L,1,3,9030,5915-41-3,229.7,C9H16ClN5,Pesticide,triazine,triazine,Terbuthylazine,A,No,,CCNc1nc(Cl)nc(NC(C)(C)C)n1
+Tetraconazole,66654,66654LCM60,ng/L,3,6,9030,112281-77-3,372.2,C13H11Cl2F4N3O,Pesticide,conazole,fungicide,Tetraconazole,A,No,,FC(F)C(F)(F)OCC(Cn1cncn1)c2ccc(Cl)cc2Cl
+Thiobencarb,65107,65107LCM60,ng/L,1,2,9030,28249-77-6,257.8,C12H16ClNOS,Pesticide,thiocarbamate,carbamate & thiocarbamate,Thiobencarb,A,No,,CCN(C(SCc1ccc(Cl)cc1)=O)CC
+trans-Permethrin,68708,68708LCM60,ng/L,2,4,9030,61949-77-7,391.3,C21H20Cl2O3,Pesticide,pyrethroid,pyrethroid & phenylpyrazine,Permethrin,A,No,,Cl/C(Cl)=C/[C@@H]3[C@@H](C(=O)OCc2cccc(Oc1ccccc1)c2)C3(C)C
+Triallate,68710,68710LCM60,ng/L,8,16,9030,2303-17-5,304.7,C10H16Cl3NOS,Pesticide,thiocarbamate,carbamate & thiocarbamate,Triallate,A,No,,CC(N(C(SC/C(Cl)=C(Cl)\Cl)=O)C(C)C)C
+Tribuphos,68711,68711LCM60,ng/L,1,2,9030,78-48-8,314.5,C12H27OPS3,Pesticide,organothiophosphate,organophosphate,Tribuphos,A,No,,CCCCSP(SCCCC)(SCCCC)=O
+Triclopyr,68712,68712LCM60,ng/L,44,88,9031,55335-06-3,256.5,C7H4Cl3NO3,Pesticide,chloropyridinyl,acid,Triclopyr,A,No,,OC(COc1c(Cl)cc(Cl)c(Cl)n1)=O
+Trifloxystrobin,66660,66660LCM60,ng/L,1,2,9030,141517-21-7,408.4,C20H19F3N2O4,Pesticide,strobin,fungicide,Trifloxystrobin,A,No,,C2=C(C(=N/OCC1=C(/C(=N/OC)C(OC)=O)C=CC=C1)/C)C=CC=C2C(F)(F)F
+Surrogates:,,,,,,,,,,,,,,,,,
+Acetochlor-d11 (surrogate),90517,90517LCM60,-,-,-,9030,1189897-44-6,280.8,C14H7D13ClNO2,Internal standard,,acetanilide & amide,Acetochlor,,na,,[2H]c1c([2H])c(C([2H])(C([2H])([2H])[2H])[2H])c(N(C(CCl)=O)COCC)c(C([2H])([2H])[2H])c1[2H]
+Alachlor-d13 (surrogate),90518,90518LCM60,-,-,-,9030,1015856-63-9,282.8,C14H7D13ClNO2,Internal standard,,acetanilide & amide,Alachlor,,na,,[2H]C([2H])(C([2H])(c1c(N(COC)C(CCl)=O)c(C([2H])(C([2H])([2H])[2H])[2H])c([2H])c([2H])c1[2H])[2H])[2H]
+Butachlor SA (surrogate),90624,90624LCM60,-,-,-,9031,187022-12-4,357.5,C17H27NO5S,Internal standard,,acetanilide & amide,Butachlor SA,,na,,O=S(CC(N(C1=C(CC)C=CC=C1CC)COCCCC)=O)(O)=O
+Dimethachlor SA (surrogate),90625,90625LCM60,-,-,-,9031,-,301.4,C13H19NO5S,Internal standard,,acetanilide & amide,Dimethachlor SA,,na,,O=S(CC(N(C1=C(C)C=CC=C1C)CCOC)=O)(O)=O
+Metolachlor-d6 (surrogate),90553,90553LCM60,-,-,-,9030,-,289.8,C15H16D6ClNO2,Internal standard,,acetanilide & amide,Metolachlor,,na,,[2H]C([2H])(C(C([2H])(OC)[2H])(N(C(CCl)=O)c1c(CC)cccc1C)[2H])[2H]
+"2,4-D-d3 (surrogate)",91986,91986LCM60,-,-,-,9031,202480-67-9,224.1,C8H3D3Cl2O3,Internal standard,,acid,"2,4-D",,na,,[2H]c1c(OCC(O)=O)c(Cl)c([2H])c(Cl)c1[2H]
+Carbaryl-d7 (surrogate),90519,90519LCM60,-,-,-,9030,362049-56-7,208.3,C12H4D7NO2,Internal standard,,carbamate & thiocarbamate,Carbaryl,,na,,[2H]c1c([2H])c2c([2H])c([2H])c([2H])c(OC(NC)=O)c2c([2H])c1[2H]
+Carbofuran-d3 (surrogate),90521,90521LCM60,-,-,-,9030,1007459-98-4,224.3,C12H12D3NO3,Internal standard,,carbamate & thiocarbamate,Carbofuran,,na,,[2H]C([2H])(NC(Oc1c(OC(C)(C)C2)c2ccc1)=O)[2H]
+Thiobencarb-d10 (surrogate),90556,90556LCM60,-,-,-,9030,-,267.8,C12H6D10ClNOS,Internal standard,,carbamate & thiocarbamate,Thiobencarb,,na,,[2H]C([2H])(C([2H])(N(C([2H])(C([2H])([2H])[2H])[2H])C(SCc1ccc(Cl)cc1)=O)[2H])[2H]
+Carbendazim-d4 (surrogate),90520,90520LCM60,-,-,-,9030,291765-95-2,195.1,C9H5D4N3O2,Internal standard,,fungicide,Carbendazim,,na,,COC(NC1=NC2=C(N1)C([2H])=C([2H])C([2H])=C2[2H])=O
+Tebuconazole-d6 (surrogate),90555,90555LCM60,-,-,-,9030,-,313.9,C16H16D6ClN3O,Internal standard,,fungicide,Tebuconazole,,na,,CC(C)(C)C(O)([C@]([2H])([2H])N1N=CN=C1)[C@@]([2H])([2H])[C@@]([2H])([2H])C2=CC=C(Cl)C=C2
+Diazinon-d10 (surrogate),90523,90523LCM60,-,-,-,9030,100155-47-3,314.4,C12H11D10N2O3PS,Internal standard,,organophosphate,Diazinon,,na,,S=P(OC(C([2H])([2H])[2H])([2H])[2H])(Oc1nc(C(C)C)nc(C)c1)OC(C([2H])([2H])[2H])([2H])[2H]
+Malathion-d10 (diethyl-d10) (surrogate),90552,90552LCM60,-,-,-,9030,347841-48-9,340.4,C10H9D10O6PS2,Internal standard,,organophosphate,Malathion,,na,,O=C(CC(C(OC(C([2H])([2H])[2H])([2H])[2H])=O)SP(OC)(OC)=S)OC([2H])(C([2H])([2H])[2H])[2H]
+3-Phenoxybenzoic acid (surrogate),90516,90516LCM60,-,-,-,9031,-,220.2,C713C6H10O3,Internal standard,,pyrethroid & phenylpyrazine,Permethrin,,na,,OC(c1cc(O[13C]2=[13CH][13CH]=[13CH][13CH]=[13CH]2)ccc1)=O
+cis-Permethrin-13C6 (surrogate),90558,90558LCM60,-,-,-,9030,-,397.2,C1513C6H20Cl2O3,Internal standard,,pyrethroid & phenylpyrazine,Permethrin,,na,,Cl/C(Cl)=C/[C@H]1[C@@H](C1(C)C)C(OCc2cc(O[13C]3=[13CH][13CH]=[13CH][13CH]=[13CH]3)ccc2)=O
+Diflubenzuron-d4 (surrogate),90524,90524LCM60,-,-,-,9030,-,314.7,C14H5D4ClF2N2O2,Internal standard,,sulfonylurea & urea,Diflubenzuron,,na,,Fc1c(C(NC(Nc2c([2H])c([2H])c(Cl)c([2H])c2[2H])=O)=O)c(F)ccc1
+Diuron-d6 (surrogate),90808,90808LCM60,-,-,-,9030,-,239.1,C9H4D6Cl2N2O,Internal standard,,sulfonylurea & urea,Diuron,,na,,O=C(Nc1cc(Cl)c(Cl)cc1)N(C([2H])([2H])[2H])C([2H])([2H])[2H]
+Linuron-d6 (dimethyl-d6) (surrogate),90529,90529LCM60,-,-,-,9030,-,255.1,C9H4D6Cl2N2O2,Internal standard,,sulfonylurea & urea,Linuron,,na,,O=C(Nc1cc(Cl)c(Cl)cc1)N(C([2H])([2H])[2H])OC([2H])([2H])[2H]
+Nicosulfuron-d6 (surrogate),90554,90554LCM60,-,-,-,9030,1189419-41-7,416.4,C15H12D6N6O6S,Internal standard,,sulfonylurea & urea,Nicosulfuron,,na,,[2H]C([2H])(Oc1nc(NC(NS(=O)(c2ncccc2C(N(C)C)=O)=O)=O)nc(OC([2H])([2H])[2H])c1)[2H]
+Deethylatrazine-d6 (surrogate),90522,90522LCM60,-,-,-,9030,-,193.7,C6H4D6ClN5,Internal standard,,triazine,Atrazine,,na,,Clc1nc(NC(C([2H])([2H])[2H])C([2H])([2H])[2H])nc(NCC)n1
+Hexazinone-d6 (surrogate),90527,90527LCM60,-,-,-,9030,-,258.3,C12H14D6N4O2,Internal standard,,triazine,Hexazinone,,na,,O=C(N(C(N1C)=O)C2CCCCC2)N=C1N(C([2H])([2H])[2H])C([2H])([2H])[2H]
+Sample volume,3406L,3406LCM060,mL,-,-,3406,-,-,-,-,-,-,-,,na,,-
+Note: pesticide group is the name of the active form of pesticide used and provides a way to link pesticide degradates to the active form of pesticide that was used.,,,,,,,,,,,,,,,,,
+Note: AnalyteID is the NWIS 5 digit parameter code (eg 90527) combined with the 5 digit  the method code (egLCM60),,,,,,,,,,,,,,,,,
+"Note: SMILES (Simplified Molecular-Input Line-Entry System) is a specification in the form of a line notation for describing the structure of molecules using short ASCII strings. SMILES strings can be imported by most molecule editors for conversion back into two-dimensional drawings or three-dimensional models of the molecules (Weininger and others, 1988, O'Boyle, 2012).",,,,,,,,,,,,,,,,,
+"Note: Lab codes are used for grouping of analytes in the NWQL LIMS system, and represent ESI+ analytes (9030), ESI- analytes (9031), and sample volume (3406).",,,,,,,,,,,,,,,,,
+Note: CASRN in bold appear to be invalid based on checksum,,,,,,,,,Degradate,122,,,A,208,,,
+acetochlor OA had incorrect Cas of 184992-44-4,,,,,,,,,Pesticide,118,,,E,21,,,
+desulfinyl fipronil has new CASRN.,,,,,,,,,Internal standard,21,,,D,11,,,
+,,,,,,,,,Total,261,,,,240,,,
