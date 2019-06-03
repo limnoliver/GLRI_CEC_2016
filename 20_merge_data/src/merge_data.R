@@ -136,7 +136,13 @@ calc_detect_limits <- function(reduced_dat){
   bdl_summ <- left_join(all_measured, all_detected) %>%
     left_join(all_bdl) %>%
     left_join(bdls) %>%
-    mutate(n_detect = ifelse(is.na(n_detect), 0, n_detect))
+    mutate(n_detect = ifelse(is.na(n_detect), 0, n_detect)) %>%
+    rename(value = median)
+  
+  bdl_summ$SiteID <- '01'
+  bdl_summ$sample_dt <- '1986-11-13'
+  bdl_summ$remark_cd <- NA
+  
   
   return(bdl_summ)
 }

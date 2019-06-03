@@ -71,10 +71,13 @@ merge_deg_parents <- function(conc_dat, parents, metolachlor) {
   
   chems_parents <- filter(parents, CAS %in% chems)
   
-  conc_dat_parent <- left_join(conc_dat, select(chems_parents, CAS, parent_pesticide))
+  conc_dat_parent <- left_join(conc_dat, select(chems_parents, CAS, parent_pesticide)) %>%
+    mutate(parent_pesticide = as.character(parent_pesticide))
   
   conc_dat_parent$parent_pesticide[conc_dat_parent$parent_pesticide %in% 'Acetochlor/Metolachlor'] <- ifelse(metolachlor, 'Metolachlor', 'Acetochlor')
 
+  conc_dat_parent$parent_pesticide[is.na(conc_dat_parent$parent_pesticide)] <- as.character(conc_dat_parent$chnm[is.na(conc_dat_parent$parent_pesticide)])
+  
   
   
   return(conc_dat_parent)
