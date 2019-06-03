@@ -63,9 +63,14 @@ targets:
   # bench: rankings based on mean and max benchmark ratio of chem
   # EAR: rankings based on mean of max EAR by chem 
     
+  figures/chem_summary.csv:
+    command: summarize_chems(target_name, all_chems)
   top_chems_ear:
     command: calc_chem_tox_hits(chemicalSummary, chemicalSummary_conc, sites_detect = I(8), sites_hit = I(4))
 
+  top_metrics:
+    command: calc_parent_tox_hits(parent_sums)
+    
   top_chems_ear_deg_meto:
     command: calc_chem_tox_hits(chemicalSummary_deg_meto, chemicalSummary_conc, I(8), I(4))
   
