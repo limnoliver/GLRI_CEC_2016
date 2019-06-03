@@ -1,7 +1,7 @@
 target_default: 24_check_data
 
 include:
-  - 20_merge_data.yml
+  - 22_merge_data_deg_test.yml
 
 packages:
   - dplyr
@@ -23,5 +23,8 @@ targets:
 # sample means
   missing_neonics:
     command: assess_neonics(reduced_dat, special_cas)
+    
+  neonic_ears:
+    command: summarize_neonic_tox(chemicalSummary)
     
  
