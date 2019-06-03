@@ -12,6 +12,7 @@ packages:
   
 sources:
   - 22_merge_data_deg_test/src/merge_data_fix_degs.R
+  - 22_merge_data_deg_test/src/deg_sums.R
   
 targets:
   22_merge_data_deg_test:
@@ -20,6 +21,8 @@ targets:
       - chemicalSummary_deg_acet
       - chemicalSummary_conc_deg_meto
       - chemicalSummary_conc_deg_acet
+      - chemicalSummary_bench_deg_meto
+      - chemicalSummary_bench_deg_acet
 
   chemicalSummary_deg_meto:
     command: get_chem_sum_deg(data_file = "data/pesticides.xlsx", parents = chem_crosswalk, metolachlor = TRUE)
@@ -33,5 +36,20 @@ targets:
   chemicalSummary_conc_deg_acet:
     command: merge_deg_parents(chemicalSummary_conc, chem_crosswalk, metolachlor = FALSE)
     
-  graph_data_deg_parent:
-    command: summarize_deg_parents()
+  chemicalSummary_bench_deg_meto:
+    command: merge_deg_parents(chemicalSummary_bench, chem_crosswalk, metolachlor = TRUE)
+  
+  chemicalSummary_bench_deg_acet:
+    command: merge_deg_parents(chemicalSummary_bench, chem_crosswalk, metolachlor = FALSE)
+  
+  parent_class:
+    command: get_parent_class(chemicalSummary_conc_deg_meto)
+    
+  parent_sums:
+    command: sum_by_parents(
+      deg_parent_ear = chemicalSummary_deg_meto, 
+      deg_parent_conc = chemicalSummary_conc_deg_meto,
+      deg_parent_bench = chemicalSummary_bench_deg_meto)
+      
+  parent_summaries:
+    command: summarize_parents(parent_sums, parent_class)
