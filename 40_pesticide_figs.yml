@@ -2,7 +2,7 @@ target_default: 40_pesticide_figs
 
 include:
   - 30_reports.yml
-
+  
 packages:
   - knitr
   - rmarkdown
@@ -45,12 +45,17 @@ targets:
       - figure/cumulative_chems_time_bysite.png
       - figure/new_chems_time_bysite.png
       - figure/site_table.csv
+      - figure/tox_bench_conc_deg.png
+      - figure/tox_bench_hbs.png
     
   sum_conc: 
     command: sum_pest_conc(reduced_dat, chems_missing_cas)
     
   unique_chems:
     command: get_n_unique_chems(reduced_dat, sites)
+    
+  sums:
+    command: combine_dat(parent_sums, sites)
     
   figure/site_table.csv:
     command: gather_site_info(target_name, sites, sum_conc, unique_chems)
@@ -99,12 +104,27 @@ targets:
     
   graph_data_conc:
     command: graph_chem_data(chemicalSummary_conc)
+    
+  graph_data_tox_deg:
+    command: graph_chem_data(chemicalSummary_deg_meto)
+    
+  graph_data_hbs:
+    command: graph_chem_data(chemicalSummary_bench_hbs, sum_logic = FALSE)
   
   figure/tox_bench_conc.png:
     command: graphData_combos(graph_data_tox, graph_data_wq, graph_data_conc, target_name)
   
+  figure/tox_bench_conc_deg.png:
+    command: graphData_combos(graph_data_tox_deg, graph_data_wq, graph_data_conc, target_name)
+    
+  figure/tox_bench_hbs.png:
+    command: graphData_combos(graph_data_tox, graph_data_wq, graph_data_hbs, target_name)
+    
   figure/tox_bench.png:
     command: graphData_wq_tox(graph_data_tox, graph_data_wq, target_name)
     
   figure/endpoint.png:
     command: endpoint_graph(target_name, chemicalSummary, AOP, I(0.001), I(10))
+    
+  figure/tox_eval_dls.png:
+    command: plot_dls_tox(chem_dls, chemicalSummary_dls, pCodeInfo, target_name)
