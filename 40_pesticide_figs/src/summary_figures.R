@@ -64,6 +64,87 @@ sum_pest_conc <- function(reduced_dat, chems_missing_cas) {
   return(sum_chems)
 }
 
+combine_dat <- function(sum_dat, site_dat) {
+  graph_dat_thresh <- make('parent_sums') %>%
+    left_join(make('parent_class')) %>%
+    mutate(day = lubridate::yday(date)) %>%
+    mutate(month = lubridate::month(date)) %>%
+    filter(type == 'p_sumval' & measure_type %in% c('ear', 'bench')) %>%
+    filter(!is.na(sumval)) %>%
+    group_by(site, month, measure_type) %>%
+    summarize(max_val = max(sumval, na.rm = TRUE)) %>%
+    ungroup()
+  
+  graph_dat_hits <- make('parent_sums') %>%
+    left_join(make('parent_class')) %>%
+    mutate(day = lubridate::yday(date)) %>%
+    mutate(month = lubridate::month(date)) %>%
+    filter(type == 'p_sumval'  & measure_type %in% c('ear', 'bench')) %>%
+    filter(measure_type == 'ear' & sumval >= 0.001 | measure_type == 'bench' & sumval >= 0.01) %>%
+    group_by(site, month, day, measure_type) %>%
+    summarize(n_hits = n()) %>%
+    ungroup()
+  
+  maumee_fix <- filter(graph_dat_hits, site == '04193500') %>%
+    group_by(site, month, measure_type) %>%
+    summarize(n_hits = max(n_hits))
+    
+  graph_dat_hits <- filter(graph_dat_hits, !site == '04193500') %>%
+    bind_rows(maumee_fix)
+    
+  # 
+  # med_graph_dat <- graph_dat_thresh %>%
+  #   group_by(month, measure_type) %>%
+  #   summarize(median_max_val = median(max_val))
+  
+  full_matrix <- expand.grid(site = unique(graph_dat_hits$site), month = 1:12, measure_type = c('bench', 'ear'))
+  
+  hits <- left_join(full_matrix, graph_dat_hits) %>%
+    mutate(n_hits = ifelse(is.na(n_hits), 0, n_hits))
+  
+  thresh <- left_join(full_matrix, graph_dat_thresh) %>%
+    mutate(max_val = ifelse(is.na(max_val), min(graph_dat_thresh$max_val)*0.5, max_val))
+  
+  # med_graph_dat_hit <- hits %>%
+  #   group_by(month, measure_type) %>%
+  #   summarize(n_hits = median(n_hits), site = 'all')
+  # 
+  # all_dat_hits <- bind_rows(hits, med_graph_dat_hit) %>%
+  #   mutate(site_cat = ifelse(site %in% 'all', 'all', 'individual'))
+  
+  
+  sites <- make('sites') %>%
+    select(site = site_no, dominant_lu = Dominant.land.use.) %>%
+    mutate(dominant_lu = ifelse(dominant_lu %in% c('Wetland', 'Forest'), 'Wetland/Forest', dominant_lu))
+    
+  all_dat <- left_join(graph_dat, sites) %>%
+    add_row(month = med_graph_dat$month, max_val = med_graph_dat$median_max_val, site = 'all', measure_type = med_graph_dat$measure_type) %>%
+    mutate(site_cat = ifelse(site %in% 'all', 'all', 'individual'))
+  
+  library(ggplot2)
+  line_dat <- data.frame(x = 1, y = 0.01, measure_type = c('bench', 'ear'), z = c(0.1, 0.001))
+  ggplot(data = thresh, aes(x = month, y = max_val)) +
+    geom_boxplot(aes(group = month)) +
+    #geom_point() +
+    #geom_line(aes(group = site, color = site_cat), alpha = 0.5) +
+    #scale_color_manual(values = c('black', 'gray')) +
+    scale_y_log10() +
+    facet_wrap(~measure_type) +
+    theme_bw() +
+    theme(panel.grid = element_blank())
+  
+  ggplot(data = hits, aes(x = month, y = n_hits)) +
+    geom_boxplot(aes(group = month)) +
+    #geom_point(aes( color = site_cat), alpha = 0.5) +
+    #geom_line(aes(group = site, color = site_cat), alpha = 0.5) +
+    #scale_color_manual(values = c('black', 'gray')) +
+    #scale_y_log10() +
+    facet_wrap(~measure_type) +
+    theme_bw() +
+    theme(panel.grid = element_blank())
+  
+  }
+
 
 boxplot_bysite <- function(sum_conc, target_name, detect_only = TRUE) {
   if (detect_only == FALSE) {
