@@ -23,7 +23,10 @@ gather_site_info <- function(target_name, sites, sum_conc, unique_chems) {
   
   site_table <- left_join(site_conc_summary, n_unique_chems)
   
-  site_table <- left_join(site_dat, site_table)
+  site_table <- left_join(site_dat, site_table) %>%
+    select(`USGS Site Number` = SiteID, `Site Name` = Site.name, `Site Short Name` = shortName, Latitude = lat, Longitude = lon, 
+           `% Agriculture` = perc_ag, `% Urban` = perc_urban, `Dominant Land Use/Land Cover` = dominant_lulc, `Sample Count` = sample_count,
+           `Neonic Sample Count` = n_with_neonics)
   
   write.csv(site_table, target_name, row.names = F)
 }

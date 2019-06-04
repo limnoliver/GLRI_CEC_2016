@@ -15,7 +15,7 @@ chem_site <- make("site_info")
 ACClong <- get_ACC(chem_info$CAS)
 ACClong <- remove_flags(ACClong)
 
-cleaned_ep <- clean_endPoint_info(endPointInfo)
+cleaned_ep <- clean_endPoint_info(end_point_info)
 filtered_ep <- filter_groups(cleaned_ep, 
                              groupCol = "intended_target_family_sub")
 

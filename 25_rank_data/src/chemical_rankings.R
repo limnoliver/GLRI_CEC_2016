@@ -93,9 +93,9 @@ merge_top_chems_hits <- function(tox_hits, wq_hits, top_chems) {
   return(dat)
 }
 
-summarize_chems <- function(file_name, chem_vals, chem_crosswalk) {
+summarize_chems <- function(file_name, chem_vals, chem_crosswalk, chem_info) {
   sample_count <- all_chems %>%
-    group_by(CAS) %>%
+    group_by(CAS, pCode) %>%
     summarize(n_samples = n(),
               n_sites = length(unique(SiteID)))
   
@@ -112,9 +112,11 @@ summarize_chems <- function(file_name, chem_vals, chem_crosswalk) {
            perc_detect_site = round(100*(n_detect_sites/n_sites), 0)) %>%
     mutate(detection_column = paste0(perc_detect, ' (', n_detect, '/', n_samples, ')'),
            detection_site_column = paste0(perc_detect_site, ' (', n_detect_sites, '/', n_sites, ')')) %>%
-    select(CAS, detection_column, detection_site_column) %>%
-    left_join(select(chem_crosswalk, CAS, parent_pesticide))
-    
+    select(CAS, pCode, detection_column, detection_site_column) %>%
+    left_join(select(chem_crosswalk, CAS, compound, parent_pesticide)) %>%
+    left_join(chem_info)
+  
+  write.csv(detects, file_name, row.names = FALSE)
     
 }
 

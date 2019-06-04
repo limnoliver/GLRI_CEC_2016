@@ -64,7 +64,8 @@ summarize_parents <- function(graph_deg_sums, classes) {
     summarize(median_sumval = median(sumval, na.rm = TRUE),
               quant95 = quantile(sumval, probs = 0.95, na.rm = TRUE),
               quant5 = quantile(sumval, probs = 0.05, na.rm = TRUE)) %>%
-    left_join(classes)
+    left_join(classes) %>%
+    distinct()
   
   chem_order <- sum_by_chem %>%
     mutate(type_measure = paste0(type, measure_type)) %>%
@@ -75,7 +76,7 @@ summarize_parents <- function(graph_deg_sums, classes) {
     group_by(Class) %>%
     mutate(max_class = max(max)) %>%
     arrange(max_class, max) %>%
-    pull(parent_pesticide)
+    pull(parent_pesticide) %>% unique()
   
   graph_deg_sums$parent_pesticide <- factor(graph_deg_sums$parent_pesticide, levels = chem_order)
   
@@ -88,13 +89,15 @@ summarize_parents <- function(graph_deg_sums, classes) {
 plot_deg_sums <- function() {
   
   library(ggplot2)
+  
+  
   ggplot(all_dat, aes(y = median_sumEAR, x = parent_pesticide)) +
     geom_point(aes(color = type), size = 2, alpha = 0.5) +
     geom_errorbar(aes(ymin = quant5, ymax = quant95, color = type)) +
     scale_y_log10() +
     coord_flip()
   
-  ggplot(graph_deg_sums, aes(y = median_sumEAR, x = parent_pesticide)) +
+  ggplot(graph_deg_sums, aes(y = median_sumval, x = parent_pesticide)) +
     #geom_point(aes(group = type), size = 2, shape = '|',
     #           alpha = 0.8, position = position_dodge(width = 1.2)) +
     #geom_jitter(aes(color = type), size = 2, alpha = 0.5) +
