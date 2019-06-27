@@ -1,0 +1,28 @@
+target_default: 26_mixtures
+
+packages:
+  - dplyr
+  
+## All R files that are used must be listed here:
+sources:
+  - 26_mixtures/src/get_mixtures.R
+  
+targets:
+  10_load_data:
+    depends: 
+      - 
+      
+  EARsum_endpoint:
+    command: sum_endpoints(chemicalSummary)
+    
+  contributing_chems:
+    command: calc_contr_chems(EARsum_endpoint)
+    
+  top_mixes:
+    command: calc_top_mixtures(contributing_chems)
+
+  26_mixtures/out/chem_mix_metrics.csv:
+    command: calc_chem_mix_metrics(top_mixtures = top_mixes, summed_EARs = EARsum_endpoint, target_name)
+    
+  26_mixtures/out/site_mix_metrics.csv:
+    command: calc_site_mix_metrics(top_mixtures = top_mixes, target_name)
