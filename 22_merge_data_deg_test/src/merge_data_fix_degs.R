@@ -66,6 +66,24 @@ get_chem_sum_deg <- function(data_file, parents, metolachlor){
   return(chemicalSummary)
 }
 
+get_unclassified <- function(data_file, parents){
+  tox_list <- create_toxEval(data_file)
+  tox_list$chem_data <- filter(tox_list$chem_data, Value != 0)
+  
+  ACClong <- get_ACC(unique(tox_list$chem_info$CAS))
+  ACClong <- remove_flags(ACClong)
+  
+  # find chems that are not in toxCast
+  missing <- unique(tox_list$chem_data$CAS)[-which(unique(tox_list$chem_data$CAS) %in% unique(ToxCast_ACC$CAS))]
+  missing <- filter(tox_list$chem_info, CAS %in% missing)
+  
+  # crosswalk between missing chems and parent compounds
+  missing_parents <- left_join(missing, select(parents, CAS, MlWt, parent_pesticide)) %>%
+    filter(grepl('/', parent_pesticide))
+  
+  return(missing_parents)
+}
+
 merge_deg_parents <- function(conc_dat, parents, metolachlor) {
   chems <- unique(conc_dat$CAS)
   
@@ -117,4 +135,34 @@ plot_parent_deg <- function(conc_dat) {
     scale_y_log10() +
     theme(strip.text.x = element_blank(),
           axis.text.y = element_text(size = 6))
+}
+
+plot_unclassified_degs <- function(conc_dat, unclassified_degs) {
+  metolachlor_cas <- filter(conc_dat, chnm %in% 'Metolachlor') %>% 
+    select(CAS) %>%
+    distinct()
+  
+  acetochlor_cas <- filter(conc_dat, chnm %in% 'Acetochlor') %>% 
+    select(CAS) %>%
+    distinct()
+  
+  deg <- filter(conc_dat, CAS %in% unclassified_degs$CAS)
+  met <- filter(conc_dat, CAS %in% metolachlor_cas$CAS) %>%
+    rename(met_ear = EAR)
+  acet <- filter(conc_dat, CAS %in% acetochlor_cas$CAS ) %>%
+    rename(acet_ear = EAR)
+  
+  deg_parent <- left_join(deg, select(met, site, date, met_ear)) %>%
+    left_join(select(acet, site, date, acet_ear))
+  
+  p1 <- ggplot(deg_parent, aes(x = acet_ear, y = EAR)) +
+    geom_point(aes(color = chnm)) +
+    abline(0, 1)
+  
+  p2 <- ggplot(deg_parent, aes(x = met_ear, y = EAR)) +
+    geom_point(aes(color = chnm)) +
+    abline(0, 1)
+  
+  ggsave(out_file, cowplot::plot_grid(p1, p2, align = 'v'), height = 6, width = 5)
+    
 }
