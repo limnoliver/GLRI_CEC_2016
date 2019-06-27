@@ -3,14 +3,22 @@ target_default: 26_mixtures
 packages:
   - dplyr
   
+include:
+  - 25_rank_data.yml
+  
 ## All R files that are used must be listed here:
 sources:
   - 26_mixtures/src/get_mixtures.R
   
 targets:
-  10_load_data:
+  26_mixtures:
     depends: 
-      - 
+      - 26_mixtures/out/chem_mix_metrics.csv
+      - 26_mixtures/out/site_mix_metrics.csv
+      - 26_mixtures/out/chem_mix_metrics_all.csv
+      - 26_mixtures/out/site_mix_metrics_all.csv
+      - figure/mixtures_summary_all.png
+      - figure/mixtures_summary_limited.png
       
   EARsum_endpoint:
     command: sum_endpoints(chemicalSummary)
@@ -20,9 +28,46 @@ targets:
     
   top_mixes:
     command: calc_top_mixtures(contributing_chems)
+    
+  top_mixes_all:
+    command: calc_top_mixtures(contributing_chems, max_only = FALSE)
+    
+  mixtures_summary_all:
+    command: summarize_mixtures(top_mixtures = top_mixes_all)
+    
+  mixtures_summary:
+    command: summarize_mixtures(top_mixtures = top_mixes)
+    
+  mixtures_n_summary_all:
+    command: summarize_by_n(top_mixtures = top_mixes_all)
+    
+  mixtures_n_summary:
+    command: summarize_by_n(top_mixtures = top_mixes)
+    
+  figure/mixtures_summary_all.png:
+    command: plot_mix_summary(
+      out_file = target_name,
+      n_summary = mixtures_n_summary_all, 
+      mix_summary = mixtures_summary_all, 
+      top_mixtures = top_mixes_all, 
+      ear_sum = EARsum_endpoint)
+      
+  figure/mixtures_summary_limited.png:
+    command: plot_mix_summary(
+      out_file = target_name,
+      n_summary = mixtures_n_summary, 
+      mix_summary = mixtures_summary, 
+      top_mixtures = top_mixes, 
+      ear_sum = EARsum_endpoint)
 
   26_mixtures/out/chem_mix_metrics.csv:
     command: calc_chem_mix_metrics(top_mixtures = top_mixes, summed_EARs = EARsum_endpoint, target_name)
-    
+  
+  26_mixtures/out/chem_mix_metrics_all.csv:
+    command: calc_chem_mix_metrics(top_mixtures = top_mixes_all, summed_EARs = EARsum_endpoint, target_name)
+     
   26_mixtures/out/site_mix_metrics.csv:
     command: calc_site_mix_metrics(top_mixtures = top_mixes, target_name)
+
+  26_mixtures/out/site_mix_metrics_all.csv:
+    command: calc_site_mix_metrics(top_mixtures = top_mixes_all, target_name)
