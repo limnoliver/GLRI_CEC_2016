@@ -61,5 +61,5 @@ targets:
   unclassified_degs:
     command: get_unclassified(data_file = "data/pesticides.xlsx", parents = chem_crosswalk)
     
-  figure/unclassified_degradates.png:
+  22_merge_data_deg_test/out/unclassified_degradates.png:
     command: plot_unclassified_degs(conc_dat = chemicalSummary_conc, unclassified_degs, out_file = target_name)
