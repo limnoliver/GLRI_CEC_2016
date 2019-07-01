@@ -30,3 +30,47 @@ gather_site_info <- function(target_name, sites, sum_conc, unique_chems) {
   
   write.csv(site_table, target_name, row.names = F)
 }
+
+gather_chem_info <- function(out_file, chem_dls, chemicalSummary_conc, chem_info, parents) {
+  
+  # chemical table for supplement
+  # includes chem name + CAS, n_detect_frequency (n_detect), median DL, median (min, max) concentration, 
+  
+  detect <- chem_dls %>%
+    mutate(`Detection frequency, %` = round(100*(n_detect/(n_detect+n_bdl)), 0),
+           `Median detection limit` = value) %>%
+    select(pCode, `Detection frequency, %`, `Median detection limit`)
+  
+  obs <- chemicalSummary_conc %>%
+    group_by(CAS) %>%
+    summarise(median = round(median(EAR), 3),
+              min = round(min(EAR), 3), 
+              max = round(max(EAR), 3),
+              `N sites` = length(unique(site)),
+              `N months` = length(unique(lubridate::month(date)))) %>%
+    mutate('Observed concentration, median (min, max)' = paste0(median, ' (', min, ', ', max, ')'))
+  
+  info <- left_join(detect, select(dataRetrieval::parameterCdFile, pCode = parameter_cd, CAS = casrn)) %>%
+    left_join(chem_info) %>%
+    left_join(select(parents, pCode, MlWt, `Parent compound` = parent_pesticide))
+  
+  missing_chems <- parameterCdFile[which(parameterCdFile$parameter_cd %in% info$pCode[is.na(info$`Chemical Name`)]),]
+  missing_chem_names <- gsub(', water.*', '', missing_chems$parameter_nm) 
+  
+  info$`Chemical Name`[is.na(info$`Chemical Name`)] <- missing_chem_names
+  
+  info <- info %>%
+    select(`Chemical Name`, CAS, `Molecular weight` = MlWt, Class, `Parent compound`, pCode) %>%
+    mutate(`Parent compound` = ifelse(is.na(`Parent compound`), `Chemical Name`, `Parent compound`))
+  
+  
+  out <- info %>%
+    left_join(detect) %>%
+    left_join(obs) %>%
+    select(-pCode, -median, -min, -max) %>%
+    arrange(-`Detection frequency, %`)
+  
+  write.csv(out, out_file, row.names = FALSE)
+  
+  
+}

@@ -137,7 +137,7 @@ plot_parent_deg <- function(conc_dat) {
           axis.text.y = element_text(size = 6))
 }
 
-plot_unclassified_degs <- function(conc_dat, unclassified_degs) {
+plot_unclassified_degs <- function(conc_dat, unclassified_degs, out_file) {
   metolachlor_cas <- filter(conc_dat, chnm %in% 'Metolachlor') %>% 
     select(CAS) %>%
     distinct()
@@ -157,12 +157,15 @@ plot_unclassified_degs <- function(conc_dat, unclassified_degs) {
   
   p1 <- ggplot(deg_parent, aes(x = acet_ear, y = EAR)) +
     geom_point(aes(color = chnm)) +
-    abline(0, 1)
+    theme_bw() +
+    labs(x = 'Acetochlor concentration', y = 'Degradate concentration')
   
   p2 <- ggplot(deg_parent, aes(x = met_ear, y = EAR)) +
     geom_point(aes(color = chnm)) +
-    abline(0, 1)
+    theme_bw() +
+    labs(x = 'Metolochlor concentration', y = 'Degradate concentration')
   
-  ggsave(out_file, cowplot::plot_grid(p1, p2, align = 'v'), height = 6, width = 5)
+  
+  ggsave(out_file, cowplot::plot_grid(p1, p2, align = 'h', nrow = 2), height = 6, width = 7)
     
 }
