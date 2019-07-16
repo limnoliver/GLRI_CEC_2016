@@ -37,10 +37,10 @@ targets:
     command: get_conc_sites(chemicalSummary_conc, all_samples)
     
   rank_site_EAR:
-    command: get_ear_sites(chemicalSummary, all_samples)
+    command: get_ear_sites(chemicalSummary_deg_meto, all_samples)
     
   rank_site_bench:
-    command: get_bench_sites(chemicalSummary_bench, all_samples)
+    command: get_bench_sites(chemicalSummary_bench_deg_meto, all_samples)
     
   site_rankings:
     command: bind_rows(rank_site_n_chems, rank_site_conc, rank_site_EAR, rank_site_bench)
