@@ -19,60 +19,66 @@ get_nchems_sites <- function(chemicalSummary_conc, all_samples) {
     arrange(site, date)
   
   # how many chemicals are unique to this sample within this site?
-  unique_samples <- select(chemicalSummary_conc, site, date) %>%
-    distinct()
+  # unique_samples <- select(chemicalSummary_conc, site, date) %>%
+  #   distinct()
+  # 
+  # unique_samples$n_new <- NA
+  # for (i in 1:nrow(unique_samples)) {
+  #   temp_site <- unique_samples$site[i]
+  #   temp_date <- as.Date(unique_samples$date[i])
+  #   
+  #   other_site_dat <- filter(chemicalSummary_conc, site %in% temp_site) %>%
+  #     filter(date != temp_date)
+  #   other_chems <- unique(other_site_dat$CAS)
+  #   
+  #   sample_dat <- filter(chemicalSummary_conc, site %in% temp_site) %>%
+  #     filter(date == temp_date)
+  #   sample_chems <- unique(sample_dat$CAS)
+  #   
+  #   unique_samples$n_new[i] <- length(which(!(sample_chems %in% other_chems)))
+  # }
   
-  unique_samples$n_new <- NA
-  for (i in 1:nrow(unique_samples)) {
-    temp_site <- unique_samples$site[i]
-    temp_date <- as.Date(unique_samples$date[i])
+  # nchems <- left_join(nchems, unique_samples) %>%
+  #   mutate(n_new = ifelse(is.na(n_new), 0, n_new))
     
-    other_site_dat <- filter(chemicalSummary_conc, site %in% temp_site) %>%
-      filter(date != temp_date)
-    other_chems <- unique(other_site_dat$CAS)
-    
-    sample_dat <- filter(chemicalSummary_conc, site %in% temp_site) %>%
-      filter(date == temp_date)
-    sample_chems <- unique(sample_dat$CAS)
-    
-    unique_samples$n_new[i] <- length(which(!(sample_chems %in% other_chems)))
-  }
+  nchem_unique_by_site <- chemicalSummary_conc %>%
+    group_by(site) %>%
+    summarize(n_detect_all = length(unique(chnm)))
   
-  nchems <- left_join(nchems, unique_samples) %>%
-    mutate(n_new = ifelse(is.na(n_new), 0, n_new))
-    
-  
-  nchem_ranks <- nchems %>%
+  nchem_metrics <- nchems %>%
     group_by(site) %>%
     summarize(med_ndetect = median(n_detected), 
-              max_ndetect = max(n_detected),
-              med_ndetect_new = median(n_new), 
-              max_ndetect_new = max(n_new)) %>%
-    mutate(med_ndetect_rank = rank(-med_ndetect),
-           max_ndetect_rank = rank(-max_ndetect), 
-           med_ndetect_new_rank = rank(-med_ndetect_new),
-           max_ndetect_new_rank = rank(-max_ndetect_new)) %>%
-    select(site, contains('rank'))
+              max_ndetect = max(n_detected)) %>%
+    left_join(nchem_unique_by_site)
   
-  nchems_wide <- left_join(nchems, nchem_ranks)
+  nchem_metrics_long <- nchem_metrics %>%
+    tidyr::gather(key = 'metric', value = 'metric_value', -site)
   
-  nchem_ndetect <- nchems_wide %>%
-    select(-contains('new')) %>%
-    rename(value = n_detected,
-           median_rank = med_ndetect_rank, 
-           max_rank = max_ndetect_rank) %>%
-    mutate(variable = 'n_detected')
+  nchem_ranks_long <- nchem_metrics %>%
+    mutate(med_ndetect = rank(-med_ndetect),
+           max_ndetect = rank(-max_ndetect),
+           n_detect_all_rank = rank(-n_detect_all)) %>%
+    tidyr::gather(key = 'metric', value = 'rank_value', -site)
   
-  nchem_ndetect_new <- nchems_wide %>%
-    select(site, date, contains('new')) %>%
-    rename(value = n_new,
-           median_rank = med_ndetect_new_rank, 
-           max_rank = max_ndetect_new_rank) %>%
-    mutate(variable = 'n_detected_new')
+  nchems_all <- left_join(nchem_metrics_long, nchem_ranks_long, by = c('site', 'metric'))
   
-  nchems <- bind_rows(nchem_ndetect, nchem_ndetect_new)
+  # nchem_ndetect <- nchems_wide %>%
+  #   select(-contains('new')) %>%
+  #   rename(value = n_detected,
+  #          median_rank = med_ndetect_rank, 
+  #          max_rank = max_ndetect_rank) %>%
+  #   mutate(variable = 'n_detected')
+  # 
+  # nchem_ndetect_new <- nchems_wide %>%
+  #   select(site, date, contains('new')) %>%
+  #   rename(value = n_new,
+  #          median_rank = med_ndetect_new_rank, 
+  #          max_rank = max_ndetect_new_rank) %>%
+  #   mutate(variable = 'n_detected_new')
   
-  return(nchems)
+  #nchems <- bind_rows(nchem_ndetect, nchem_ndetect_new)
+  
+  return(nchems_all)
 }
 
 get_conc_sites <- function(chemicalSummary_conc, all_samples) {
@@ -123,65 +129,126 @@ get_conc_sites <- function(chemicalSummary_conc, all_samples) {
 }
 
 get_ear_sites <- function(chemicalSummary, all_samples) {
-  site_ear <- chemicalSummary %>%
+  site_sum_ear <- chemicalSummary %>%
     group_by(site, date, CAS) %>%
-    summarize(sum_ear = sum(EAR)) %>%
-    ungroup() %>%
+    summarize(sum_ear = sum(EAR))
+  
+  site_sum_ear <- all_samples %>%
+    mutate(date = as.POSIXct(date)) %>%
+    left_join(site_sum_ear) %>%
+    mutate(sum_ear = ifelse(is.na(sum_ear), 0, sum_ear))
+  
+  n_samples <- all_samples %>%
+    group_by(site) %>%
+    summarize(n_samples = length(unique(date)))
+  
+  site_ear_summary <- site_sum_ear %>%
     group_by(site, date) %>%
-    summarize(mean_sumEAR = mean(sum_ear),
-              max_sumEAR = max(sum_ear))
+    summarize(max_sumEAR = max(sum_ear),
+              n_hits = length(which(sum_ear > 0.001))) %>%
+    group_by(site) %>%
+    summarize(max_max_sumEAR = round(max(max_sumEAR),4),
+              med_max_sumEAR = round(median(max_sumEAR),4),
+              n_hits_sum = sum(n_hits),
+              n_month_hits = length(unique(lubridate::month(date)[n_hits > 0]))) %>%
+    left_join(n_samples) %>%
+    mutate(n_hits_per_sample = round(n_hits_sum/n_samples, 1)) %>%
+    select(site, max_max_sumEAR, med_max_sumEAR, n_hits_per_sample, n_month_hits) 
+  
+  site_ear_metric_long <- site_ear_summary %>%
+    tidyr::gather(key = 'metric', value = 'metric_value', -site)
+  
+  site_ear_rank_long <- site_ear_metric_long %>%
+    group_by(metric) %>%
+    mutate(rank_value = rank(-metric_value)) %>%
+    mutate(metric_type = 'EAR')
+    
   
   # this likely underestimates effects, but summing likely overestimates
   # mean might not make sense -- having a "low" value doesn't somehow offset a 
   # high value. 
   
-  samples <- all_samples %>%
-    mutate(date = as.POSIXct(date)) %>%
-    filter()
+  # samples <- all_samples %>%
+  #   mutate(date = as.POSIXct(date)) %>%
+  #   filter()
+  # 
+  # site_ear <- full_join(site_ear, samples) %>%
+  #   mutate(mean_sumEAR = ifelse(is.na(mean_sumEAR), 0, mean_sumEAR),
+  #          max_sumEAR = ifelse(is.na(max_sumEAR), 0, max_sumEAR)) %>%
+  #   ungroup()
+  # 
+  # site_ear_rank <- group_by(site_ear, site) %>%
+  #   summarize(med_mean_sumEAR = median(mean_sumEAR),
+  #             max_mean_sumEAR = max(mean_sumEAR),
+  #             med_max_sumEAR = median(max_sumEAR),
+  #             max_max_sumEAR = max(max_sumEAR)) %>%
+  #   mutate(med_mean_sumEAR_rank = rank(-med_mean_sumEAR),
+  #          max_mean_sumEAR_rank = rank(-max_mean_sumEAR),
+  #          med_max_sumEAR_rank = rank(-med_max_sumEAR),
+  #          max_max_sumEAR_rank = rank(-max_max_sumEAR)) %>%
+  #   select(site, contains('rank'))
+  # 
+  # site_ear_wide <- left_join(site_ear, site_ear_rank)
+  # 
+  # site_mean_ear <- site_ear_wide %>%
+  #   select(-contains('max_sumEAR')) %>%
+  #   rename(value = mean_sumEAR,
+  #          median_rank = med_mean_sumEAR_rank,
+  #          max_rank = max_mean_sumEAR_rank) %>%
+  #   mutate(variable = 'mean_sumEAR')
+  # 
+  # site_max_ear <- site_ear_wide %>%
+  #   select(-contains('mean_sumEAR')) %>%
+  #   rename(value = max_sumEAR,
+  #          median_rank = med_max_sumEAR_rank,
+  #          max_rank = max_max_sumEAR_rank) %>%
+  #   mutate(variable = 'max_sumEAR')
+  # 
+  # site_ear <- bind_rows(site_mean_ear, site_max_ear)
   
-  site_ear <- full_join(site_ear, samples) %>%
-    mutate(mean_sumEAR = ifelse(is.na(mean_sumEAR), 0, mean_sumEAR),
-           max_sumEAR = ifelse(is.na(max_sumEAR), 0, max_sumEAR)) %>%
-    ungroup()
-  
-  site_ear_rank <- group_by(site_ear, site) %>%
-    summarize(med_mean_sumEAR = median(mean_sumEAR),
-              max_mean_sumEAR = max(mean_sumEAR),
-              med_max_sumEAR = median(max_sumEAR),
-              max_max_sumEAR = max(max_sumEAR)) %>%
-    mutate(med_mean_sumEAR_rank = rank(-med_mean_sumEAR),
-           max_mean_sumEAR_rank = rank(-max_mean_sumEAR),
-           med_max_sumEAR_rank = rank(-med_max_sumEAR),
-           max_max_sumEAR_rank = rank(-max_max_sumEAR)) %>%
-    select(site, contains('rank'))
-  
-  site_ear_wide <- left_join(site_ear, site_ear_rank)
-  
-  site_mean_ear <- site_ear_wide %>%
-    select(-contains('max_sumEAR')) %>%
-    rename(value = mean_sumEAR,
-           median_rank = med_mean_sumEAR_rank,
-           max_rank = max_mean_sumEAR_rank) %>%
-    mutate(variable = 'mean_sumEAR')
-  
-  site_max_ear <- site_ear_wide %>%
-    select(-contains('mean_sumEAR')) %>%
-    rename(value = max_sumEAR,
-           median_rank = med_max_sumEAR_rank,
-           max_rank = max_max_sumEAR_rank) %>%
-    mutate(variable = 'max_sumEAR')
-  
-  site_ear <- bind_rows(site_mean_ear, site_max_ear)
-  
-  return(site_ear)
+  return(site_ear_rank_long)
   
 }
 
 get_bench_sites <- function(chemicalSummary_bench, all_samples) {
+  site_max_bench <- chemicalSummary_bench %>%
+    group_by(site, date, CAS) %>%
+    summarize(max_bench = max(EAR))
+  
+  site_max_bench <- all_samples %>%
+    mutate(date = as.POSIXct(date)) %>%
+    left_join(site_max_bench) %>%
+    mutate(max_bench = ifelse(is.na(max_bench), 0, max_bench))
+  
+  n_samples <- all_samples %>%
+    group_by(site) %>%
+    summarize(n_samples = length(unique(date)))
+  
+  site_bench_summary <- site_max_bench %>%
+    group_by(site, date) %>%
+    summarize(max_bench = max(max_bench),
+              n_hits = length(which(sum_ear > 0.001))) %>%
+    group_by(site) %>%
+    summarize(max_max_sumEAR = round(max(max_sumEAR),4),
+              med_max_sumEAR = round(median(max_sumEAR),4),
+              n_hits_sum = sum(n_hits),
+              n_month_hits = length(unique(lubridate::month(date)[n_hits > 0]))) %>%
+    left_join(n_samples) %>%
+    mutate(n_hits_per_sample = round(n_hits_sum/n_samples, 1)) %>%
+    select(site, max_max_sumEAR, med_max_sumEAR, n_hits_per_sample, n_month_hits) 
+  
+  site_ear_metric_long <- site_ear_summary %>%
+    tidyr::gather(key = 'metric', value = 'metric_value', -site)
+  
+  site_ear_rank_long <- site_ear_metric_long %>%
+    group_by(metric) %>%
+    mutate(rank_value = rank(-metric_value)) %>%
+    mutate(metric_type = 'EAR')
+  
+  ## old code
   site_bench <- chemicalSummary_bench %>%
     group_by(site, date) %>%
-    summarize(mean_bench = mean(EAR), 
-              max_bench = max(EAR))
+    summarize(max_bench = max(EAR))
   
   samples <- all_samples %>%
     mutate(date = as.POSIXct(date)) %>%
