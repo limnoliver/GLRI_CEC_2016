@@ -130,7 +130,8 @@ get_conc_sites <- function(chemicalSummary_conc, all_samples) {
 
 get_ear_sites <- function(chemicalSummary, all_samples) {
   site_sum_ear <- chemicalSummary %>%
-    group_by(site, date, CAS) %>%
+    #group_by(site, date, CAS) %>%
+    group_by(site, date, parent_pesticide) %>%
     summarize(sum_ear = sum(EAR))
   
   site_sum_ear <- all_samples %>%
@@ -212,7 +213,7 @@ get_ear_sites <- function(chemicalSummary, all_samples) {
 
 get_bench_sites <- function(chemicalSummary_bench, all_samples) {
   site_max_bench <- chemicalSummary_bench %>%
-    group_by(site, date, CAS) %>%
+    group_by(site, date, parent_pesticide) %>%
     summarize(max_bench = max(EAR))
   
   site_max_bench <- all_samples %>%
