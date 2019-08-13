@@ -35,15 +35,19 @@ targets:
     
   chemicalSummary_conc_deg_acet:
     command: merge_deg_parents(chemicalSummary_conc, chem_crosswalk, metolachlor = FALSE)
-    
-  chemicalSummary_bench_deg_meto:
-    command: merge_deg_parents(chemicalSummary_bench, chem_crosswalk, metolachlor = TRUE)
   
+  # need to find parent benchmark values for degradates with no toxicity info
+  #chem_bench_surrogates:
+  #    command: get_chem_sum_deg(data_file = "data/pesticides_bench.xlsx", parents = chem_crosswalk, metolachlor = TRUE)
+  
+  chemicalSummary_bench_deg_meto:
+    command: get_bench_sum_deg("data/pesticides_bench.xlsx", chem_crosswalk, metolachlor = TRUE)
+    
   chemicalSummary_bench_deg_acet:
-    command: merge_deg_parents(chemicalSummary_bench, chem_crosswalk, metolachlor = FALSE)
+    command: get_bench_sum_deg("data/pesticides_bench.xlsx", chem_crosswalk, metolachlor = FALSE)
   
   parent_class:
-    command: get_parent_class(chemicalSummary_conc_deg_meto)
+    command: get_parent_class(chemicalSummary_conc_deg_meto, chem_info)
     
   parent_sums:
     command: sum_by_parents(
@@ -52,7 +56,7 @@ targets:
       deg_parent_bench = chemicalSummary_bench_deg_meto)
       
   parent_summaries:
-    command: summarize_parents(parent_sums, parent_class)
+    command: summarize_parents(parent_sums, classes = parent_class)
     
   # for the degradates that are either acetochlor or metolachlor, look at the 
   # the relationship between the degradate and parent
@@ -63,3 +67,8 @@ targets:
     
   22_merge_data_deg_test/out/unclassified_degradates.png:
     command: plot_unclassified_degs(conc_dat = chemicalSummary_conc, unclassified_degs, out_file = target_name)
+    
+  # create the "boxplot" fig but use the summed parent + degradates 
+  figures/ms_figures/parent_deg_sums_dotplot.png:
+    command: plot_deg_sums(parent_summaries, target_name)
+  
