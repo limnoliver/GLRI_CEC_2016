@@ -212,6 +212,28 @@ get_ear_sites <- function(chemicalSummary, all_samples) {
 }
 
 get_bench_sites <- function(chemicalSummary_bench, all_samples) {
+  
+  # first, find lowest toxicity unit/highest TQ for each chemical
+  # (conservative approach)
+  chem_max_bench <- chemicalSummary_bench %>%
+    group_by(site, date, CAS, parent_pesticide) %>%
+    summarize(max_bench = max(EAR))
+  
+  # now, sum the TQs for each parent compound
+  parent_sum_bench <- chem_max_bench %>%
+    group_by(site, date, parent_pesticide) %>%
+    summarize(sum_max_bench = sum(max_bench))
+  
+  
+  
+  site_max_bench <- chemicalSummary_bench %>%
+    group_by(site, date, CAS) %>%
+    summarize(n_bench = n(),
+              endpoints = paste0(endPoint, collapse = ', ')) %>%
+    ungroup() %>%
+    select(CAS, n_bench, endpoints) %>%
+    distinct()
+  
   site_max_bench <- chemicalSummary_bench %>%
     group_by(site, date, parent_pesticide) %>%
     summarize(max_bench = max(EAR))
