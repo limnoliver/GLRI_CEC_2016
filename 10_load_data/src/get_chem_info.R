@@ -17,10 +17,10 @@ get_chem_info <- function(infile) {
     select(-CAS) %>%
     rename(CAS = CAS_2)
   
-  # filter a few compounds out that have repeated CAS numbers
-  #pCode 68566 (Demethyl hexazinone B) and Hexazinone TP F	68574 have same CAS
+  # change incorrect CAS number
+  # Hexazinone TP F	68574 should have cas == 56611-55-3
   
-  info_c <- filter(info_c, !pCode == '68574')
+  info_c$CAS[info_c$pCode %in% '68574'] <- '56611-55-3'
   
   # fix missing parent/compounds
   
