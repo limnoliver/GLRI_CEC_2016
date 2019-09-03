@@ -14,7 +14,7 @@ select_top_chems <- function(chem_dat) {
   
   top_chems_attr <- left_join(top_chems, distinct(select(chem_dat, CAS, Class)))
 }
-calc_chem_tox_hits <- function(chem_tox_dat, chem_conc_dat, sites_detect, sites_hit) {
+calc_chem_tox_hits <- function(chem_tox_dat, chem_conc_dat) {
   
   site_hits_tox <- chem_tox_dat %>%
     group_by(site, date, CAS, chnm) %>%
@@ -86,6 +86,10 @@ calc_chem_wq_metrics <- function(chem_dat) {
   
 }
 
+cal_chem_mix_metrics <- function(mix_dat) {
+  
+}
+
 merge_top_chems_hits <- function(tox_hits, wq_hits, top_chems) {
   dat <- left_join(top_chems, wq_hits) %>%
     left_join(tox_hits)
@@ -120,9 +124,34 @@ summarize_chems <- function(file_name, chem_vals, chem_crosswalk, chem_info) {
     
 }
 
+summarize_chem_meta <- function(file_name, chem_vals, chem_crosswalk, chem_info_all, chems_missing_toxcast, chems_missing_bench, neonic) {
+  
+  sample_count <- chem_vals %>%
+    group_by(CAS, pCode) %>%
+    summarize(n_samples = n(),
+              n_sites = length(unique(SiteID)))
+  
+  
+
+  meta <- left_join(sample_count, chem_info_all, by = 'CAS') %>%
+    left_join(select(chem_crosswalk, CAS, compound, parent_pesticide)) %>%
+    mutate(`In toxCast` = ifelse(CAS %in% chems_missing_toxcast, '', 'x'),
+           `In benchmarks` = ifelse(CAS %in% chems_missing_bench, '', 'x'))
+  
+  meta$parent_pesticide[is.na(meta$parent_pesticide)] <- meta$`Chemical Name`[is.na(meta$parent_pesticide)]
+  
+  meta <- meta %>%
+    arrange(parent_pesticide) %>%
+    select(`Chemical Name`, CAS, `USGS parameter code` = pCode, Class, `Parent compound` = parent_pesticide, `In toxCast`, `In benchmarks`, `N samples measured` = n_samples, `N sites measured` = n_sites)
+  
+  
+  write.csv(meta, file_name, row.names = FALSE)
+  
+}
+
 calc_parent_tox_hits <- function(parent_sums){
   hits_ear <- parent_sums %>%
-    filter(type == 'p_sumval' & measure_type %in% 'ear') %>%
+    filter(type == 'p_d_sumval' & measure_type %in% 'ear') %>%
     filter(sumval > 0.001) %>%
     group_by(parent_pesticide) %>%
     summarize(n_hits = n(), 

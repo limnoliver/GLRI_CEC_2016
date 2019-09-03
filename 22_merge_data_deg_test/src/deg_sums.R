@@ -62,7 +62,7 @@ sum_by_parents <- function(deg_parent_ear, deg_parent_conc, deg_parent_bench) {
     j_par_deg_sums <- full_join(rename(parent_sums, p_sumval = sumval), 
                                 rename(deg_sums, d_sumval = sumval)) %>%
       rowwise() %>%
-      mutate(p_d_sumval = sum(c(p_sumval, d_sumval)))
+      mutate(p_d_sumval = sum(c(p_sumval, d_sumval), na.rm = TRUE))
     
     sum_by_chem <- j_par_deg_sums %>%
       gather(key = 'type', value = 'sumval', p_sumval, d_sumval, p_d_sumval) %>%

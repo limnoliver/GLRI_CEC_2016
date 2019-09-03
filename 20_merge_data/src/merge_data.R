@@ -107,9 +107,10 @@ remove_duplicate_chems <- function(merged_dat) {
   
   # only one casrn number is repeated
   # this is for Demethyl hexazinone B (68566)/Didemethyl hexazinone F (68574)
-  # 68574 are all BDL, so 68566 is going to remain in dataset, will filter out 68574
-  
-  fixed_dat <- filter(fixed_dat, pCode != '68574')
+  # hex F has wrong cas number
+
+  #fixed_dat <- filter(fixed_dat, pCode != '68574')
+  # commenting out since we fix cas elsewhere
   
   return(fixed_dat)
 
@@ -346,7 +347,7 @@ create_ConcExcel <- function(chem_data, chem_info, site_info, exclusions, file_o
 get_chem_sum <- function(data_file){
 
   tox_list <- create_toxEval(data_file)
-  tox_list$chem_data <- filter(tox_list$chem_data, Value != 0)
+  #tox_list$chem_data <- filter(tox_list$chem_data, Value != 0)
   
   ACClong <- get_ACC(tox_list$chem_info$CAS)
   ACClong <- remove_flags(ACClong)
@@ -361,7 +362,7 @@ get_chem_sum <- function(data_file){
 get_chem_bench <- function(data_file){
   
   tox_list <- create_toxEval(data_file)
-  tox_list$chem_data <- filter(tox_list$chem_data, Value != 0)
+  #tox_list$chem_data <- filter(tox_list$chem_data, Value != 0)
 
   chemicalSummary_bench <- get_chemical_summary(tox_list)
   
@@ -372,7 +373,7 @@ get_chem_bench <- function(data_file){
 get_conc_summary <- function(data_file){
   
   tox_list <- create_toxEval(data_file)
-  tox_list$chem_data <- filter(tox_list$chem_data, Value != 0)
+  #tox_list$chem_data <- filter(tox_list$chem_data, Value != 0)
 
   chemicalSummary_conc <- get_chemical_summary(tox_list)
   return(chemicalSummary_conc)

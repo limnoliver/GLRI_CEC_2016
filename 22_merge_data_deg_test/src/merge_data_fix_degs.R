@@ -1,13 +1,28 @@
-get_chem_sum_deg <- function(data_file, parents, metolachlor){
+find_missing_tox <- function(data_file, parents, metolachlor){
   
   tox_list <- create_toxEval(data_file)
-  tox_list$chem_data <- filter(tox_list$chem_data, Value != 0)
+  #tox_list$chem_data <- filter(tox_list$chem_data, Value != 0)
   
   ACClong <- get_ACC(unique(tox_list$chem_info$CAS))
   ACClong <- remove_flags(ACClong)
   
   # find chems that are not in toxCast
   missing <- unique(tox_list$chem_data$CAS)[-which(unique(tox_list$chem_data$CAS) %in% unique(ToxCast_ACC$CAS))]
+  
+  return(missing)
+}
+
+get_chem_sum_deg <- function(data_file, parents, metolachlor){
+  
+  tox_list <- create_toxEval(data_file)
+  #tox_list$chem_data <- filter(tox_list$chem_data, Value != 0)
+  
+  ACClong <- get_ACC(unique(tox_list$chem_info$CAS))
+  ACClong <- remove_flags(ACClong)
+  
+  # find chems that are not in toxCast
+  missing <- unique(tox_list$chem_data$CAS)[-which(unique(tox_list$chem_data$CAS) %in% unique(ToxCast_ACC$CAS))]
+  
   missing <- filter(tox_list$chem_info, CAS %in% missing)
   
   # crosswalk between missing chems and parent compounds
@@ -65,10 +80,23 @@ get_chem_sum_deg <- function(data_file, parents, metolachlor){
   
   return(chemicalSummary)
 }
+find_missing_bench <- function(data_file, parents, metolachlor){
+  
+  tox_list <- create_toxEval(data_file)
+  #tox_list$chem_data <- filter(tox_list$chem_data, Value != 0)
+  
+  bench_vals <- unique(tox_list$benchmarks) %>%
+    filter(!is.na(ACC_value)) %>%
+    left_join(select(parents, CAS, MlWt))
+  
+  # find chems that are not in benchmarks
+  missing <- unique(tox_list$chem_data$CAS)[-which(unique(tox_list$chem_data$CAS) %in% unique(bench_vals$CAS))]
+  return(missing)
+}
 get_bench_sum_deg <- function(data_file, parents, metolachlor){
   
   tox_list <- create_toxEval(data_file)
-  tox_list$chem_data <- filter(tox_list$chem_data, Value != 0)
+  #tox_list$chem_data <- filter(tox_list$chem_data, Value != 0)
   
   bench_vals <- unique(tox_list$benchmarks) %>%
     filter(!is.na(ACC_value)) %>%
@@ -136,7 +164,7 @@ get_bench_sum_deg <- function(data_file, parents, metolachlor){
 
 get_unclassified <- function(data_file, parents){
   tox_list <- create_toxEval(data_file)
-  tox_list$chem_data <- filter(tox_list$chem_data, Value != 0)
+  #tox_list$chem_data <- filter(tox_list$chem_data, Value != 0)
   
   ACClong <- get_ACC(unique(tox_list$chem_info$CAS))
   ACClong <- remove_flags(ACClong)
