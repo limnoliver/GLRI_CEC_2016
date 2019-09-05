@@ -16,11 +16,8 @@ sources:
 targets:
   25_rank_data:
     depends:
-      - figure/site_rankings.png
-      - figure/site_rankings_tile.png
-      - top_chems_ear
-      - top_chems_ear_deg_meto
-      - top_chems_ear_deg_acet
+      - top_parents
+
       
   all_samples:
     command: get_all_samples(chem_data)
@@ -42,13 +39,16 @@ targets:
   rank_site_bench:
     command: get_bench_sites(chemicalSummary_bench_deg_meto, all_samples)
     
+  rank_site_mix:
+    command: get_mix_sites(site_mix_metrics_all)
+    
   site_rankings:
-    command: bind_rows(rank_site_n_chems, rank_site_conc, rank_site_EAR, rank_site_bench)
+    command: bind_rows(rank_site_n_chems, rank_site_EAR, rank_site_bench)
   
   figure/site_rankings.png:
     command: make_site_fig(target_name, site_rankings, sites)
     
-  figure/site_rankings_tile.png:
+  figures/ms_figures/site_rankings_tile.png:
     command: make_site_tile(target_name, site_rankings, sites)
     
   site_avg_rankings:
@@ -63,23 +63,33 @@ targets:
   # bench: rankings based on mean and max benchmark ratio of chem
   # EAR: rankings based on mean of max EAR by chem 
     
+  figures/ms_supplement_figures/chem_metadata.csv:
+    command: summarize_chem_meta(file_name = target_name, chem_vals = all_chems, 
+      chem_crosswalk, chem_info_all, chems_missing_toxcast, chems_missing_bench)
+    
   figure/chem_summary.csv:
-    command: summarize_chems(file_name = target_name, chem_vals = all_chems, chem_crosswalk, chem_info)
+    command: summarize_chems(file_name = target_name, chem_vals = all_chems, 
+      chem_crosswalk, chem_info_all, chemicalSummary_conc)
     
   #figure/site_summary.csv:
   #  command: summarize_chems_by_site(file_name = target_name, chem_conc, chem_ear, chem_bench)
     
-  top_chems_ear:
-    command: calc_chem_tox_hits(chemicalSummary, chemicalSummary_conc, sites_detect = I(8), sites_hit = I(4))
+  #top_chems_ear:
+  #  command: calc_chem_tox_hits(chemicalSummary, chemicalSummary_conc, sites_detect = I(8), sites_hit = I(4))
 
-  top_metrics:
-    command: calc_parent_tox_hits(parent_sums)
+  parent_chem_rank_metrics:
+    command: calc_parent_tox_hits(parent_sums, mixtures = chem_mix_metrics_all)
     
-  top_chems_ear_deg_meto:
-    command: calc_chem_tox_hits(chemicalSummary_deg_meto, chemicalSummary_conc, I(8), I(4))
+  top_parents:
+    command: filter_parents(parent_chem_rank_metrics, f_detect_prob = I(.2), f_detect_sites_prob = I(.5),
+      f_detect_months = I(12), f_hit_prob = I(.1), f_hit_sites_prob = I(0.25))
+    
+  #top_chems_ear_deg_meto:
+  #  command: calc_chem_tox_hits(chemicalSummary_deg_meto, chemicalSummary_conc, I(8), I(4))
   
-  top_chems_ear_deg_acet:
-    command: calc_chem_tox_hits(chemicalSummary_deg_acet, chemicalSummary_conc, I(8), I(4))
+  #top_chems_ear_deg_acet:
+  #  command: calc_chem_tox_hits(chemicalSummary_deg_acet, chemicalSummary_conc)
+    
   
   # TIMING of highest impact (RANKINGS) by month
   # nchems: mean # chemicals across sites, unique chemicals relative to all other periods
