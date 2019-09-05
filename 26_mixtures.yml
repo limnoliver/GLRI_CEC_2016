@@ -13,15 +13,10 @@ sources:
 targets:
   26_mixtures:
     depends: 
-      - 26_mixtures/out/chem_mix_metrics.csv
-      - 26_mixtures/out/site_mix_metrics.csv
-      - 26_mixtures/out/chem_mix_metrics_all.csv
-      - 26_mixtures/out/site_mix_metrics_all.csv
-      - figure/mixtures_summary_all.png
-      - figure/mixtures_summary_limited.png
+      - EARsum_endpoint
       
   EARsum_endpoint:
-    command: sum_endpoints(chemicalSummary)
+    command: sum_endpoints(chemicalSummary_deg_meto)
     
   contributing_chems:
     command: calc_contr_chems(EARsum_endpoint)
@@ -60,14 +55,17 @@ targets:
       top_mixtures = top_mixes, 
       ear_sum = EARsum_endpoint)
 
-  26_mixtures/out/chem_mix_metrics.csv:
+  chem_mix_metrics:
     command: calc_chem_mix_metrics(top_mixtures = top_mixes, summed_EARs = EARsum_endpoint, target_name)
   
-  26_mixtures/out/chem_mix_metrics_all.csv:
+  chem_mix_metrics_all:
     command: calc_chem_mix_metrics(top_mixtures = top_mixes_all, summed_EARs = EARsum_endpoint, target_name)
-     
-  26_mixtures/out/site_mix_metrics.csv:
-    command: calc_site_mix_metrics(top_mixtures = top_mixes, target_name)
+   
+  26_mixtures/out/chem_mix_metrics_all.csv:
+    command: write.csv(chem_mix_metrics_all, target_name, row.names = FALSE)
+  
+  site_mix_metrics:
+    command: calc_site_mix_metrics(top_mixtures = top_mixes, chemicalSummary_conc)
 
-  26_mixtures/out/site_mix_metrics_all.csv:
-    command: calc_site_mix_metrics(top_mixtures = top_mixes_all, target_name)
+  site_mix_metrics_all:
+    command: calc_site_mix_metrics(top_mixtures = top_mixes_all, chemicalSummary_conc)

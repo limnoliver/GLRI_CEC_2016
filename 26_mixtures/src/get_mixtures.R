@@ -29,7 +29,9 @@ calc_contr_chems <- function(summed_EARs) {
 EAR_sum_endpoint <- summed_EARs %>%
   group_by(site, shortName, date, endPoint, sum_ear_endpoint) %>%
   summarize(n_contr_chems = n(),
-            contr_chems = paste0(chnm, collapse = ', '),
+            n_contr_parents = length(unique(parent_pesticide)),
+            contr_chems = paste0(sort(chnm), collapse = ', '),
+            contr_parents = paste0(sort(unique(parent_pesticide)), collapse = ', '),
             max_individual_contr = max(EAR)) %>%
   ungroup()
 return(EAR_sum_endpoint)
@@ -66,14 +68,16 @@ top_mixes_2plus <- filter(top_mixtures, n_contr_chems >1)
 top_mix_chems <- summed_EARs %>%
   left_join(select(top_mixes_2plus, site, shortName, date, endPoint = endPoint_top, prop_ind_contr)) %>%
   filter(!is.na(prop_ind_contr)) %>%
-  group_by(chnm) %>%
+  group_by(site, shortName, date, endPoint, sum_ear_endpoint, prop_ind_contr, parent_pesticide) %>%
+  summarize(chem_mix_contribution = sum(chem_mix_contribution)) %>%
+  group_by(parent_pesticide) %>%
   summarize(times_in_mixes = n(),
             contribution_median = median(chem_mix_contribution),
             n_endpoints = length(unique(endPoint)),
             n_sites = length(unique(site))) %>%
   arrange(-times_in_mixes)
 
-write.csv(top_mix_chems, out_file, row.names = FALSE)
+return(top_mix_chems)
 }
 
 summarize_mixtures <- function(top_mixtures) {
@@ -153,13 +157,21 @@ plot_mix_summary <- function(n_summary, mix_summary, top_mixtures, ear_sum, out_
 
 # sites - calculate max EARmix across samples, as well as the 
 # number of months where there is an EARmix > 0.001 
-calc_site_mix_metrics <- function(top_mixtures, out_file) {
+calc_site_mix_metrics <- function(top_mixtures, all_samples) {
+  all_dates <- all_samples %>%
+    select(site, date) %>%
+    distinct() %>%
+    group_by(site) %>%
+    summarize(n_samples = n())
+    
   site_mix <- top_mixtures %>%
-  group_by(site, shortName) %>%
-  summarize(n_mix_hits = n(),
-            n_mix_hit_months = length(unique(lubridate::month(date))),
+    left_join(all_dates) %>%
+    group_by(site, shortName,) %>%
+    summarize(mix_hits_per_sample = n()/unique(n_samples),
+             mix_hit_n_endpoints = length(unique(endPoint)),
+            mix_hit_n_months = length(unique(lubridate::month(date))),
             max_EARmix = round(max(max_sum_ear_endpoint), 4)) %>%
     arrange(-max_EARmix)
-  
-  write.csv(site_mix, out_file, row.names = FALSE)
+    
+    return(site_mix)
 }
