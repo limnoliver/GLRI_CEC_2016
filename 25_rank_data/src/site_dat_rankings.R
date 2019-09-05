@@ -187,7 +187,18 @@ get_bench_sites <- function(chemicalSummary_bench, all_samples) {
 
 get_mix_sites <- function(mixes) {
   mixes_long <- mixes %>%
-    
+    select(-shortName) %>%
+    rename(Hits = mix_hits_per_sample,
+           `max EARmix` = max_EARmix, 
+           `Months w/hits` = mix_hit_n_months,
+           `Endpoints w/hits` = mix_hit_n_endpoints) %>%
+    tidyr::gather(key = 'metric', value = 'metric_value', -site) %>%
+    group_by(metric) %>%
+    mutate(rank_value = rank(-metric_value),
+           relative_value = metric_value/max(metric_value)) %>%
+    mutate(metric_type = 'EARmix')
+  
+  return(mixes_long)
     
 }
 merge_site_rankings <- function(nchems, conc, ear, bench) {

@@ -117,37 +117,47 @@ make_site_tile <- function(file_name, site_rankings, sites) {
            perc_ag_urban = ag_total + Urban)
   
   plot_dat <- site_rankings
-  plot_dat$variable <- factor(plot_dat$variable,
-                              levels = c('n_detected', 'n_detected_new',
-                                         'mean_conc', 'sum_conc',
-                                         'mean_bench', 'max_bench',
-                                         'mean_sumEAR', 'max_sumEAR'))
-  levels(plot_dat$variable) <- c('No. chems detected', 'No. unique chems',
-                                 'Mean concentration', 'Sum concentration',
-                                 'Mean benchmark ratio', 'Max benchmark ratio',
-                                 'Mean sumEAR', 'Max sumEAR')
+  plot_dat$metric <- factor(plot_dat$metric)
+  levels(plot_dat$metric) <- c(levels(plot_dat$metric)[1], 'med hits/sample',levels(plot_dat$metric)[3], 
+                               'max TQchem', 'max EARchem', 'max chems detected', 
+                                 'med hits/sample', 'med TQchem', 'med EARchem',
+                                 'med detects/sample', 'months w/hits','total chems detected',
+                                 'months w/hits')
   site_dat$landuse <- factor(site_dat$landuse, levels = rev(c('Natural','Urban', 'AgMix', 'Crops')))
   site_dat <- arrange(site_dat, landuse, perc_ag_urban)
   site_order <- unique(site_dat$shortName)
   site_dat$shortName <- factor(site_dat$shortName, levels = site_order)
   
   # filter out specific vars that we don't want to use
-  plot_dat <- filter(plot_dat, variable %in% c('No. chems detected', 'Mean concentration',
-                                               'Mean benchmark ratio', 'Mean sumEAR'))
+  #plot_dat <- filter(plot_dat, variable %in% c('No. chems detected', 'Mean concentration',
+  #                                             'Mean benchmark ratio', 'Mean sumEAR'))
   
   plot_dat <- left_join(plot_dat, site_dat)
-  head(plot_dat)
-  long_plot_dat <- gather(plot_dat, key = rank_variable, value = rank_value, median_rank, max_rank) %>%
-    mutate(rank_variable = ifelse(rank_variable == 'max_rank', "Acute (max) rank", "Chronic (med) rank"))
   
-  p <- ggplot(long_plot_dat) +
-    geom_tile(aes(y = shortName, x = variable, fill = rank_value), color = 'black') +
-    scale_fill_gradient2(low = 'red', mid = 'white', high = 'blue',
-                         midpoint = 8.5, limits = c(1, 16), breaks = c(1,4,8,12,16)) +
+  
+  plot_dat_min <- plot_dat %>%
+    group_by(metric, metric_type) %>%
+    summarize(metric_value = metric_value[which.min(metric_value)]) %>%
+    mutate(print_min = metric_value)
+  
+  plot_dat <- plot_dat %>%
+    mutate(print_max = ifelse(relative_value == 1, metric_value, NA)) 
+  plot_dat <- left_join(plot_dat, plot_dat_min, by = c("metric", "metric_value", "metric_type", 'metric_value'))%>%
+    mutate(print_min = ifelse(is.na(print_min), '', format(print_min, scientific = FALSE, digits = 4)))
+  
+  
+  #long_plot_dat <- gather(plot_dat, key = rank_variable, value = rank_value, median_rank, max_rank) %>%
+  #  mutate(rank_variable = ifelse(rank_variable == 'max_rank', "Acute (max) rank", "Chronic (med) rank"))
+  
+  p <- ggplot(plot_dat, aes(y = shortName, x = metric)) +
+    geom_tile(aes(fill = relative_value), color = 'black') +
+    geom_text(aes(label = round(print_max, 1)), color = 'white') +
+    geom_text(aes(label = print_min), color = 'black') +
+    scale_fill_viridis(option = 'viridis', direction = -1, begin = 0.1) +
     #facet_wrap(landuse~rank_variable, ncol = 2, scales = 'free_y') +
-    facet_grid(landuse~rank_variable, scales = 'free_y', space = 'free_y') +
-    labs(y = '', x = '', fill = "Rank") +
+    facet_grid(landuse~metric_type, scales = 'free', space = 'free_y') +
+    labs(y = '', x = '', fill = "Relative Value") +
     theme(axis.text.x = element_text(angle = 45, v = 1, h = 1))
   
-  ggsave(file_name, p, height = 7, width = 6)
+  ggsave(file_name, p, height = 7, width = 9)
 }
