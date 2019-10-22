@@ -112,17 +112,17 @@ make_site_fig <- function(file_name, site_rankings, sites) {
 make_site_tile <- function(file_name, site_rankings, sites) {
   
   site_dat <- select(sites, site = site_no, landuse = `Dominant.land.use.`, shortName, 
-                     ag_total = `Ag..total`, Urban) %>%
+                     ag_total = `Ag..total`, ag_crops = `Ag..crops`, Urban) %>%
     mutate(landuse = ifelse(landuse == 'Wetland' | landuse == 'Forest', "Natural", landuse),
-           perc_ag_urban = ag_total + Urban)
+           perc_ag_urban = ag_total + Urban,
+           perc_row_urban = ag_crops+Urban)
   
   plot_dat <- site_rankings
   plot_dat$metric <- factor(plot_dat$metric)
   levels(plot_dat$metric) <- c(levels(plot_dat$metric)[1], 'med hits/sample',levels(plot_dat$metric)[3], 
-                               'max TQchem', 'max EARchem', 'max chems detected', 
-                                 'med hits/sample', 'med TQchem', 'med EARchem',
-                                 'med detects/sample', 'months w/hits','total chems detected',
-                                 'months w/hits')
+                               'max TQchem', 'max chems detected', 'med hits/sample', 
+                               'med TQchem', 'med detects/sample', 'months w/hits',
+                               'total chems detected', 'months w/hits')
   site_dat$landuse <- factor(site_dat$landuse, levels = rev(c('Natural','Urban', 'AgMix', 'Crops')))
   site_dat <- arrange(site_dat, landuse, perc_ag_urban)
   site_order <- unique(site_dat$shortName)
@@ -157,7 +157,59 @@ make_site_tile <- function(file_name, site_rankings, sites) {
     #facet_wrap(landuse~rank_variable, ncol = 2, scales = 'free_y') +
     facet_grid(landuse~metric_type, scales = 'free', space = 'free_y') +
     labs(y = '', x = '', fill = "Relative Value") +
-    theme(axis.text.x = element_text(angle = 45, v = 1, h = 1))
+    theme(axis.text.x = element_text(angle = 45, v = 1, h = 1),
+          legend.position = 'bottom', legend.direction = 'horizontal',
+          legend.title = element_text(vjust = 1.5, hjust = 1.5))
   
-  ggsave(file_name, p, height = 7, width = 9)
+  ggsave(file_name, p, height = 7, width = 10)
 }
+
+create_site_rank_table <- function(site_rankings, sites, out_file) {
+  
+  # create wide version of site rank data
+  wide_dat <- site_rankings
+  wide_dat$metric <- factor(wide_dat$metric)
+  levels(wide_dat$metric) <- c(levels(wide_dat$metric)[1], 'med hits/sample',levels(wide_dat$metric)[3], 
+                                 'max TQchem', 'max chems detected', 'med hits/sample', 
+                                 'med TQchem', 'med detects/sample', 'months w/hits',
+                                 'total chems detected', 'months w/hits')
+  
+  wide_dat_values <- wide_dat %>%
+    ungroup() %>%
+    mutate(column_name = paste(metric_type, metric, sep = '_')) %>%
+    select(-metric, -rank_value, -relative_value, -metric_type) %>%
+    tidyr::spread(column_name, metric_value)
+  
+  wide_rel_vals <- wide_dat %>%
+    ungroup() %>%
+    mutate(column_name = paste(metric_type, metric, sep = '_')) %>%
+    select(-metric, -metric_value, -rank_value, -metric_type) %>%
+    tidyr::spread(column_name, relative_value)
+  
+  # calculate mean values -- and weight benchmarks by 3 (most confident in those #s), 
+  # EARs by 2 (better than just a chem being present, but not exactly sure how it scales), 
+  # and occurence data by 1
+  bench_rel_vals <- wide_rel_vals %>%
+    mutate(bench_mean_rel = rowMeans(select(., starts_with('Bench')), na.rm = TRUE),
+           earmix_mean_rel = rowMeans(select(., starts_with('EARmix')), na.rm = TRUE),
+           occurance_mean_rel = rowMeans(select(., starts_with('Occurance')), na.rm = TRUE))
+  
+  bench_rel_vals$final_rel_val_321 <- round((3*bench_rel_vals$bench_mean_rel + 2*bench_rel_vals$earmix_mean_rel + bench_rel_vals$occurance_mean_rel)/6, 2)
+  #bench_rel_vals$final_rel_val_111 <- (bench_rel_vals$bench_mean_rel + bench_rel_vals$earmix_mean_rel + bench_rel_vals$occurance_mean_rel)/3
+  
+  dat_out <- left_join(wide_dat_values, select(bench_rel_vals, site, final_rel_val_321)) %>%
+    left_join(select(sites, site=site_no, shortName)) %>%
+    select(-site)
+  
+  write.csv(dat_out, out_file, row.names = FALSE)
+  
+}
+
+plot_rankings_v_landuse <- function(){
+  plot_vals <- select(bench_rel_vals, site, final_rel_val_321, final_rel_val_111) %>%
+    left_join(site_dat)
+  
+  ggplot(plot_vals, aes(y=final_rel_val_111, x = perc_row_urban)) +
+    geom_point(aes(color = landuse))
+}
+
