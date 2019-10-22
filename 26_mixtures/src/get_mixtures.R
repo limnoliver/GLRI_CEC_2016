@@ -6,7 +6,7 @@
 # 2. For each chemical, calculates percent contribution to each summed endpoint
 # 3. Chooses a cutoff for percent contribution, and finds important mixtures.
 # 4. Defines chemicals in important mixtures
-sum_endpoints <- function(all_EARs) {
+sum_endpoints <- function(all_EARs, filter_cutoffs = TRUE) {
 ear_cutoff <- 0.001
 
 # note Steve limited each chemical to contributing to one endpoint by 
@@ -14,13 +14,24 @@ ear_cutoff <- 0.001
 # I don't really know the rationale for this -- so am leaving out for now
 # I've incorporated a slightly different filter below: I used only the max summed endpointEAR
 # per site-date to represent sort of the "worst" mixture. Should touch base with Steve about this. 
-summed_EARs <- all_EARs %>%
-  group_by(site, shortName, date, endPoint) %>%
-  mutate(sum_ear_endpoint = sum(EAR)) %>%
-  ungroup() %>%
-  mutate(chem_mix_contribution = (EAR/sum_ear_endpoint)*100) %>%
-  filter(sum_ear_endpoint > ear_cutoff) %>%
-  filter(chem_mix_contribution > 1)
+
+if (filter_cutoffs) {
+  summed_EARs <- all_EARs %>%
+    group_by(site, shortName, date, endPoint) %>%
+    mutate(sum_ear_endpoint = sum(EAR)) %>%
+    ungroup() %>%
+    mutate(chem_mix_contribution = (EAR/sum_ear_endpoint)*100) %>%
+    filter(sum_ear_endpoint > ear_cutoff) %>%
+    filter(chem_mix_contribution > 1)
+} else {
+  summed_EARs <- all_EARs %>%
+    group_by(site, shortName, date, endPoint) %>%
+    mutate(sum_ear_endpoint = sum(EAR)) %>%
+    ungroup() %>%
+    mutate(chem_mix_contribution = (EAR/sum_ear_endpoint)*100) %>%
+    filter(chem_mix_contribution > 1)
+}
+
 
 return(summed_EARs)
 }
@@ -166,12 +177,30 @@ calc_site_mix_metrics <- function(top_mixtures, all_samples) {
     
   site_mix <- top_mixtures %>%
     left_join(all_dates) %>%
-    group_by(site, shortName,) %>%
-    summarize(mix_hits_per_sample = n()/unique(n_samples),
-             mix_hit_n_endpoints = length(unique(endPoint)),
+    group_by(site, shortName) %>%
+    summarize(mix_hits_per_sample = round(n()/unique(n_samples), 1),
+             mix_hit_n_endpoints = length(unique(endPoint_top)),
             mix_hit_n_months = length(unique(lubridate::month(date))),
             max_EARmix = round(max(max_sum_ear_endpoint), 4)) %>%
     arrange(-max_EARmix)
+  
+  if (length(unique(site_mix$site)) < length(unique(all_dates$site))) {
+    missing_sites <- unique(all_dates$site)[!unique(all_dates$site) %in% unique(site_mix$site)]
+    
+    # these sites are missing because they had no hits
+    max_value <- filter(EARsum_endpoint_nofilter, site %in% missing_sites) %>%
+      group_by(site, shortName) %>%
+      summarize(max_EARmix = round(max(sum_ear_endpoint), 4))
+    
+    dat_add <- data.frame(site = max_value$site, 
+                          shortName = max_value$shortName,
+                          mix_hits_per_sample = 0, 
+                          mix_hit_n_endpoints = 0,
+                          mix_hit_n_months = 0, 
+                          max_EARmix = max_value$max_EARmix)
+    
+    site_mix <- bind_rows(site_mix, dat_add)
+  }
     
     return(site_mix)
 }

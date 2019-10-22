@@ -16,7 +16,10 @@ targets:
       - EARsum_endpoint
       
   EARsum_endpoint:
-    command: sum_endpoints(chemicalSummary_deg_meto)
+    command: sum_endpoints(chemicalSummary_deg_meto, filter_cutoffs = TRUE)
+    
+  EARsum_endpoint_nofilter:
+    command: sum_endpoints(chemicalSummary_deg_meto, filter_cutoffs = FALSE)
     
   contributing_chems:
     command: calc_contr_chems(EARsum_endpoint)
