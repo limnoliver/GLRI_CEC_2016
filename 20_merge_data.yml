@@ -45,7 +45,7 @@ targets:
     command: create_chemData(filtered_censor, pCodeInfo)
     
   all_chems:
-    command: create_chemData(merged_dat, pCodeInfo)
+    command: create_chemData(reduced_dat, pCodeInfo)
     
   chem_data_dl:
     command: create_chemData(chem_dls, pCodeInfo)

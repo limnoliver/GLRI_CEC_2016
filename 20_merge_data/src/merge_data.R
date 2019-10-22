@@ -195,7 +195,15 @@ create_chemData <- function(reduced_dat,  pCodeInfo){
 
   
   chem_data <- distinct(chem_data) # currently this just gets rid of duplicated IHC values on 8/2
-
+  # change incorrect CAS numbers
+  
+  # Hexazinone TP F	68574 should have cas == 56611-55-3 from 56611-54-2
+  chem_data$CAS[chem_data$pCode %in% '68574'] <- '56611-55-3'
+  
+  #chem_data
+  
+  
+  
   return(chem_data)
 }
 
@@ -238,6 +246,9 @@ create_tox_chemInfo <- function(chem_data, special_cas, pCodeInfo, classes){
   # chem_info$Class[chem_info$CAS == "56611-54-2_68574"] <- "Deg - Herbicide"
   # 
   chem_info$`Chemical Name`[chem_info$CAS == "1066-51-9"] <- "Aminomethylphosphonic acid"
+  chem_info$`Chemical Name`[chem_info$CAS == '2303-17-5'] <- 'Triallate'
+  chem_info$`Chemical Name`[chem_info$CAS == '94-75-7'] <- '2,4-D'
+  
   
   # this needs to happen because glyphosate is in micrograms per liter. 
   # be sure this gets taken care of somewhere. 

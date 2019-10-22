@@ -24,6 +24,9 @@ targets:
       - chemicalSummary_bench_deg_meto
       - chemicalSummary_bench_deg_acet
 
+  chems_missing_toxcast:
+    command: find_missing_tox(data_file = "data/pesticides.xlsx", parents = chem_crosswalk)
+    
   chemicalSummary_deg_meto:
     command: get_chem_sum_deg(data_file = "data/pesticides.xlsx", parents = chem_crosswalk, metolachlor = TRUE)
     
@@ -40,6 +43,9 @@ targets:
   #chem_bench_surrogates:
   #    command: get_chem_sum_deg(data_file = "data/pesticides_bench.xlsx", parents = chem_crosswalk, metolachlor = TRUE)
   
+  chems_missing_bench:
+    command: find_missing_bench("data/pesticides_bench.xlsx", chem_crosswalk)
+    
   chemicalSummary_bench_deg_meto:
     command: get_bench_sum_deg("data/pesticides_bench.xlsx", chem_crosswalk, metolachlor = TRUE)
     
@@ -55,8 +61,17 @@ targets:
       deg_parent_conc = chemicalSummary_conc_deg_meto,
       deg_parent_bench = chemicalSummary_bench_deg_meto)
       
+  parent_sums_nozero:
+    command: filter_parent_sums(parent_sums)
+      
+  chnm_to_cas:
+    command: crosswalk_names(conc_dat = chemicalSummary_conc_deg_meto)
+      
   parent_summaries:
-    command: summarize_parents(parent_sums, classes = parent_class)
+    command: summarize_parents(parent_sums, classes = parent_class, zeros = FALSE)
+    
+  parent_summaries_zeros:
+    command: summarize_parents(parent_sums, classes = parent_class, zeros = TRUE)
     
   # for the degradates that are either acetochlor or metolachlor, look at the 
   # the relationship between the degradate and parent
@@ -70,5 +85,5 @@ targets:
     
   # create the "boxplot" fig but use the summed parent + degradates 
   figures/ms_figures/parent_deg_sums_dotplot.png:
-    command: plot_deg_sums(parent_summaries, target_name)
+    command: plot_deg_sums(all_dat = parent_summaries, top_parents, target_name)
   

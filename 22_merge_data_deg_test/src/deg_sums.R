@@ -15,7 +15,9 @@ get_parent_class <- function(deg_parent_conc, chem_info) {
   # so need to manually transfer that information
   
   all_parents <- all_parents %>%
-    add_row(parent_pesticide = c('Benomyl', 'Chlorothalonil'), Class = rep('Fungicide',2), CAS = c('17804-35-2', '1897-45-6'))
+    add_row(parent_pesticide = c('Benomyl', 'Chlorothalonil', 'Parathion-methyl', 'Parathion-ethyl', 'Dacthal'), 
+            Class = c(rep('Fungicide',2), rep("Insecticide", 2), 'Herbicide'), 
+            CAS = c('17804-35-2', '1897-45-6', '298-00-0', '56-38-2', '1861-32-1'))
   
   return(all_parents)
 
@@ -81,15 +83,28 @@ sum_by_parents <- function(deg_parent_ear, deg_parent_conc, deg_parent_bench) {
   return(graph_deg_sums)
 }
 
-summarize_parents <- function(graph_deg_sums, classes) {
+crosswalk_names <- function(conc_dat) {
+  names_to_cas <- select(conc_dat, chnm, CAS, parent_pesticide, Class) %>%
+    distinct()
+}
+summarize_parents <- function(graph_deg_sums, classes, classes_fixed, zeros) {
+  
+  if (!zeros) {
+    
+    graph_deg_sums <- filter(graph_deg_sums, sumval > 0)
+  }
+  parent_classes <- classes %>%
+    filter(parent_pesticide %in% unique(graph_deg_sums$parent_pesticide))
+ 
   
   sum_by_chem <- graph_deg_sums %>%
     group_by(parent_pesticide, measure_type, type) %>%
     summarize(median_sumval = median(sumval, na.rm = TRUE),
-              quant95 = quantile(sumval, probs = 0.95, na.rm = TRUE),
-              quant5 = quantile(sumval, probs = 0.05, na.rm = TRUE)) %>%
+              quant90 = quantile(sumval, probs = 0.90, na.rm = TRUE),
+              quant10 = quantile(sumval, probs = 0.10, na.rm = TRUE),
+              n_vals = n()) %>%
     #left_join(select(cross, parent_pesticide, CAS)) %>%
-    left_join(classes) %>%
+    left_join(distinct(select(classes, parent_pesticide, Class))) %>%
     distinct() %>%
     ungroup()
   
@@ -98,7 +113,7 @@ summarize_parents <- function(graph_deg_sums, classes) {
   
   chem_order <- sum_by_chem %>%
     mutate(type_measure = paste0(type, measure_type)) %>%
-    select(-quant95, -quant5, -type, -measure_type) %>%
+    select(-quant90, -quant10, -type, -measure_type) %>%
     tidyr::spread(key = type_measure, value = median_sumval) %>%
     rowwise() %>%
     mutate(max = max(c(p_d_sumvalear, p_sumvalear, d_sumvalear), na.rm = TRUE)) %>%
@@ -116,33 +131,36 @@ summarize_parents <- function(graph_deg_sums, classes) {
   return(sum_by_chem) 
 }
 
-plot_deg_sums <- function(all_dat, out_file) {
+plot_deg_sums <- function(all_dat, top_parents, out_file) {
   
   #all_dat$parent_pesticide[is.na(all_dat$Class)]
+  top_dat <- filter(all_dat, parent_pesticide %in% top_parents$parent_pesticide)
   
   line_dat <- data.frame(yintercept = c(0.1, NA, 0.001),
-                         measure_type = c('bench', 'conc', 'ear'))
+                         measure_type = c('TQchem', 'Conc', 'EARchem'))
   
-  all_dat$measure_type <- factor(all_dat$measure_type, levels = c('ear', 'bench', 'conc'))
-  all_dat$Class <- factor(all_dat$Class, levels = c('Herbicide', "Insecticide", "Fungicide", "Other"))
-  p <- ggplot(all_dat, aes(y = median_sumval, x = parent_pesticide)) +
+  top_dat$measure_type <- factor(top_dat$measure_type, levels = c('ear', 'bench', 'conc'))
+  levels(top_dat$measure_type) <- c('EARchem', 'TQchem', 'Conc')
+  top_dat$Class <- factor(top_dat$Class, levels = c('Herbicide', "Insecticide", "Fungicide", "Other"))
+  p <- ggplot(top_dat, aes(y = median_sumval, x = parent_pesticide)) +
     geom_point(aes(color = type), size = 2, alpha = 0.5) +
     facet_grid(rows = vars(Class), cols = vars(measure_type), 
                scales = 'free', shrink = FALSE, space = 'free_y') +
-    geom_vline(xintercept = seq(2, length(levels(all_dat$parent_pesticide)), 2), 
+    geom_vline(xintercept = seq(2, length(levels(top_dat$parent_pesticide)), 2), 
                size = 4, color = 'gray88')  +
     geom_point(aes(color = type), size = 2, alpha = 0.5) +
-    geom_errorbar(aes(ymin = quant5, ymax = quant95, color = type)) +
+    geom_errorbar(aes(ymin = quant10, ymax = quant90, color = type)) +
     scale_y_log10() +
     coord_flip() +
     geom_hline(data = line_dat, aes(yintercept = yintercept), color = 'orange') +
     theme_bw() +
-    labs(x = '', y = '')
+    labs(x = '', y = '', color = '') +
+    theme(legend.position = 'top', legend.direction = 'horizontal')
   
-  ggsave(out_file, p, height = 8, width = 10)
+  ggsave(out_file, p, height = 6, width = 6)
   
   
-  # ggplot(all_dat, aes(y = median_sumval, x = parent_pesticide)) +
+  # ggplot(top_dat, aes(y = median_sumval, x = parent_pesticide)) +
   #   #geom_point(aes(group = type), size = 2, shape = '|',
   #   #           alpha = 0.8, position = position_dodge(width = 1.2)) +
   #   #geom_jitter(aes(color = type), size = 2, alpha = 0.5) +
