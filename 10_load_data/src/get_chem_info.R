@@ -21,8 +21,12 @@ get_chem_info <- function(infile) {
   # Hexazinone TP F	68574 should have cas == 56611-55-3
   
   info_c$CAS[info_c$pCode %in% '68574'] <- '56611-55-3'
+  info_c$parent_pesticide[info_c$parent_pesticide %in% 'Bifenthrin; lambda-cyhalothrin; Tefluthrin'] <- 'Bifenthrin'
+
+  # fix space after Azinphos-methyl
+  info_c$parent_pesticide[grepl('Azinphos-methyl', info_c$parent_pesticide)] <- 'Azinphos-methyl'
+  info_c$parent_pesticide[grepl('thiobencarb', info_c$parent_pesticide)] <- 'Thiobencarb'
   
-  # fix missing parent/compounds
   
   return(info_c)
   

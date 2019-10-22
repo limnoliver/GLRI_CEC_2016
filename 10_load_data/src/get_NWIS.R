@@ -144,6 +144,9 @@ get_pCode <- function(NWIS){
 
   pCodes <- unique(NWIS$pCode)
   pCodeInfo <- readNWISpCode(pCodes) 
+  pCodeInfo$casrn[pCodeInfo$parameter_cd %in% '68574'] <- '56611-55-3'
+  
+  
   
   return(pCodeInfo)
 }
