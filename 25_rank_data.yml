@@ -43,7 +43,10 @@ targets:
     command: get_mix_sites(site_mix_metrics_all)
     
   site_rankings:
-    command: bind_rows(rank_site_n_chems, rank_site_EAR, rank_site_bench)
+    command: bind_rows(rank_site_n_chems, rank_site_bench, rank_site_mix)
+    
+  figures/ms_supplement_figures/site_rankings_table.csv:
+    command: create_site_rank_table(site_rankings, sites, out_file = target_name)
   
   figure/site_rankings.png:
     command: make_site_fig(target_name, site_rankings, sites)
@@ -83,6 +86,9 @@ targets:
   top_parents:
     command: filter_parents(parent_chem_rank_metrics, f_detect_prob = I(.2), f_detect_sites_prob = I(.5),
       f_detect_months = I(12), f_hit_prob = I(.1), f_hit_sites_prob = I(0.25))
+      
+  figures/ms_supplement_figures/top_parent_compounds.csv:
+    command: write.csv(top_parents, target_name, row.names = FALSE)
     
   #top_chems_ear_deg_meto:
   #  command: calc_chem_tox_hits(chemicalSummary_deg_meto, chemicalSummary_conc, I(8), I(4))
