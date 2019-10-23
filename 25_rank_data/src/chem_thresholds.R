@@ -1,5 +1,7 @@
-wq <- make('graph_data_wq')
-tox <- make('graph_data_tox')
+wq <- make('graph_data_wq') %>%
+  filter(meanEAR > 0)
+tox <- make('graph_data_tox') %>%
+  filter(meanEAR > 0)
 
 names(wq)[4] <- "bench"
 names(tox)[3] <- "maxEAR"
@@ -46,7 +48,4 @@ p <- ggplot(compare, aes(x = median_bench, y = median_maxEAR)) +
   geom_vline(xintercept = 0.1, color = 'black', linetype = 2, size = 1, alpha = 0.5)
 
 ggsave('figure/bench_vs_EAR.png', p, height = 3.5, width = 6)
-c('orange', 'yellow', 'brown', 
-  'green', 'red', 'blue', 'purple')
-plot(compare$median_bench ~ compare$median_maxEAR,
-     )
+

@@ -163,16 +163,14 @@ make_site_tile <- function(file_name, site_rankings, sites) {
   
   ggsave(file_name, p, height = 7, width = 10)
 }
-
-create_site_rank_table <- function(site_rankings, sites, out_file) {
-  
+add_final_rank <- function(site_rankings, sites) {
   # create wide version of site rank data
   wide_dat <- site_rankings
   wide_dat$metric <- factor(wide_dat$metric)
   levels(wide_dat$metric) <- c(levels(wide_dat$metric)[1], 'med hits/sample',levels(wide_dat$metric)[3], 
-                                 'max TQchem', 'max chems detected', 'med hits/sample', 
-                                 'med TQchem', 'med detects/sample', 'months w/hits',
-                                 'total chems detected', 'months w/hits')
+                               'max TQchem', 'max chems detected', 'med hits/sample', 
+                               'med TQchem', 'med detects/sample', 'months w/hits',
+                               'total chems detected', 'months w/hits')
   
   wide_dat_values <- wide_dat %>%
     ungroup() %>%
@@ -189,17 +187,49 @@ create_site_rank_table <- function(site_rankings, sites, out_file) {
   # calculate mean values -- and weight benchmarks by 3 (most confident in those #s), 
   # EARs by 2 (better than just a chem being present, but not exactly sure how it scales), 
   # and occurence data by 1
-  bench_rel_vals <- wide_rel_vals %>%
-    mutate(bench_mean_rel = rowMeans(select(., starts_with('Bench')), na.rm = TRUE),
-           earmix_mean_rel = rowMeans(select(., starts_with('EARmix')), na.rm = TRUE),
-           occurance_mean_rel = rowMeans(select(., starts_with('Occurance')), na.rm = TRUE))
+  rel_vals <- wide_rel_vals %>%
+    mutate(bench_mean_rel = round(rowMeans(select(., starts_with('Bench')), na.rm = TRUE),2),
+           earmix_mean_rel = round(rowMeans(select(., starts_with('EARmix')), na.rm = TRUE),2),
+           occurance_mean_rel = round(rowMeans(select(., starts_with('Occurance')), na.rm = TRUE),2))
   
-  bench_rel_vals$final_rel_val_321 <- round((3*bench_rel_vals$bench_mean_rel + 2*bench_rel_vals$earmix_mean_rel + bench_rel_vals$occurance_mean_rel)/6, 2)
-  #bench_rel_vals$final_rel_val_111 <- (bench_rel_vals$bench_mean_rel + bench_rel_vals$earmix_mean_rel + bench_rel_vals$occurance_mean_rel)/3
+  rel_vals$final_rel_val_321 <- round((3*rel_vals$bench_mean_rel + 2*rel_vals$earmix_mean_rel + rel_vals$occurance_mean_rel)/6, 2)
+  #rel_vals$final_rel_val_111 <- (rel_vals$bench_mean_rel + rel_vals$earmix_mean_rel + rel_vals$occurance_mean_rel)/3
+
+  dat_add <- rel_vals %>%
+    select(site, bench_mean_rel, earmix_mean_rel, occurance_mean_rel, final_rel_val_321) %>%
+    tidyr::gather(key = 'metric', value = 'relative_value', -site) %>%
+    mutate(metric_type = case_when(
+      grepl('bench', metric) ~ 'Bench',
+      grepl('earmix', metric) ~ 'EARmix',
+      grepl('occurance', metric) ~ 'Occurance',
+      grepl('final', metric) ~ 'RRI'
+    ))
   
-  dat_out <- left_join(wide_dat_values, select(bench_rel_vals, site, final_rel_val_321)) %>%
-    left_join(select(sites, site=site_no, shortName)) %>%
-    select(-site)
+  dat_out <- bind_rows(wide_dat, dat_add)
+  
+  return(dat_out)
+}
+create_site_rank_table <- function(site_rankings_final, sites, out_file) {
+  
+ rel_vals <- filter(site_rankings_final, grepl('mean_rel|final_rel', metric)) %>%
+   ungroup(metric) %>%
+   select(-metric_type, -rank_value, -metric_value) %>%
+   tidyr::spread(key = metric, value = relative_value)
+ 
+ values <- filter(site_rankings_final, !grepl('mean_rel|final_rel', metric)) %>%
+   ungroup(metric) %>%
+   mutate(metric = paste(metric_type, metric, sep = '_')) %>%
+   select(-metric_type, -rank_value, -relative_value) %>%
+   tidyr::spread(key = metric, value = metric_value)
+ 
+ dat_out <- left_join(rel_vals, values) %>%
+   left_join(select(sites, site, shortName)) %>%
+   select(site, starts_with('Bench', ignore.case = TRUE), 
+          starts_with('EAR', ignore.case = TRUE), 
+          starts_with('Occurance', ignore.case = TRUE), 
+          RRI = final_rel_val_321) %>%
+   arrange(-RRI) %>%
+   
   
   write.csv(dat_out, out_file, row.names = FALSE)
   

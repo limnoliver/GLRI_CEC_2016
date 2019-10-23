@@ -97,7 +97,7 @@ merge_top_chems_hits <- function(tox_hits, wq_hits, top_chems) {
   return(dat)
 }
 
-summarize_chems <- function(file_name, chem_vals, chem_crosswalk, chem_info) {
+summarize_chems <- function(file_name, chem_vals, chem_crosswalk, chem_info, conc_dat) {
   sample_count <- all_chems %>%
     group_by(CAS, pCode) %>%
     summarize(n_samples = n(),
@@ -131,44 +131,84 @@ summarize_chem_meta <- function(file_name, chem_vals, chem_crosswalk, chem_info_
     summarize(n_samples = n(),
               n_sites = length(unique(SiteID)))
   
-  
+  n_detect <- chem_vals %>%
+    filter(!remark_cd %in% '<') %>%
+    group_by(CAS) %>%
+    summarize(n_detect = n(),
+              n_detect_sites = length(unique(SiteID))) %>%
+    mutate(n_detect = ifelse(is.na(n_detect), 0, n_detect),
+           n_detect_sites = ifelse(is.na(n_detect_sites), 0, n_detect_sites))
 
   meta <- left_join(sample_count, chem_info_all, by = 'CAS') %>%
     left_join(select(chem_crosswalk, CAS, compound, parent_pesticide)) %>%
     mutate(`In toxCast` = ifelse(CAS %in% chems_missing_toxcast, '', 'x'),
-           `In benchmarks` = ifelse(CAS %in% chems_missing_bench, '', 'x'))
+           `In benchmarks` = ifelse(CAS %in% chems_missing_bench, '', 'x')) %>%
+    left_join(n_detect, by = 'CAS')
   
   meta$parent_pesticide[is.na(meta$parent_pesticide)] <- meta$`Chemical Name`[is.na(meta$parent_pesticide)]
   
   meta <- meta %>%
     arrange(parent_pesticide) %>%
-    select(`Chemical Name`, CAS, `USGS parameter code` = pCode, Class, `Parent compound` = parent_pesticide, `In toxCast`, `In benchmarks`, `N samples measured` = n_samples, `N sites measured` = n_sites)
+    select(`Chemical Name`, CAS, `USGS parameter code` = pCode, 
+           Class, `Parent compound` = parent_pesticide, `In toxCast`, 
+           `In benchmarks`, `N samples measured` = n_samples, `N samples detected` = n_detect, 
+           `N sites measured` = n_sites, `N sites detected` = n_detect_sites)
   
   
   write.csv(meta, file_name, row.names = FALSE)
   
 }
 
-calc_parent_tox_hits <- function(parent_sums){
+calc_parent_tox_hits <- function(parent_sums, mixtures){
   hits_ear <- parent_sums %>%
     filter(type == 'p_d_sumval' & measure_type %in% 'ear') %>%
-    filter(sumval > 0.001) %>%
+    #filter(sumval > 0.001) %>%
     group_by(parent_pesticide) %>%
-    summarize(n_hits = n(), 
-              n_hits_sites = length(unique(site)),
-              n_hits_months = length(unique(lubridate::month(date))),
-              median_sumval = median(sumval),
-              max_sumval = max(sumval)) %>%
-    mutate(measure_type = 'ear')
+    summarize(ear_hit_prob = round(length(which(sumval > 0.001))/n(),2), 
+              ear_hit_sites_prob = round(length(unique(site[sumval > 0.001]))/length(unique(site)), 2),
+              ear_hit_months = length(unique(lubridate::month(date[sumval > 0.001]))),
+              ear_median_sumval = round(median(sumval), 4),
+              ear_max_sumval = round(max(sumval), 4))
   
   hits_bench <- parent_sums %>%
-    filter(type == 'p_sumval' & measure_type %in% 'bench') %>%
-    filter(sumval > 0.01) %>%
+    filter(type == 'p_d_sumval' & measure_type %in% 'bench') %>%
+    #filter(sumval > 0.01) %>%
     group_by(parent_pesticide) %>%
-    summarize(n_hits = n(), 
-              n_hits_sites = length(unique(site)),
-              n_hits_months = length(unique(lubridate::month(date))),
-              median_sumval = median(sumval),
-              max_sumval = max(sumval)) %>%
-    mutate(measure_type = 'bench')
+    summarize(bench_hit_prob = round(length(which(sumval > 0.01))/n(), 2), 
+              bench_hit_sites_prob = round(length(unique(site[sumval > 0.01]))/length(unique(site)), 2),
+              bench_hit_months = length(unique(lubridate::month(date[sumval > 0.01]))),
+              bench_median_sumval = round(median(sumval), 3),
+              bench_max_sumval = round(max(sumval), 3))
+  
+  hits_mixes <- mixtures %>%
+    rename(mixes_hit_n = times_in_mixes, mixes_hit_sites_n = n_sites, 
+           mixes_hit_endpoints_n = n_endpoints, mixes_median_contribution = contribution_median) %>%
+    mutate(mixes_median_contribution_prob = round(mixes_median_contribution/100, 2)) %>%
+    select(-mixes_median_contribution)
+  
+  detections <- parent_sums %>%
+    filter(type == 'p_d_sumval' & measure_type %in% 'conc') %>%
+    group_by(parent_pesticide) %>%
+    summarize(detect_prob = round(length(which(sumval > 0))/n(), 2),
+              detect_sites_prob = round(length(unique(site[sumval > 0]))/length(unique(site)),2),
+              detect_months = length(unique(lubridate::month(date[sumval > 0]))))
+  
+  parent_metrics <- left_join(detections, hits_mixes, by = 'parent_pesticide') %>%
+    left_join(hits_bench, by = 'parent_pesticide') %>%
+    left_join(hits_ear, by = 'parent_pesticide')
+  
+  return(parent_metrics)
+    
+}
+
+filter_parents <- function(parent_metrics, f_detect_prob, f_detect_sites_prob, f_detect_months, f_hit_prob, f_hit_sites_prob) {
+  top_parents <- parent_metrics %>%
+    filter(detect_prob >= f_detect_prob |
+             detect_sites_prob >= f_detect_sites_prob |
+             detect_months >= f_detect_months |
+             bench_hit_prob >= f_hit_prob |
+             ear_hit_prob >= f_hit_prob |
+             ear_hit_sites_prob >= f_hit_sites_prob |
+             ear_hit_sites_prob >= f_hit_sites_prob
+             )
 }
