@@ -45,8 +45,11 @@ targets:
   site_rankings:
     command: bind_rows(rank_site_n_chems, rank_site_bench, rank_site_mix)
     
+  site_rankings_final:
+    command: add_final_rank(site_rankings, sites)
+    
   figures/ms_supplement_figures/site_rankings_table.csv:
-    command: create_site_rank_table(site_rankings, sites, out_file = target_name)
+    command: create_site_rank_table(site_rankings_final, sites, out_file = target_name)
   
   figure/site_rankings.png:
     command: make_site_fig(target_name, site_rankings, sites)
