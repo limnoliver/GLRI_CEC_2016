@@ -192,7 +192,7 @@ create_chemData <- function(reduced_dat,  pCodeInfo){
     mutate(Value = if_else(parameter_units == "ng/l",Value/1000,Value)) %>%
     select(-parameter_units) %>%
     filter(!is.na(CAS)) # get rid of chemicals without CAS number - not sure if/where we should do this? 
-
+  
   
   chem_data <- distinct(chem_data) # currently this just gets rid of duplicated IHC values on 8/2
   # change incorrect CAS numbers
@@ -206,6 +206,36 @@ create_chemData <- function(reduced_dat,  pCodeInfo){
   
   return(chem_data)
 }
+
+create_chemData2 <- function(reduced_dat,  pCodeInfo){
+  
+  dat_with_cas <- left_join(reduced_dat, pCodeInfo, by = c('pCode' = 'parameter_cd'))
+  
+  chem_data <- dat_with_cas %>%
+    select(SiteID,
+           `Sample Date` = sample_dt,
+           Value = value,
+           remark_cd,
+           CAS = casrn,
+           pCode, 
+           parameter_units) %>%
+    mutate(Value = if_else(parameter_units == "ng/l",Value/1000,Value)) %>%
+    select(-parameter_units) # get rid of chemicals without CAS number - not sure if/where we should do this? 
+  
+  
+  chem_data <- distinct(chem_data) # currently this just gets rid of duplicated IHC values on 8/2
+  # change incorrect CAS numbers
+  
+  # Hexazinone TP F	68574 should have cas == 56611-55-3 from 56611-54-2
+  chem_data$CAS[chem_data$pCode %in% '68574'] <- '56611-55-3'
+  
+  #chem_data
+  
+  
+  
+  return(chem_data)
+}
+
 
 find_missing_cas <- function(reduced_dat, chem_data) {
   chems_all <- unique(reduced_dat$pCode)
@@ -233,7 +263,7 @@ create_tox_chemInfo <- function(chem_data, special_cas, pCodeInfo, classes){
 
   chem_info$Class[is.na(chem_info$Class)] <- chem_info$class1[is.na(chem_info$Class)]
   
-  chem_info <- select(chem_info, -class1, -pCode) %>%
+  chem_info <- select(chem_info, -class1) %>%
     distinct()
 
   chem_info$`Chemical Name` <- gsub(", water, filtered, recoverable, nanograms per liter","",chem_info$`Chemical Name`)
@@ -262,6 +292,34 @@ create_tox_chemInfo <- function(chem_data, special_cas, pCodeInfo, classes){
   return(chem_info)
 }
 
+fix_missing_cas <- function(chem_info_complete, chem_crosswalk) {
+  
+  info <- left_join(chem_info_complete, chem_crosswalk) %>%
+    mutate(parent_pesticide = ifelse(is.na(parent_pesticide), `Chemical Name`, parent_pesticide))
+  
+  missing <- filter(info, is.na(Class))
+  
+  info$Class[info$pCode %in% '68561'] <- 'Deg - Insecticide'
+  info$Class[info$pCode %in% '68685'] <- 'Deg - Herbicide'
+  info$Class[info$pCode %in% c('68623', '68675')] <- 'Deg - Insecticide'
+  info$Class[info$pCode %in% c('68581', '68583')] <- 'Deg - Herbicide'
+  info$Class[info$pCode %in% '68563'] <- 'Deg - Insecticide'
+  info$Class[info$pCode %in% c('68617', '68619', '68620')] <- 'Deg - Herbicide'
+  info$Class[info$pCode %in% '68713'] <- 'Deg - Herbicide'
+  info$Class[info$pCode %in% '68690'] <- 'Deg - Herbicide'
+  info$Class[info$pCode %in% '68694'] <- 'Deg - Insecticide'
+  info$Class[info$pCode %in% c('68575', '68714')] <- 'Deg - Herbicide'
+  
+  # additionally, there are issues with some mismatching compound to parent names
+  info$parent_pesticide[info$parent_pesticide %in% 'Bentazone'] <- 'Bentazon'
+  
+  # add Permethrin as a compound, with associated metadata
+  # this is because we are summing cis and trans permethrin, and need crosswalk
+  info <- add_row(info, compound = 'Permethrin', pCode = 'fake_1', parent_pesticide = 'Permethrin', MlWt = 391.29, CAS = '52645-53-1')
+  
+  return(info)
+  
+}
 create_tox_siteInfo <- function(sites){
 
   siteInfo <- sites %>%
@@ -318,6 +376,17 @@ create_WQExcel <- function(chem_data, chem_info, site_info, exclusions, benchmar
     left_join(select(toxEval::tox_chemicals, CAS=Substance_CASRN, chnm=Substance_Name), by="CAS") %>%
     left_join(select(benchmarks, CAS, endPoint, Value = value), by="CAS") %>%
     mutate(groupCol = "WQ")
+  
+  test_cas <- unique(chem_data$CAS[!is.na(chem_data$CAS)])
+  test_cas_in_bench <- test_cas[test_cas %in% unique(benchmarks$CAS)]
+  
+  no_cas <- chem_info[is.na(chem_info$CAS),] %>%
+    left_join(select(chem_master, pCode, parent_pesticide))
+  
+  no_cas_bench <- unique(benchmarks$Compound[is.na(benchmarks$CAS)])
+  
+  grep('amide', no_cas_bench, ignore.case = TRUE, value = TRUE)
+  test_names <- chem_info[chem_info$`Chemical Name` %in% unique(benchmarks$Compound),]
   
   benchmarks_new$chnm[is.na(benchmarks_new$chnm)] <- benchmarks_new$orig_name[is.na(benchmarks_new$chnm)]
   
