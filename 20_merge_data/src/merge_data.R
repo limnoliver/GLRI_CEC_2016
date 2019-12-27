@@ -179,9 +179,10 @@ get_special_cas <- function(){
 
 create_chemData <- function(reduced_dat,  pCodeInfo){
   
-  dat_with_cas <- left_join(reduced_dat, pCodeInfo, by = c('pCode' = 'parameter_cd'))
   
-  chem_data <- dat_with_cas %>%
+  dat_with_cas <- left_join(reduced_dat, pCodeInfo, by = c('pCode' = 'parameter_cd')) 
+
+    chem_data <- dat_with_cas %>%
     select(SiteID,
            `Sample Date` = sample_dt,
            Value = value,
@@ -199,10 +200,6 @@ create_chemData <- function(reduced_dat,  pCodeInfo){
   
   # Hexazinone TP F	68574 should have cas == 56611-55-3 from 56611-54-2
   chem_data$CAS[chem_data$pCode %in% '68574'] <- '56611-55-3'
-  
-  #chem_data
-  
-  
   
   return(chem_data)
 }
@@ -313,9 +310,22 @@ fix_missing_cas <- function(chem_info_complete, chem_crosswalk) {
   # additionally, there are issues with some mismatching compound to parent names
   info$parent_pesticide[info$parent_pesticide %in% 'Bentazone'] <- 'Bentazon'
   
-  # add Permethrin as a compound, with associated metadata
-  # this is because we are summing cis and trans permethrin, and need crosswalk
-  info <- add_row(info, compound = 'Permethrin', pCode = 'fake_1', parent_pesticide = 'Permethrin', MlWt = 391.29, CAS = '52645-53-1')
+  # add parent compounds that weren't measured but are used for degradate matching
+  info <- add_row(info, 
+                  `Chemical Name` = c('Chlorothalonil', 'Dacthal', 'Benomyl', 'Parathion-ethyl', 'Parathion-methyl'), 
+                  Class = c('Fungicide', 'Herbicide', 'Fungicide', 'Insecticide', 'Insecticide'),
+                  parent_pesticide = c('Chlorothalonil', 'Dacthal', 'Benomyl', 'Parathion-ethyl', 'Parathion-methyl'), 
+                  compound = c('Chlorothalonil', 'Dacthal', 'Benomyl', 'Parathion-ethyl', 'Parathion-methyl'), 
+                  CAS = c('1897-45-6', '1861-32-1', '17804-35-2', '56-38-2', '298-00-0'), 
+                  MlWt = c(265.90, 331.95, 290.32, 291.26, 263.2),
+                  pCode = paste0('fake_', 2:6))
+  
+  # complete permethrin data
+  info$Class[info$CAS %in% '52645-53-1'] <- 'Insecticide'
+  info$compound[info$CAS %in% '52645-53-1'] <- 'Permethrin'
+  info$MlWt[info$CAS %in% '52645-53-1'] <- 391.29
+  
+  
   
   return(info)
   
@@ -364,29 +374,24 @@ create_toxExcel <- function(chem_data, chem_info, site_info, exclusions, file_ou
 
 }
 
-create_WQExcel <- function(chem_data, chem_info, site_info, exclusions, benchmarks, file_out){
+create_WQExcel <- function(chem_data, chem_info, site_info, exclusions, benchmarks, chem_master, file_out){
   
   chem_data$CAS[chem_data$CAS == "56611-54-2_68574"] <- "56611-54-2"
   # chem_data$CAS[chem_data$CAS == "1071-83-6_99960"] <- "1071-83-6"
   #chem_data$CAS[chem_data$CAS == "138261-41-3_GLRI"] <- "138261-41-3"
   
-  benchmarks_new <- data.frame(CAS = chem_info$CAS, 
-                           orig_name = chem_info$`Chemical Name`,
+  # add parents to chem_info that were not measured, but have measured degradates
+  # we'll need these later to look up benchmark values
+  chem_info_new <- filter(chem_master, !is.na(CAS) & !CAS %in% chem_info$CAS) %>%
+    bind_rows(chem_info)
+  
+  benchmarks_new <- data.frame(CAS = chem_info_new$CAS, 
+                           orig_name = chem_info_new$`Chemical Name`,
                            stringsAsFactors = FALSE) %>%
     left_join(select(toxEval::tox_chemicals, CAS=Substance_CASRN, chnm=Substance_Name), by="CAS") %>%
     left_join(select(benchmarks, CAS, endPoint, Value = value), by="CAS") %>%
-    mutate(groupCol = "WQ")
-  
-  test_cas <- unique(chem_data$CAS[!is.na(chem_data$CAS)])
-  test_cas_in_bench <- test_cas[test_cas %in% unique(benchmarks$CAS)]
-  
-  no_cas <- chem_info[is.na(chem_info$CAS),] %>%
-    left_join(select(chem_master, pCode, parent_pesticide))
-  
-  no_cas_bench <- unique(benchmarks$Compound[is.na(benchmarks$CAS)])
-  
-  grep('amide', no_cas_bench, ignore.case = TRUE, value = TRUE)
-  test_names <- chem_info[chem_info$`Chemical Name` %in% unique(benchmarks$Compound),]
+    mutate(groupCol = "WQ") %>%
+    filter(!is.na(Value))
   
   benchmarks_new$chnm[is.na(benchmarks_new$chnm)] <- benchmarks_new$orig_name[is.na(benchmarks_new$chnm)]
   

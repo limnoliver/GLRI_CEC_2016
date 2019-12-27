@@ -1,10 +1,6 @@
-find_missing_tox <- function(data_file, parents, metolachlor){
+find_missing_tox <- function(data_file){
   
   tox_list <- create_toxEval(data_file)
-  #tox_list$chem_data <- filter(tox_list$chem_data, Value != 0)
-  
-  ACClong <- get_ACC(unique(tox_list$chem_info$CAS))
-  ACClong <- remove_flags(ACClong)
   
   # find chems that are not in toxCast
   missing <- unique(tox_list$chem_data$CAS)[-which(unique(tox_list$chem_data$CAS) %in% unique(ToxCast_ACC$CAS))]
@@ -12,58 +8,80 @@ find_missing_tox <- function(data_file, parents, metolachlor){
   return(missing)
 }
 
-get_chem_sum_deg <- function(data_file, parents, metolachlor){
+combine_missing <- function(missing_tox, missing_cas, parents) {
   
-  tox_list <- create_toxEval(data_file)
-  #tox_list$chem_data <- filter(tox_list$chem_data, Value != 0)
-  
-  ACClong <- get_ACC(unique(tox_list$chem_info$CAS))
-  ACClong <- remove_flags(ACClong)
-  
-  # find chems that are not in toxCast
-  missing <- unique(tox_list$chem_data$CAS)[-which(unique(tox_list$chem_data$CAS) %in% unique(ToxCast_ACC$CAS))]
-  
-  missing <- filter(tox_list$chem_info, CAS %in% missing)
-  
-  # crosswalk between missing chems and parent compounds
-  missing_parents <- left_join(missing, select(parents, CAS, MlWt, parent_pesticide))
+  missing_chems <- parents %>%
+    filter(CAS %in% missing_tox | pCode %in% missing_cas)
+  return(missing_chems)
+}
 
+complete_parents <- function(chem_master) {
+  # some parents are not in this study so don't have additional information
+  # this function adds complete parent info for all compounds
+  parents <- filter(chem_master, `Chemical Name` == parent_pesticide | compound == parent_pesticide)
   
-  # find out how many sites/samples have missing chem
-  missing_sample_counts <- tox_list$chem_data %>%
-    filter(CAS %in% missing$CAS) %>%
-    group_by(CAS) %>%
-    summarize(sample_count = n(),
-              site_count = length(unique(SiteID)))
+  # now find compounds with no parent rep
+  lost_parents <- filter(chem_master, !(parent_pesticide %in% parents$`Chemical Name` | parent_pesticide %in% parents$compound))
   
+  parents <- parents %>%
+    select(parent_pesticide, parent_CAS = CAS, parent_MlWt = MlWt)
+    
+  
+  return(parents)
+}
+
+get_chem_sum_deg <- function(data_file, missing_chems, parents, metolachlor, chem_master){
  
   
   if (metolachlor == TRUE) {
-    missing_parents$parent_pesticide[missing_parents$parent_pesticide == 'Acetochlor/Metolachlor '] <- 'Metolachlor'
+    missing_chems$parent_pesticide[missing_chems$parent_pesticide == 'Acetochlor/Metolachlor'] <- 'Metolachlor'
   } else {
-    missing_parents$parent_pesticide[missing_parents$parent_pesticide == 'Acetochlor/Metolachlor '] <- 'Acetochlor'
+    missing_chems$parent_pesticide[missing_chems$parent_pesticide == 'Acetochlor/Metolachlor'] <- 'Acetochlor'
     
   }
   
+  
+  # some missing compounds are parent compounds, and are not applicable to this exercise
+  #missing_chems_degs
+  
+  # three chemicals were not matched because parent was not measured in this study
+  # see if the parent is in toxCast
+  # all three are. Maybe put this content elsewhere?
+  
+  missing_chem_parents <- left_join(missing_chems, parents) %>%
+    filter(!(`Chemical Name` == parent_pesticide | compound == parent_pesticide))
+
+  ACClong_parents <- get_ACC(unique(missing_chem_parents$parent_CAS))
+  ACClong_parents <- remove_flags(ACClong_parents)
+  
+  
   fixed_deg <- data.frame()
-  for (i in 1:nrow(missing_parents)) {
-    temp_parent <- as.character(missing_parents$parent_pesticide[i])
+  
+  for (i in 1:nrow(missing_chem_parents)) {
+
+    if (is.na(missing_chem_parents$parent_CAS[i])) {next}
     
-    if (is.na(temp_parent)) {next}
+    if (!(missing_chem_parents$parent_CAS[i] %in% ACClong_parents$CAS)) {next}
     
-    if (!(temp_parent %in% ACClong$chnm)) {next}
-    
-    replace_data <- filter(ACClong, chnm %in% temp_parent) %>%
-      mutate(CAS = missing_parents$CAS[i],
-             chnm = missing_parents$`Chemical Name`[i],
+    replace_data <- filter(ACClong_parents, CAS %in% missing_chem_parents$parent_CAS[i]) %>%
+      mutate(CAS = missing_chem_parents$CAS[i],
+             chnm = missing_chem_parents$`Chemical Name`[i],
              # account for change on MlWt. Acc is calculated as ACC*MolWt of parent,
              # so need to divide by parent and multiply by degradate MlWt
-             ACC_value = ACC_value*(missing_parents$MlWt[i]/MlWt)) %>%
-      mutate(MlWt = missing_parents$MlWt[i])
+             ACC_value = ACC_value*(missing_chem_parents$MlWt[i]/MlWt)) %>%
+      mutate(MlWt = missing_chem_parents$MlWt[i])
              
     
     fixed_deg <- bind_rows(fixed_deg, replace_data)
   }
+  
+  # ACC vals for all other compounds
+  tox_list <- create_toxEval(data_file)
+  ACClong <- get_ACC(unique(tox_list$chem_info$CAS))
+  ACClong <- remove_flags(ACClong)
+  
+  # verify there is no overlap between replacement data and original data
+  all(!unique(fixed_deg$CAS) %in% unique(ACClong$CAS))
   
   ACClong <- bind_rows(ACClong, fixed_deg)
   
@@ -73,74 +91,59 @@ get_chem_sum_deg <- function(data_file, parents, metolachlor){
   
   chemicalSummary <- get_chemical_summary(tox_list, ACClong, filtered_ep)
   
-  chemicalSummary <- left_join(chemicalSummary, select(parents, CAS, parent_pesticide)) %>%
-    mutate(parent_pesticide = as.character(parent_pesticide))
-  
-  chemicalSummary$parent_pesticide[is.na(chemicalSummary$parent_pesticide)] <- as.character(chemicalSummary$chnm[is.na(chemicalSummary$parent_pesticide)])
-  
+  chemicalSummary <- left_join(chemicalSummary, select(chem_master, CAS, parent_pesticide))
+
   return(chemicalSummary)
 }
-find_missing_bench <- function(data_file, parents, metolachlor){
+find_missing_bench <- function(data_file){
   
   tox_list <- create_toxEval(data_file)
   #tox_list$chem_data <- filter(tox_list$chem_data, Value != 0)
   
   bench_vals <- unique(tox_list$benchmarks) %>%
-    filter(!is.na(ACC_value)) %>%
-    left_join(select(parents, CAS, MlWt))
+    filter(!is.na(ACC_value))
   
   # find chems that are not in benchmarks
   missing <- unique(tox_list$chem_data$CAS)[-which(unique(tox_list$chem_data$CAS) %in% unique(bench_vals$CAS))]
   return(missing)
 }
-get_bench_sum_deg <- function(data_file, parents, metolachlor){
-  
-  tox_list <- create_toxEval(data_file)
-  #tox_list$chem_data <- filter(tox_list$chem_data, Value != 0)
-  
-  bench_vals <- unique(tox_list$benchmarks) %>%
-    filter(!is.na(ACC_value)) %>%
-    left_join(select(parents, CAS, MlWt))
-  
-  # find chems that are not in benchmarks
-  missing <- unique(tox_list$chem_data$CAS)[-which(unique(tox_list$chem_data$CAS) %in% unique(bench_vals$CAS))]
-  missing <- filter(tox_list$chem_info, CAS %in% missing)
-  
-  # crosswalk between missing chems and parent compounds
-  missing_parents <- left_join(missing, select(parents, CAS, MlWt, parent_pesticide))
-  
-  
-  # find out how many sites/samples have missing chem
-  missing_sample_counts <- tox_list$chem_data %>%
-    filter(CAS %in% missing$CAS) %>%
-    group_by(CAS) %>%
-    summarize(sample_count = n(),
-              site_count = length(unique(SiteID)))
-  
-  
+get_bench_sum_deg <- function(data_file, missing_chems, parents, metolachlor, chem_master){
   
   if (metolachlor == TRUE) {
-    missing_parents$parent_pesticide[missing_parents$parent_pesticide == 'Acetochlor/Metolachlor '] <- 'Metolachlor'
+    missing_chems$parent_pesticide[missing_chems$parent_pesticide == 'Acetochlor/Metolachlor'] <- 'Metolachlor'
   } else {
-    missing_parents$parent_pesticide[missing_parents$parent_pesticide == 'Acetochlor/Metolachlor '] <- 'Acetochlor'
+    missing_chems$parent_pesticide[missing_chems$parent_pesticide == 'Acetochlor/Metolachlor'] <- 'Acetochlor'
     
   }
+  # reduce missing chems to just deg compounds
+  # some missing are parents
+  missing_chem_parents <- left_join(missing_chems, parents) %>%
+    filter(!(`Chemical Name` == parent_pesticide | compound == parent_pesticide))
+  
+  tox_list <- create_toxEval(data_file)
+  
+  bench_vals <- distinct(tox_list$benchmarks) %>%
+    filter(!is.na(ACC_value))
+  
+  # note I manually checked if there were any missing compounds in benchmarks that
+  # did not have CAS numbers that matched compounds in our database without CAS numbers
+  # I found no matches so did not try to do a name match.
   
   fixed_deg <- data.frame()
-  for (i in 1:nrow(missing_parents)) {
-    temp_parent <- as.character(missing_parents$parent_pesticide[i])
+  for (i in 1:nrow(missing_chem_parents)) {
+
+    if (is.na(missing_chem_parents$parent_pesticide[i])) {next}
     
-    if (is.na(temp_parent)) {next}
+    if (!(missing_chem_parents$parent_CAS[i] %in% unique(bench_vals$CAS))) {next}
     
-    if (!(temp_parent %in% bench_vals$chnm)) {next}
-    
-    replace_data <- filter(bench_vals, chnm %in% temp_parent) %>%
-      mutate(CAS = missing_parents$CAS[i],
-             chnm = missing_parents$`Chemical Name`[i],
+    replace_data <- filter(bench_vals, CAS %in% missing_chem_parents$parent_CAS[i]) %>%
+      mutate(CAS = missing_chem_parents$CAS[i],
+             chnm = missing_chem_parents$`Chemical Name`[i],
+             orig_name = missing_chem_parents$compound[i],
              # account for change on MlWt. Acc is calculated as ACC*MolWt of parent,
              # so need to divide by parent and multiply by degradate MlWt
-             ACC_value = ACC_value*(missing_parents$MlWt[i]/MlWt)) %>%
-      mutate(MlWt = missing_parents$MlWt[i])
+             ACC_value = ACC_value*(missing_chem_parents$MlWt[i]/missing_chem_parents$parent_MlWt[i])) %>%
+      mutate(MlWt = missing_chem_parents$MlWt[i])
     
     
     fixed_deg <- bind_rows(fixed_deg, replace_data)
@@ -154,12 +157,27 @@ get_bench_sum_deg <- function(data_file, parents, metolachlor){
   
   chemicalSummary <- get_chemical_summary(tox_list)
   
-  chemicalSummary <- left_join(chemicalSummary, select(parents, CAS, parent_pesticide)) %>%
-    mutate(parent_pesticide = as.character(parent_pesticide))
-  
-  chemicalSummary$parent_pesticide[is.na(chemicalSummary$parent_pesticide)] <- as.character(chemicalSummary$chnm[is.na(chemicalSummary$parent_pesticide)])
+  chemicalSummary <- left_join(chemicalSummary, select(chem_master, CAS, parent_pesticide))
   
   return(chemicalSummary)
+}
+
+create_tox_supp_table <- function(toxcast_dat, bench_dat, all_chems) {
+  # which compounds are measured in toxcast
+  # which compounds had assumed parent vals in toxcast
+  
+  eligible_chems <- all_chems$CAS[!is.na(all_chems$CAS)]
+  
+  in_toxcast <- all_chems %>%
+    filter(!is.na(CAS)) %>%
+    filter(CAS %in% unique(toxEval::ToxCast_ACC$CAS))
+  
+  
+  used_toxcast <- unique(toxcast_dat$CAS)[unique(toxcast_dat$CAS) %in% unique(toxEval::ToxCast_ACC$CAS)]
+  used_parent_acc <- unique(toxcast_dat$CAS)[!unique(toxcast_dat$CAS) %in% unique(toxEval::ToxCast_ACC$CAS)]
+  
+  # which compounds are measured in benchmarks
+  # which compounds had assumed parent valus in benchmarks
 }
 
 get_unclassified <- function(data_file, parents){
