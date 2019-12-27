@@ -1,5 +1,5 @@
 get_chem_info <- function(infile) {
-  info <- read.csv(infile, nrows = 240, stringsAsFactors = FALSE)
+  info <- read.csv(infile, nrows = 240, stringsAsFactors = FALSE, strip.white = TRUE)
   
   info_c <- info %>%
     select(compound = Pesticide.compound, 
