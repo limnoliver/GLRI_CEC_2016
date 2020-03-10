@@ -36,7 +36,7 @@ targets:
     command: get_special_cas()
     
   chem_dls:
-    command: calc_detect_limits(reduced_dat)
+    command: calc_detect_limits(chem_data_complete)
     
   filtered_censor:
     command: remove_censor(reduced_dat)
@@ -44,8 +44,14 @@ targets:
   chem_data: 
     command: create_chemData(filtered_censor, pCodeInfo)
     
+  no_cas_crosswalk:
+    command: crosswalk_nocas_chems()
+    
   all_chems:
     command: create_chemData(reduced_dat, pCodeInfo)
+    
+  chem_data_complete:
+    command: create_chemData2(reduced_dat, pCodeInfo)
     
   chem_data_dl:
     command: create_chemData(chem_dls, pCodeInfo)
@@ -58,21 +64,33 @@ targets:
     
   chem_info_all:
     command: create_tox_chemInfo(all_chems, special_cas, pCodeInfo, classes_fixed)
+    
+  chem_info_complete:
+    command: create_tox_chemInfo(chem_data_complete, special_cas, pCodeInfo, classes_fixed)
 
+  # all compounds, all metadata, with fixed cas  
+  chem_master:
+    command: fix_missing_cas(chem_info_complete, chem_crosswalk)
+  
+  # now fix the chem data to include missing cas
+  chem_master_data:
+    command: complete_cas(chem_data_complete, chem_master)
+  
   site_info:
     command: create_tox_siteInfo(sites)
     
   data/pesticides.xlsx:
-    command: create_toxExcel(chem_data, chem_info, site_info, exclusions, target_name)
+    command: create_toxExcel(chem_master_data, chem_master, site_info, exclusions, target_name)
 
   data/pesticides_dls.xlsx:
     command: create_toxExcel(chem_data_dl, chem_info, site_info, exclusions, target_name)
   
+  # use all chems, not just chems with CAS numbers
   data/pesticides_Conc.xlsx:
-    command: create_ConcExcel(chem_data, chem_info, site_info, exclusions, target_name)
+    command: create_ConcExcel(chem_master_data, chem_master, site_info, exclusions, target_name)
 
   data/pesticides_Bench.xlsx:
-    command: create_WQExcel(chem_data, chem_info, site_info, exclusions, benchmarks, target_name)
+    command: create_WQExcel(chem_master_data, chem_master, site_info, exclusions, benchmarks, target_name)
 
   data/pesticides_Bench_hbs.xlsx:
     command: create_WQExcel(chem_data, chem_info, site_info, exclusions, benchmarks_hbs, target_name)

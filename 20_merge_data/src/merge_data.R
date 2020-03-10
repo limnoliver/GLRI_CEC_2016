@@ -325,9 +325,28 @@ fix_missing_cas <- function(chem_info_complete, chem_crosswalk) {
   info$compound[info$CAS %in% '52645-53-1'] <- 'Permethrin'
   info$MlWt[info$CAS %in% '52645-53-1'] <- 391.29
   
+  # add CAS numbers to those compounds missing CAS numbers
+  missing_cas <- filter(info, is.na(CAS)) %>%
+    mutate(CAS = paste0('fakecas_', 1:n()))
   
+  info <- filter(info, !is.na(CAS)) %>%
+    bind_rows(missing_cas)
   
   return(info)
+  
+}
+
+complete_cas <- function(chem_dat_complete, chem_master) {
+
+  
+  out <- chem_dat_complete %>%
+    left_join(select(chem_master, CAS2 = CAS, pCode)) %>%
+    mutate(CAS = ifelse(is.na(CAS), CAS2, CAS)) %>%
+    select(-CAS2)
+  
+  out <- filter(out, !remark_cd %in% '<')
+  
+  return(out)
   
 }
 create_tox_siteInfo <- function(sites){
@@ -362,10 +381,7 @@ create_tox_siteInfo <- function(sites){
   
 create_toxExcel <- function(chem_data, chem_info, site_info, exclusions, file_out){
   
-  chem_data$CAS[chem_data$CAS == "56611-54-2_68574"] <- "56611-54-2"
-  # chem_data$CAS[chem_data$CAS == "1071-83-6_99960"] <- "1071-83-6"
-  #chem_data$CAS[chem_data$CAS == "138261-41-3_GLRI"] <- "138261-41-3"
-
+  
   list_of_datasets <- list("Data" = chem_data, 
                            "Chemicals" = chem_info,
                            "Sites" = site_info,
@@ -374,19 +390,10 @@ create_toxExcel <- function(chem_data, chem_info, site_info, exclusions, file_ou
 
 }
 
-create_WQExcel <- function(chem_data, chem_info, site_info, exclusions, benchmarks, chem_master, file_out){
-  
-  chem_data$CAS[chem_data$CAS == "56611-54-2_68574"] <- "56611-54-2"
-  # chem_data$CAS[chem_data$CAS == "1071-83-6_99960"] <- "1071-83-6"
-  #chem_data$CAS[chem_data$CAS == "138261-41-3_GLRI"] <- "138261-41-3"
-  
-  # add parents to chem_info that were not measured, but have measured degradates
-  # we'll need these later to look up benchmark values
-  chem_info_new <- filter(chem_master, !is.na(CAS) & !CAS %in% chem_info$CAS) %>%
-    bind_rows(chem_info)
-  
-  benchmarks_new <- data.frame(CAS = chem_info_new$CAS, 
-                           orig_name = chem_info_new$`Chemical Name`,
+create_WQExcel <- function(chem_data, chem_info, site_info, exclusions, benchmarks, file_out){
+ 
+  benchmarks_new <- data.frame(CAS = chem_info$CAS, 
+                           orig_name = chem_info$`Chemical Name`,
                            stringsAsFactors = FALSE) %>%
     left_join(select(toxEval::tox_chemicals, CAS=Substance_CASRN, chnm=Substance_Name), by="CAS") %>%
     left_join(select(benchmarks, CAS, endPoint, Value = value), by="CAS") %>%
@@ -435,7 +442,8 @@ get_chem_sum <- function(data_file){
   #tox_list$chem_data <- filter(tox_list$chem_data, Value != 0)
   
   ACClong <- get_ACC(tox_list$chem_info$CAS)
-  ACClong <- remove_flags(ACClong)
+
+  ACClong <- remove_flags(ACClong, flagsShort = c("Borderline", "OnlyHighest", "GainAC50", "Biochemical", 'ACCLessThan'))
   
   cleaned_ep <- clean_endPoint_info(toxEval::end_point_info)
   filtered_ep <- filter_groups(cleaned_ep)
