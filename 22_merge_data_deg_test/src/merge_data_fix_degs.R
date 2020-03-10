@@ -52,7 +52,7 @@ get_chem_sum_deg <- function(data_file, missing_chems, parents, metolachlor, che
     filter(!(`Chemical Name` == parent_pesticide | compound == parent_pesticide))
 
   ACClong_parents <- get_ACC(unique(missing_chem_parents$parent_CAS))
-  ACClong_parents <- remove_flags(ACClong_parents)
+  ACClong_parents <- remove_flags(ACClong_parents, flagsShort = c("Borderline", "OnlyHighest", "GainAC50", "Biochemical", "ACCLessThan"))
   
   
   fixed_deg <- data.frame()
@@ -78,7 +78,7 @@ get_chem_sum_deg <- function(data_file, missing_chems, parents, metolachlor, che
   # ACC vals for all other compounds
   tox_list <- create_toxEval(data_file)
   ACClong <- get_ACC(unique(tox_list$chem_info$CAS))
-  ACClong <- remove_flags(ACClong)
+  ACClong <- remove_flags(ACClong, flagsShort = c("Borderline", "OnlyHighest", "GainAC50", "Biochemical", 'ACCLessThan'))
   
   # verify there is no overlap between replacement data and original data
   all(!unique(fixed_deg$CAS) %in% unique(ACClong$CAS))
@@ -92,6 +92,13 @@ get_chem_sum_deg <- function(data_file, missing_chems, parents, metolachlor, che
   chemicalSummary <- get_chemical_summary(tox_list, ACClong, filtered_ep)
   
   chemicalSummary <- left_join(chemicalSummary, select(chem_master, CAS, parent_pesticide))
+  
+  if (metolachlor == TRUE) {
+    chemicalSummary$parent_pesticide[chemicalSummary$parent_pesticide == 'Acetochlor/Metolachlor'] <- 'Metolachlor'
+  } else {
+    chemicalSummary$parent_pesticide[chemicalSummary$parent_pesticide == 'Acetochlor/Metolachlor'] <- 'Acetochlor'
+    
+  }
 
   return(chemicalSummary)
 }
@@ -185,7 +192,7 @@ get_unclassified <- function(data_file, parents){
   #tox_list$chem_data <- filter(tox_list$chem_data, Value != 0)
   
   ACClong <- get_ACC(unique(tox_list$chem_info$CAS))
-  ACClong <- remove_flags(ACClong)
+  ACClong <- remove_flags(ACClong, flagsShort = c("Borderline", "OnlyHighest", "GainAC50", "Biochemical", 'ACCLessThan'))
   
   # find chems that are not in toxCast
   missing <- unique(tox_list$chem_data$CAS)[-which(unique(tox_list$chem_data$CAS) %in% unique(ToxCast_ACC$CAS))]
@@ -202,7 +209,7 @@ merge_deg_parents <- function(conc_dat, parents, metolachlor) {
   chems <- unique(conc_dat$CAS)
   
   chems_parents <- filter(parents, CAS %in% chems)
-  
+
   conc_dat_parent <- left_join(conc_dat, select(chems_parents, CAS, parent_pesticide)) %>%
     mutate(parent_pesticide = as.character(parent_pesticide))
   

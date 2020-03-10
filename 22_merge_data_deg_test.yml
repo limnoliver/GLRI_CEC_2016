@@ -25,35 +25,64 @@ targets:
       - chemicalSummary_bench_deg_acet
 
   chems_missing_toxcast:
-    command: find_missing_tox(data_file = "data/pesticides.xlsx", parents = chem_crosswalk)
+    command: find_missing_tox(data_file = "data/pesticides.xlsx")
+    
+  missing_toxcast:
+    command: combine_missing(missing_tox = chems_missing_toxcast, missing_cas = chems_missing_cas, parents = chem_master)
+    
+  all_parents:
+    command: complete_parents(chem_master)
+    
+    # when CAS numbers are missing, everything is fine until you go back to match concentrations to
+    # toxicity levels, where the information is matched by CAS, and the system breaks down.
+    # need to add fake CAS numbers to all compounds missing CAS numbers
     
   chemicalSummary_deg_meto:
-    command: get_chem_sum_deg(data_file = "data/pesticides.xlsx", parents = chem_crosswalk, metolachlor = TRUE)
+    command: get_chem_sum_deg(
+      data_file = "data/pesticides.xlsx", 
+      missing_chems = missing_toxcast,
+      parents = all_parents, 
+      metolachlor = TRUE,
+      chem_master)
     
   chemicalSummary_deg_acet:
-    command: get_chem_sum_deg("data/pesticides.xlsx", chem_crosswalk, metolachlor = FALSE)
+    command: get_chem_sum_deg(
+      data_file = "data/pesticides.xlsx", 
+      missing_chems = missing_toxcast,
+      parents = all_parents, 
+      metolachlor = FALSE,
+      chem_master)
 
+  # fix concentration data to include all chemicals
   chemicalSummary_conc_deg_meto:
-    command: merge_deg_parents(chemicalSummary_conc, chem_crosswalk, metolachlor = TRUE)
+    command: merge_deg_parents(chemicalSummary_conc, chem_master, metolachlor = TRUE)
     
   chemicalSummary_conc_deg_acet:
-    command: merge_deg_parents(chemicalSummary_conc, chem_crosswalk, metolachlor = FALSE)
+    command: merge_deg_parents(chemicalSummary_conc, chem_master, metolachlor = FALSE)
   
   # need to find parent benchmark values for degradates with no toxicity info
-  #chem_bench_surrogates:
-  #    command: get_chem_sum_deg(data_file = "data/pesticides_bench.xlsx", parents = chem_crosswalk, metolachlor = TRUE)
-  
   chems_missing_bench:
-    command: find_missing_bench("data/pesticides_bench.xlsx", chem_crosswalk)
+    command: find_missing_bench("data/pesticides_bench.xlsx")
+    
+  missing_bench:
+    command: combine_missing(missing_tox = chems_missing_bench, missing_cas = chems_missing_cas, parents = chem_master)
     
   chemicalSummary_bench_deg_meto:
-    command: get_bench_sum_deg("data/pesticides_bench.xlsx", chem_crosswalk, metolachlor = TRUE)
+    command: get_bench_sum_deg(data_file = "data/pesticides_bench.xlsx", 
+      missing_chems = missing_bench,
+      parents = all_parents, 
+      metolachlor = TRUE,
+      chem_master)
     
   chemicalSummary_bench_deg_acet:
-    command: get_bench_sum_deg("data/pesticides_bench.xlsx", chem_crosswalk, metolachlor = FALSE)
+    command: get_bench_sum_deg(data_file = "data/pesticides_bench.xlsx", 
+      missing_chems = missing_bench,
+      parents = all_parents, 
+      metolachlor = FALSE,
+      chem_master)
   
   parent_class:
-    command: get_parent_class(chemicalSummary_conc_deg_meto, chem_info)
+    command: get_parent_class(chemicalSummary_conc_deg_meto, chem_master)
     
   parent_sums:
     command: sum_by_parents(
