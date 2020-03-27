@@ -146,6 +146,9 @@ get_pCode <- function(NWIS){
   pCodeInfo <- readNWISpCode(pCodes) 
   pCodeInfo$casrn[pCodeInfo$parameter_cd %in% '68574'] <- '56611-55-3'
   
+  pCodeInfo <- add_row(pCodeInfo, parameter_group_nm = 'Permethrin', parameter_nm = 'Permethrin', 
+                       srsname = 'Permethrin', parameter_cd = 'fake_1', casrn = '52645-53-1', parameter_units = 'ng/l')
+
   
   
   return(pCodeInfo)
