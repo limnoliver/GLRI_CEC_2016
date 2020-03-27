@@ -1,22 +1,20 @@
 sum_pest_conc <- function(reduced_dat, chems_missing_cas) {
-  dat <- select(reduced_dat, SiteID, pCode, value, remark_cd, sample_dt, source, State, Site, Glyphosate, Neonics) %>%
-    filter(!(pCode %in% chems_missing_cas)) %>%
-    distinct()
-  sum_chems <- dat %>%
+
+  sum_chems <- reduced_dat %>%
     #mutate(date_no_time = date(pdate)) %>%
-    group_by(SiteID, sample_dt) %>%
-    summarize(sum_conc = sum(value, na.rm = T), 
-              sum_conc_detect = sum(value[which(!(remark_cd %in% "<"))], na.rm = T),
+    group_by(SiteID, `Sample Date`) %>%
+    summarize(sum_conc = sum(Value, na.rm = T), 
+              sum_conc_detect = sum(Value[which(!(remark_cd %in% "<"))], na.rm = T),
               n_chems = n(), 
-              neonic_meas = ifelse('neonic' %in% source, TRUE, FALSE),
+              #neonic_meas = ifelse('neonic' %in% source, TRUE, FALSE),
               n_detected = length(which(!(remark_cd %in% "<"))))
   
   sum_detected_chems <- filter(dat, !(remark_cd %in% "<")) %>%
     group_by(pCode) %>%
     summarise(n_detected = n(),
-              mean_val = mean(value),
-              median_val = median(value),
-              min_val = min(value))
+              mean_val = mean(Value),
+              median_val = median(Value),
+              min_val = min(Value))
 
   sum_study <- ungroup(sum_chems) %>%
     summarise_at(vars(sum_conc_detect, n_detected), funs(mean, median, min, max, sd))
@@ -63,6 +61,70 @@ sum_pest_conc <- function(reduced_dat, chems_missing_cas) {
   
   return(sum_chems)
 }
+sum_pest_conc_byclass <- function(master_dat, master_info, sites) {
+  
+  site_dat <- select(sites, SiteID = site_no, shortName, dominant_lu = `Dominant.land.use.`)
+  
+  exclude_dates <- c('2016-05-10', '2016-06-07', '2016-06-14', '2016-06-21', '2016-07-20', '2016-08-25')
+  
+  dat <- left_join(master_dat, master_info) %>%
+    filter(!Class %in% 'Other') %>%
+    left_join(site_dat) %>%
+    filter(!(shortName %in% 'Maumee' & `Sample Date` %in% as.Date(exclude_dates))) %>%
+    mutate(month = lubridate::month(`Sample Date`))
+    # filter out extra maumee samples
+  
+  sum_class <- dat %>%
+    #mutate(date_no_time = date(pdate)) %>%
+    group_by(SiteID, month, Class) %>%
+    summarize(sum_conc_detect = sum(Value[which(!(remark_cd %in% "<"))], na.rm = T),
+              n_detected = length(which(!(remark_cd %in% "<")))) %>%
+    group_by(Class, month) %>%
+    summarize(med_sum_conc_detect = median(sum_conc_detect),
+              med_n_detected = median(n_detected))
+  
+  sum_site <- dat %>%
+    group_by(SiteID, month, dominant_lu) %>%
+    summarize(sum_conc_detect = sum(Value[which(!(remark_cd %in% "<"))], na.rm = T),
+              n_detected = length(which(!(remark_cd %in% "<")))) %>%
+    group_by(dominant_lu, month) %>%
+    summarize(med_sum_conc_detect = median(sum_conc_detect),
+              med_n_detected = median(n_detected))
+    
+  
+  sum_class$Class <- factor(sum_class$Class, levels = c('Herbicide', 'Deg - Herbicide',
+                                                        'Fungicide', 'Deg - Fungicide',
+                                                        'Insecticide', 'Deg - Insecticide'))
+  
+  colors <- RColorBrewer::brewer.pal(3, 'Dark2')
+  p1 <- ggplot(sum_class, aes(x = month, y = med_sum_conc_detect)) +
+    geom_line(aes(group = Class, color = Class, linetype = Class)) +
+    scale_y_log10() +
+    scale_color_manual(values = rep(colors, each = 2)) +
+    scale_linetype_manual(values = rep(1:2, 3)) +
+    scale_x_continuous(breaks = 1:12) +
+    coord_cartesian(ylim = c(0.001, 1)) +
+    labs(y = "Median concentration (ug/L)", x = '') +
+    theme_bw() +
+    theme(panel.grid.minor = element_blank())
+  
+  colors <- RColorBrewer::brewer.pal(5, 'Set1')
+  
+  p2 <- ggplot(sum_site, aes(x = month, y = med_sum_conc_detect)) +
+    geom_line(aes(group = dominant_lu, color = dominant_lu)) +
+    scale_y_log10() +
+    scale_color_manual(values = colors) +
+    #scale_linetype_manual(values = rep(1:2, 3)) +
+    scale_x_continuous(breaks = 1:12) +
+    labs(y = "Median concentration (ug/L)", x = 'Month', color = 'Dominant land use') +
+    theme_bw() +
+    theme(panel.grid.minor = element_blank())
+  
+  ggsave(filename = 'figures/ms_supplement_figures/class_lu_by_month.png', 
+         plot = cowplot::plot_grid(p1, p2, nrow = 2), height = 8, width = 8)
+  return(sum_chems)
+}
+
 
 combine_dat <- function(sum_dat, site_dat) {
   graph_dat_thresh <- make('parent_sums') %>%
@@ -236,6 +298,40 @@ boxplot_ndetect_bysite_month <- function(sum_conc, target_name, site_dat) {
     guides(color = guide_legend(ncol = 2),shape = guide_legend(ncol = 2))
   
   ggsave(target_name, p_month, height = 4, width = 6)
+  
+  
+  
+}
+
+facet_boxplot <- function(sum_conc, target_name, site_dat) {
+  dat <- left_join(sum_conc, site_dat, by = 'SiteID')
+  
+  # filter out extra maumee samples
+  exclude_dates <- c('2016-05-10', '2016-06-07', '2016-06-14', '2016-06-21', '2016-07-20', '2016-08-25')
+  
+  dat <- filter(dat, !(`Short Name` %in% 'Maumee' & sample_dt %in% as.Date(exclude_dates)))
+  
+  # ordered_names <- dat %>%
+  #   ungroup() %>%
+  #   select(`Short Name`, SiteID_detected) %>%
+  #   arrange(SiteID_detected) %>%
+  #   distinct()
+  # 
+  # dat$`Short Name` <- factor(dat$`Short Name`, levels = ordered_names$`Short Name`)
+  # 
+  site.cols<- inferno(16, begin=0.4, end=.9, direction = -1)
+  
+  png('figures/ms_supplement_figures/conc_ndetect_boxplot.png', height = 700, width = 800, pointsize = 18)
+  par(mfrow=c(2,1),  mai = c(.2, 1.3, 0.2, 0.1), oma = c(1.2, 0.5, .2, 0))
+  boxplot(dat$sum_conc_detect_ppb~dat$month, outline = FALSE, xlab = '', ylab = 'Pesticide concentration (ug/L)', xaxt = 'n')
+  axis(1, at = 1:12, tick = TRUE, labels = FALSE)
+  boxplot(dat$n_detected~dat$month, outline = FALSE, xlab = '', ylab = 'N chemicals detected')
+  dev.off()
+  
+  
+  
+  
+  
   
   
 }
