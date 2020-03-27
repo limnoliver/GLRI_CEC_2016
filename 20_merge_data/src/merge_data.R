@@ -64,11 +64,7 @@ remove_duplicate_chems <- function(merged_dat) {
   fixed_dat <- filter(merged_dat, !(pCode %in% '68426')) %>%
     bind_rows(fixed_imidacloprid)
     
-  # drop the full glyphosate analysis + degradate, use the immunoassay
-  # eventually should estimate degradate based on glyphosate ~ degradate relationship - see Mahler's work on topic
-  glyphosate_drop <- c("62722", "62649")
   
-  fixed_dat <- filter(fixed_dat, !(pCode %in% glyphosate_drop))
   
   # check fixed data for remaining duplicates
   
@@ -319,6 +315,13 @@ fix_missing_cas <- function(chem_info_complete, chem_crosswalk) {
                   CAS = c('1897-45-6', '1861-32-1', '17804-35-2', '56-38-2', '298-00-0'), 
                   MlWt = c(265.90, 331.95, 290.32, 291.26, 263.2),
                   pCode = paste0('fake_', 2:6))
+  
+  # fix glyphosate and deg
+  info$Class[info$pCode %in% '62649'] <- 'Deg - Herbicide'
+  info$parent_pesticide[info$pCode %in% '62649'] <- 'Glyphosate'
+  info$MlWt[info$pCode %in% '62649'] <- 111.037
+  info$MlWt[info$pCode %in% '99960'] <- 169.073
+  
   
   # complete permethrin data
   info$Class[info$CAS %in% '52645-53-1'] <- 'Insecticide'
