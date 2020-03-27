@@ -37,7 +37,7 @@ get_nchems_sites <- function(chemicalSummary_conc, all_samples) {
     group_by(metric) %>%
     mutate(rank_value = rank(-metric_value),
            relative_value = metric_value/max(metric_value),
-           metric_type = 'Occurance')
+           metric_type = 'Occurrence')
   
 
   # nchem_ndetect <- nchems_wide %>%
@@ -188,10 +188,6 @@ get_bench_sites <- function(chemicalSummary_bench, all_samples) {
 get_mix_sites <- function(mixes) {
   mixes_long <- mixes %>%
     select(-shortName) %>%
-    rename(Hits = mix_hits_per_sample,
-           `max EARmix` = max_EARmix, 
-           `Months w/hits` = mix_hit_n_months,
-           `Endpoints w/hits` = mix_hit_n_endpoints) %>%
     tidyr::gather(key = 'metric', value = 'metric_value', -site) %>%
     group_by(metric) %>%
     mutate(rank_value = rank(-metric_value),
@@ -241,22 +237,34 @@ calc_avg_rankings <- function(site_rankings, sites) {
   
 }
 
-plot_avg_rankings <- function(outfile, ranking_dat, sites) {
+plot_avg_rankings <- function(outfile, ranking_dat, sites, site_meta) {
   
-  dat <- left_join(ranking_dat, sites, by = c('site' = 'SiteID'))
+  dat <- left_join(ranking_dat, sites, by = c('site' = 'SiteID')) %>%
+    left_join(site_meta, by = c('site' = 'site_no')) %>%
+    mutate(disturbance_index = `Ag..crops` + Urban, 
+           natural_index = Forest + `Water..wetland`) %>%
+    mutate(dist_diff_index = disturbance_index - natural_index)
+  
+  dat2 <- filter(dat, metric %in% 'final_rel_val_321')
+  dat3 <- filter(dat, metric %in% 'bench_mean_rel')
+  dat4 <- filter(dat, metric %in% 'earmix_mean_rel')
+  dat5 <- filter(dat, metric %in% 'occurance_mean_rel')
+  
  
-   p <- ggplot(dat, aes(y = avg_rank, x = disturbance_index, label = `Short Name`)) +
+   p <- ggplot(dat2, aes(y = relative_value, x = disturbance_index, label = shortName)) +
     geom_point(aes(color = `Dominant.land.use.`), size = 2) + 
-    geom_errorbar(aes(ymin = avg_rank - sd_rank, 
-                      ymax = avg_rank + sd_rank, 
-                      color = `Dominant.land.use.`), width = 1.5) +
+    #geom_errorbar(aes(ymin = avg_rank - sd_rank, 
+    #                  ymax = avg_rank + sd_rank, 
+    #                  color = `Dominant.land.use.`), width = 1.5) +
      #geom_label(check_overlap = T, hjust = -0.1, nudge_x = 0.3) +
-     ggrepel::geom_label_repel(data = dat, aes(color = `Dominant.land.use.`), show.legend = F, size = 2) +
+     ggrepel::geom_label_repel(data = dat2, aes(color = `Dominant.land.use.`), 
+                               show.legend = F, size = 2, label.size = NA) +
     theme_bw() +
+    theme(panel.grid = element_blank()) +
     labs(x = "Watershed Disturbance Index (% Crop + % Urban)", 
-         y = 'Average (sd) rank across metrics\n(1 = most impacted by pesticides)',
+         y = 'Relative Risk Index\n(1 = most impacted across all metrics)',
          color = "Dominant land use") +
     scale_x_continuous(limits = c(0,100))
   
-  ggsave(outfile, p, height = 4, width = 8)
+  ggsave(outfile, p, height = 4, width = 6)
 }
