@@ -1,22 +1,6 @@
-test <- data.frame(chem = sample(c('a', 'b', 'c', 'd', 'e', 'f'), 100, replace = TRUE),
-                   value = sample(seq(0.001, 1, by = 0.001), 100, replace = TRUE),
-                   month = sample(c(1:12), 100, replace = TRUE))
-
-test <- mutate(test, class = case_when(
-  chem %in% c('a', 'b') ~ 'class1',
-  chem %in% c('c', 'd') ~ 'class2',
-  chem %in% c('e', 'f') ~ 'class3'
-)) %>%
-  add_row(month = 13)
-  
-head(test)
 library(ggplot2)
 library(dplyr)
-ggplot(data = test, aes(x = month, y = value)) +
-  geom_point(aes(color = class, shape = chem), alpha = 0.5) +
-  #geom_jitter() +
-  coord_polar(theta = 'x', start = 0) +
-  scale_x_continuous(expand = c(0, 0), breaks = c(1,4,7,10), labels = c('Jan', 'Apr', 'Jul', 'Oct'))
+
 
 chem_ear <- make('chemicalSummary_deg_meto')
 #levels(chem_ear$chnm)[86] <- '2,4-D'
@@ -26,6 +10,9 @@ parents <- chem_ear %>%
   select(Class, parent_pesticide) %>%
   distinct()
 
+drop_dates <- make('maumee_exclude')
+
+
 chem_sums <- chem_ear %>%
   group_by(site, date, parent_pesticide) %>%
   summarize(sumEAR = sum(EAR)) %>%
@@ -34,8 +21,9 @@ chem_sums <- chem_ear %>%
 graph_dat <- make('parent_sums') %>%
   left_join(make('parent_class')) %>%
   mutate(day = lubridate::yday(date)) %>%
-  filter(type == 'p_sumval' & measure_type == 'ear') %>%
+  filter(type == 'p_d_sumval' & measure_type == 'ear') %>%
   filter(sumval >= 0.001) %>%
+  filter(!(site %in% '04193500' & as.Date(date) %in% as.Date(drop_dates))) %>%
   group_by(site, day, Class) %>%
   summarize(n_hits = n(),
             max_ear = max(sumval)) %>%
@@ -44,6 +32,8 @@ graph_dat <- make('parent_sums') %>%
 sites <- make('sites') %>%
   select(site = site_no, dominant_lu = Dominant.land.use.)
 
+sites2 <- make('sites') %>%
+  select(site = site_no, shortName, dominant_lu = Dominant.land.use.)
 graph_dat <- left_join(graph_dat, sites) %>%
   add_row(day = c(1, 365), Class = rep('Herbicide', 2), dominant_lu = rep('Crops', 2)) %>%
   filter(!dominant_lu == 'Wetland')
@@ -65,3 +55,21 @@ p <- ggplot(data = graph_dat, aes(x = day, y = max_ear)) +
   labs(x = '', y = 'Max EAR for each site-date-class', color = 'Dominant Land Use', size = '# Chems w/hits')
 
 ggsave('figures/ms_figures/month_class_hits.png', p, height = 6, width = 8)
+
+head(graph_dat)
+ggplot(graph_dat, aes(x = day, y = n_hits)) +
+  geom_point(aes(group = site, color = site)) +
+  geom_line(aes(group = site, color = site)) +
+  facet_wrap(~dominant_lu)
+
+graph_dat <- make('parent_sums') %>%
+  left_join(make('parent_class')) %>%
+  filter(type == 'p_d_sumval' & measure_type == 'ear') %>%
+  filter(sumval >= 0.001) %>%
+  filter(!(site %in% '04193500' & as.Date(date) %in% as.Date(drop_dates))) %>%
+  mutate(month = lubridate::month(date)) %>%
+  group_by(site) %>%
+  summarize(n_month_hits = length(unique(month))) %>%
+  left_join(sites2)
+
+            

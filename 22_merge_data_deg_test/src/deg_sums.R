@@ -24,18 +24,13 @@ get_parent_class <- function(deg_parent_conc, chem_info) {
   }
 
 sum_by_parents <- function(deg_parent_ear, deg_parent_conc, deg_parent_bench) {
-  
-  #deg_parent_ear$parent_pesticide[is.na(deg_parent_ear$parent_pesticide)] <- as.character(deg_parent_ear$chnm[is.na(deg_parent_ear$parent_pesticide)])
-  
- 
     
   parent_cmpd_count <- deg_parent_ear %>%
     select(parent_pesticide, chnm) %>%
     distinct() %>%
     group_by(parent_pesticide) %>%
     summarize(n_cmpds = n())
-  
- 
+
   
   sum_deg_parents <- function(in_dat, measure) {
     
@@ -143,12 +138,12 @@ plot_deg_sums <- function(all_dat, top_parents, out_file) {
   levels(top_dat$measure_type) <- c('EARchem', 'TQchem', 'Conc')
   top_dat$Class <- factor(top_dat$Class, levels = c('Herbicide', "Insecticide", "Fungicide", "Other"))
   p <- ggplot(top_dat, aes(y = median_sumval, x = parent_pesticide)) +
-    geom_point(aes(color = type), size = 2, alpha = 0.5) +
+    geom_point(aes(color = type), size = 1.5, alpha = 0.5) +
     facet_grid(rows = vars(Class), cols = vars(measure_type), 
                scales = 'free', shrink = FALSE, space = 'free_y') +
     geom_vline(xintercept = seq(2, length(levels(top_dat$parent_pesticide)), 2), 
                size = 4, color = 'gray88')  +
-    geom_point(aes(color = type), size = 2, alpha = 0.5) +
+    geom_point(aes(color = type), size = 1.5, alpha = 0.5) +
     geom_errorbar(aes(ymin = quant10, ymax = quant90, color = type)) +
     scale_y_log10() +
     coord_flip() +

@@ -339,7 +339,7 @@ fix_missing_cas <- function(chem_info_complete, chem_crosswalk) {
   
 }
 
-complete_cas <- function(chem_dat_complete, chem_master) {
+complete_cas <- function(chem_dat_complete, chem_master, filter_dl) {
 
   
   out <- chem_dat_complete %>%
@@ -347,7 +347,11 @@ complete_cas <- function(chem_dat_complete, chem_master) {
     mutate(CAS = ifelse(is.na(CAS), CAS2, CAS)) %>%
     select(-CAS2)
   
-  out <- filter(out, !remark_cd %in% '<')
+  if(filter_dl) {
+    out <- filter(out, !remark_cd %in% '<')
+    
+  }
+  
   
   return(out)
   
@@ -402,7 +406,8 @@ create_WQExcel <- function(chem_data, chem_info, site_info, exclusions, benchmar
     left_join(select(benchmarks, CAS, endPoint, Value = value), by="CAS") %>%
     mutate(groupCol = "WQ") %>%
     filter(!is.na(Value))
-  
+
+  nrow(benchmarks)
   benchmarks_new$chnm[is.na(benchmarks_new$chnm)] <- benchmarks_new$orig_name[is.na(benchmarks_new$chnm)]
   
   list_of_datasets <- list("Data" = chem_data, 
@@ -446,7 +451,7 @@ get_chem_sum <- function(data_file){
   
   ACClong <- get_ACC(tox_list$chem_info$CAS)
 
-  ACClong <- remove_flags(ACClong, flagsShort = c("Borderline", "OnlyHighest", "GainAC50", "Biochemical", 'ACCLessThan'))
+  ACClong <- remove_flags(ACClong)
   
   cleaned_ep <- clean_endPoint_info(toxEval::end_point_info)
   filtered_ep <- filter_groups(cleaned_ep)
@@ -458,7 +463,9 @@ get_chem_sum <- function(data_file){
 get_chem_bench <- function(data_file){
   
   tox_list <- create_toxEval(data_file)
+  
   #tox_list$chem_data <- filter(tox_list$chem_data, Value != 0)
+  ncol(tox_list)
 
   chemicalSummary_bench <- get_chemical_summary(tox_list)
   

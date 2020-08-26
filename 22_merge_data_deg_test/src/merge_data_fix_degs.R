@@ -1,18 +1,14 @@
-find_missing_tox <- function(data_file){
+find_missing_tox <- function(chem_conc, chem_ear, chem_info){
   
-  tox_list <- create_toxEval(data_file)
+  detected <- unique(chem_conc$CAS)
+  in_toxcast <- unique(chem_ear$CAS)
   
-  # find chems that are not in toxCast
-  missing <- unique(tox_list$chem_data$CAS)[-which(unique(tox_list$chem_data$CAS) %in% unique(ToxCast_ACC$CAS))]
   
-  return(missing)
-}
-
-combine_missing <- function(missing_tox, missing_cas, parents) {
+  chems_missing <- chem_info %>%
+    filter(CAS %in% detected) %>%
+    filter(!CAS %in% in_toxcast)
   
-  missing_chems <- parents %>%
-    filter(CAS %in% missing_tox | pCode %in% missing_cas)
-  return(missing_chems)
+  return(chems_missing)
 }
 
 complete_parents <- function(chem_master) {
@@ -102,17 +98,17 @@ get_chem_sum_deg <- function(data_file, missing_chems, parents, metolachlor, che
 
   return(chemicalSummary)
 }
-find_missing_bench <- function(data_file){
+find_missing_bench <- function(chem_conc, chem_bench, chem_info){
+  detected <- unique(chem_conc$CAS)
+  in_bench <- unique(chem_bench$CAS)
   
-  tox_list <- create_toxEval(data_file)
-  #tox_list$chem_data <- filter(tox_list$chem_data, Value != 0)
+  length(in_bench)
   
-  bench_vals <- unique(tox_list$benchmarks) %>%
-    filter(!is.na(ACC_value))
-  
-  # find chems that are not in benchmarks
-  missing <- unique(tox_list$chem_data$CAS)[-which(unique(tox_list$chem_data$CAS) %in% unique(bench_vals$CAS))]
-  return(missing)
+  chems_missing <- chem_info %>%
+    filter(CAS %in% detected) %>%
+    filter(!CAS %in% in_bench)
+
+  return(chems_missing)
 }
 get_bench_sum_deg <- function(data_file, missing_chems, parents, metolachlor, chem_master){
   
@@ -165,6 +161,13 @@ get_bench_sum_deg <- function(data_file, missing_chems, parents, metolachlor, ch
   chemicalSummary <- get_chemical_summary(tox_list)
   
   chemicalSummary <- left_join(chemicalSummary, select(chem_master, CAS, parent_pesticide))
+  
+  if (metolachlor == TRUE) {
+    chemicalSummary$parent_pesticide[chemicalSummary$parent_pesticide == 'Acetochlor/Metolachlor'] <- 'Metolachlor'
+  } else {
+    chemicalSummary$parent_pesticide[chemicalSummary$parent_pesticide == 'Acetochlor/Metolachlor'] <- 'Acetochlor'
+    
+  }
   
   return(chemicalSummary)
 }

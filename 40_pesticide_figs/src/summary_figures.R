@@ -125,6 +125,55 @@ sum_pest_conc_byclass <- function(master_dat, master_info, sites) {
   return(sum_chems)
 }
 
+overall_temporal_effects <- function(chem_bench, chem_ear) {
+  chem_bench <- make('chemicalSummary_bench_deg_meto')
+  chem_ear <- make('chemicalSummary_bench_deg_meto')
+  
+  bench_months <- chem_bench %>%
+    group_by(site, date, CAS) %>%
+    summarize(maxbench = max(EAR)) %>%
+    filter(maxbench > 0.1) %>%
+    mutate(month = lubridate::month(date)) %>%
+    group_by(month) %>%
+    summarize(n_site_hits = length(unique(site)),
+              n_chem_hits = length(unique(CAS))) %>%
+    mutate(metric = 'TQ')
+  
+  sites <- chem_ear %>%
+    group_by(site, date, CAS) %>%
+    summarize(sumear = sum(EAR)) %>%
+    filter(sumear > 0.001) %>%
+    group_by(site) %>%
+    summarize(n_hits = n())
+  
+  ear_months <- chem_ear %>%
+    group_by(site, date, CAS) %>%
+    summarize(sumear = sum(EAR)) %>%
+    filter(sumear > 0.001) %>%
+    mutate(month = lubridate::month(date)) %>%
+    group_by(month) %>%
+    summarize(n_site_hits = length(unique(site)),
+              n_chem_hits = length(unique(CAS))) %>%
+    mutate(metric = 'EAR')
+  
+  months <- bind_rows(bench_months, ear_months)
+  
+  p1 <- ggplot(months, aes(x = month, y = n_site_hits)) +
+    geom_line(aes(group = metric, color = metric)) +
+    theme_bw() +
+    labs(x = '', y = 'N sites with\nTQchem EARchem hits') +
+    scale_x_continuous(breaks = 1:12) +
+    theme(panel.grid.minor = element_blank())
+  
+  p2 <- ggplot(months, aes(x = month, y = n_chem_hits)) +
+    geom_line(aes(group = metric, color = metric)) +
+    theme_bw() +
+    labs(x = 'Month', y = 'N chems with \nTQchem or EARchem hits') +
+    scale_x_continuous(breaks = 1:12) +
+    theme(panel.grid.minor = element_blank())
+  
+  ggsave(filename = 'figures/ms_supplement_figures/hits_per_month.png', plot = cowplot::plot_grid(p1, p2, nrow = 2, axis = 'l'), height = 5, width = 6)
+}
 
 combine_dat <- function(sum_dat, site_dat) {
   graph_dat_thresh <- make('parent_sums') %>%

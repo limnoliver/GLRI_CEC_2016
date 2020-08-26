@@ -318,7 +318,7 @@ plot_tox_boxplots_facet <- function(chemicalSummary){
 plot_genes <- function(file_out, chem_info, chem_data, site_info, exclusions, AOP){
   
   ACClong <- get_ACC(chem_info$CAS)
-  ACClong <- remove_flags(ACClong)
+  ACClong <- remove_flags(ACClong, flagsShort = c("Borderline", "OnlyHighest", "GainAC50", "Biochemical", 'ACCLessThan'))
   
   cleaned_ep <- clean_endPoint_info(end_point_info)
   filtered_ep <- filter_groups(cleaned_ep, groupCol = "intended_target_gene_symbol")
