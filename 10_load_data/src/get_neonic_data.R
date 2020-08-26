@@ -11,6 +11,17 @@ get_csv <- function(file_classes){
   return(classes)
 }
 
+get_benches <- function(file_classes){
+  #Changed to Other:
+  # 78-48-8,Defoliant
+  # 51-03-6,Synergist
+  classes <- data.frame(read_csv(file_classes))
+  classes$CAS[classes$CAS %in% '17118-09-5'] <- '171118-09-5' # fix CAS for metolachlor ESA
+  classes$CAS[grepl('SDS-3701', classes$Compound)] <- '28343-61-5' # add cas for SDS-3701 which appears to be the Chlorothanolil degradate 4-Hydroxychlorothalonil
+
+  return(classes)
+}
+
 get_sites <- function(tracking, file.sites){
   
   sites <- readRDS(file.sites)
