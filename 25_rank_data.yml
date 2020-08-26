@@ -57,11 +57,14 @@ targets:
   figures/ms_figures/site_rankings_tile.png:
     command: make_site_tile(target_name, site_rankings, sites)
     
+  figures/ms_figures/site_rankings_tile_updated.png:
+    command: make_site_tile(target_name, site_rankings, sites)
+    
   site_avg_rankings:
     command: calc_avg_rankings(site_rankings, sites)
     
-  figure/site_avg_rankings_disturbance.png:
-    command: plot_avg_rankings(target_name, site_avg_rankings, site_info)
+  figures/ms_figures/site_avg_rankings_disturbance.png:
+    command: plot_avg_rankings(target_name, site_rankings_final, site_info, sites)
     
   # Top CHEMICALS of concern (RANKINGS) (maybe top 5-10 from each stat?)
   # ndetect: detection frequency (site and sample)
@@ -69,9 +72,9 @@ targets:
   # bench: rankings based on mean and max benchmark ratio of chem
   # EAR: rankings based on mean of max EAR by chem 
     
-  figures/ms_supplement_figures/chem_metadata.csv:
-    command: summarize_chem_meta(file_name = target_name, chem_vals = all_chems, 
-      chem_crosswalk, chem_info_all, chems_missing_toxcast, chems_missing_bench)
+  #figures/ms_supplement_figures/chem_metadata.csv:
+   # command: summarize_chem_meta(file_name = target_name, chem_vals = all_chems, 
+    #  chem_crosswalk, chem_info_all, chems_missing_toxcast, chems_missing_bench)
     
   figure/chem_summary.csv:
     command: summarize_chems(file_name = target_name, chem_vals = all_chems, 
@@ -84,14 +87,32 @@ targets:
   #  command: calc_chem_tox_hits(chemicalSummary, chemicalSummary_conc, sites_detect = I(8), sites_hit = I(4))
 
   parent_chem_rank_metrics:
-    command: calc_parent_tox_hits(parent_sums, mixtures = chem_mix_metrics_all)
+    command: calc_parent_tox_hits(parent_sums, mixtures = chem_mix_metrics_all, all_dat = chem_data_complete, chem_master)
     
+  parent_ranks: 
+    command: rank_parents(parent_metrics = parent_chem_rank_metrics)
+    
+  mean_parent_ranks:
+    command: calc_mean_ranks(ranks = parent_ranks)
+    
+  # choose top parents, which meet below category RRI criteria
   top_parents:
-    command: filter_parents(parent_chem_rank_metrics, f_detect_prob = I(.2), f_detect_sites_prob = I(.5),
-      f_detect_months = I(12), f_hit_prob = I(.1), f_hit_sites_prob = I(0.25))
+    command: determine_priorities(
+      metrics = parent_chem_rank_metrics, site_hits = I(.25), sample_hits = I(.10), 
+      occurrence = chem_data_complete, missing_toxcast, missing_bench,
+      mixtures = chem_mix_metrics_all)
+    
+  top_parent_names:
+    command: filter_top(top_parents)
       
   figures/ms_supplement_figures/top_parent_compounds.csv:
     command: write.csv(top_parents, target_name, row.names = FALSE)
+    
+  figures/ms_figures/top_parents_plot.png:
+    command: plot_top_parents(
+      top_parents, chem_master, conc = chemicalSummary_conc_deg_meto, ear = chemicalSummary_deg_meto,
+      bench = chemicalSummary_bench_deg_meto, raw_ear = chemicalSummary, raw_bench = chemicalSummary_bench,
+      out_file = target_name)
     
   #top_chems_ear_deg_meto:
   #  command: calc_chem_tox_hits(chemicalSummary_deg_meto, chemicalSummary_conc, I(8), I(4))

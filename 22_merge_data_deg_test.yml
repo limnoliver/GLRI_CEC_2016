@@ -24,11 +24,8 @@ targets:
       - chemicalSummary_bench_deg_meto
       - chemicalSummary_bench_deg_acet
 
-  chems_missing_toxcast:
-    command: find_missing_tox(data_file = "data/pesticides.xlsx")
-    
   missing_toxcast:
-    command: combine_missing(missing_tox = chems_missing_toxcast, missing_cas = chems_missing_cas, parents = chem_master)
+    command: find_missing_tox(chem_conc = chemicalSummary_conc, chem_ear = chemicalSummary, chem_info = chem_master)
     
   all_parents:
     command: complete_parents(chem_master)
@@ -61,11 +58,9 @@ targets:
     command: merge_deg_parents(chemicalSummary_conc, chem_master, metolachlor = FALSE)
   
   # need to find parent benchmark values for degradates with no toxicity info
-  chems_missing_bench:
-    command: find_missing_bench("data/pesticides_bench.xlsx")
     
   missing_bench:
-    command: combine_missing(missing_tox = chems_missing_bench, missing_cas = chems_missing_cas, parents = chem_master)
+    command: find_missing_bench(chem_conc = chemicalSummary_conc, chem_bench = chemicalSummary_bench, chem_info = chem_master)
     
   chemicalSummary_bench_deg_meto:
     command: get_bench_sum_deg(data_file = "data/pesticides_bench.xlsx", 

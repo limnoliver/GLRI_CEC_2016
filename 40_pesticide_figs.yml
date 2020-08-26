@@ -49,7 +49,7 @@ targets:
       - figure/tox_bench_hbs.png
     
   sum_conc: 
-    command: sum_pest_conc(reduced_dat, chems_missing_cas)
+    command: sum_pest_conc(chem_master_data, chems_missing_cas)
     
   unique_chems:
     command: get_n_unique_chems(reduced_dat, sites)
@@ -58,12 +58,12 @@ targets:
     command: combine_dat(parent_sums, sites)
     
   figures/ms_figures/site_table.csv:
-    command: gather_site_info(target_name, sites, sum_conc, unique_chems)
+    command: gather_site_info(target_name, sites, neonic)
     
     # still need to classify chems with no chem Class
     # also need to get everything in same units
   figures/ms_supplement_figures/chem_table.csv:
-    command: gather_chem_info(target_name, chem_dls, chemicalSummary_conc, chem_info, parents = chem_crosswalk)
+    command: gather_chem_info(target_name, chem_dls, chemicalSummary_conc_deg_meto, chem_crosswalk)
   
   # figures/ms_supplement_figures/site_chem_table.csv:
    # command: gather_chem_info(target_name, chem_dls, chemicalSummary_conc, chem_info, parents = chem_crosswalk)

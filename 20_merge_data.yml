@@ -74,11 +74,19 @@ targets:
   
   # now fix the chem data to include missing cas
   chem_master_data:
-    command: complete_cas(chem_data_complete, chem_master)
+    command: complete_cas(chem_data_complete, chem_master, filter_dl = TRUE)
+    
+  chem_master_data_dls:
+    command: complete_cas(chem_data_complete, chem_master, filter_dl = FALSE)
   
   site_info:
     command: create_tox_siteInfo(sites)
     
+  # exclude extra Maumee sites for certain analysis
+  # kept dates that were most aligned with other samples, kept distaince ~1 month apart
+  maumee_exclude: 
+    command: c(I(c('2016-05-10', '2016-06-07', '2016-06-14', '2016-06-21', '2016-07-20', '2016-08-25')))
+
   data/pesticides.xlsx:
     command: create_toxExcel(chem_master_data, chem_master, site_info, exclusions, target_name)
 

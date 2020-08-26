@@ -17,8 +17,10 @@ targets:
 # assess chemicals that are randomly missing from pesticide schedule
 # are the important, based on frequency of detection? 
   missing_chems: 
-    command: get_missing_chems(reduced_dat, special_cas)
+    command: get_missing_chems(chemicalSummary_conc, special_cas)
 
+  missing_ears:
+    command: assess_missing_chems(missing_chems, EAR_dat = chemicalSummary_deg_meto, chem_data = chem_data_complete)
 # assess detection rate of neonics so can explore what not having them in each
 # sample means
   missing_neonics:

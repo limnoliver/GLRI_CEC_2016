@@ -9,46 +9,64 @@ include:
 ## All R files that are used must be listed here:
 sources:
   - 26_mixtures/src/get_mixtures.R
+  - 26_mixtures/src/top_mixtures_analysis.R
   
 targets:
   26_mixtures:
     depends: 
       - EARsum_endpoint
       
+  # sum by endpoint, but leave all compound-endpoint combos
+  # filters those compounds-endpoints where the compound did not contribute > 1%
+  # exception is if the compound contributing < 1% alone would exceed 0.001.
+  # if filter_cutoffs = TRUE, then mixtures with EARmix > 0.001 are kept
+  #sum_endpoint:
+   # command: sum_by_endpoint(chemicalSummary_deg_meto)
+    
   EARsum_endpoint:
     command: sum_endpoints(chemicalSummary_deg_meto, filter_cutoffs = TRUE)
     
   EARsum_endpoint_nofilter:
     command: sum_endpoints(chemicalSummary_deg_meto, filter_cutoffs = FALSE)
     
+  all_parents_with_ears:
+    command: get_uniques(chemicalSummary_deg_meto)
+    
+  # document contributing chems to those EARmix > 0.001
   contributing_chems:
     command: calc_contr_chems(EARsum_endpoint)
     
+  # find top mixtures
+  # if max_only = TRUE, it takes the miximum mixtures from each site-date
+  # if max_only = FALSE, it keeps all mixtures > 0.001
   top_mixes:
     command: calc_top_mixtures(contributing_chems)
     
   top_mixes_all:
     command: calc_top_mixtures(contributing_chems, max_only = FALSE)
     
+  # summarize by unique mixtures 
   mixtures_summary_all:
     command: summarize_mixtures(top_mixtures = top_mixes_all)
     
   mixtures_summary:
     command: summarize_mixtures(top_mixtures = top_mixes)
     
+  # group by number of contributing chems, and summarize
   mixtures_n_summary_all:
     command: summarize_by_n(top_mixtures = top_mixes_all)
     
   mixtures_n_summary:
     command: summarize_by_n(top_mixtures = top_mixes)
     
-  figure/mixtures_summary_all.png:
+  figures/ms_figures/mixtures_summary_all.png:
     command: plot_mix_summary(
       out_file = target_name,
       n_summary = mixtures_n_summary_all, 
       mix_summary = mixtures_summary_all, 
       top_mixtures = top_mixes_all, 
-      ear_sum = EARsum_endpoint)
+      ear_sum = EARsum_endpoint,
+      chem_master = chem_master)
       
   figure/mixtures_summary_limited.png:
     command: plot_mix_summary(
@@ -57,18 +75,30 @@ targets:
       mix_summary = mixtures_summary, 
       top_mixtures = top_mixes, 
       ear_sum = EARsum_endpoint)
+      
+  parent_samples:
+    command: summarize_parent_samples(conc = chem_master_data_dls, metadata = chem_master)
 
   chem_mix_metrics:
-    command: calc_chem_mix_metrics(top_mixtures = top_mixes, summed_EARs = EARsum_endpoint, target_name)
+    command: calc_chem_mix_metrics(top_mixtures = top_mixes, summed_EARs = EARsum_endpoint, target_name, all_parents_with_ears, parent_samples = parent_samples)
   
   chem_mix_metrics_all:
-    command: calc_chem_mix_metrics(top_mixtures = top_mixes_all, summed_EARs = EARsum_endpoint, target_name)
+    command: calc_chem_mix_metrics(top_mixtures = top_mixes_all, summed_EARs = EARsum_endpoint, target_name, all_parents_with_ears, parent_samples = parent_samples)
    
   26_mixtures/out/chem_mix_metrics_all.csv:
     command: write.csv(chem_mix_metrics_all, target_name, row.names = FALSE)
   
   site_mix_metrics:
-    command: calc_site_mix_metrics(top_mixtures = top_mixes, chemicalSummary_conc)
+    command: calc_site_mix_metrics(top_mixtures = top_mixes, chem_data_complete, EARsum_endpoint_nofilter)
 
   site_mix_metrics_all:
-    command: calc_site_mix_metrics(top_mixtures = top_mixes_all, chemicalSummary_conc)
+    command: calc_site_mix_metrics(top_mixtures = top_mixes_all, chem_data_complete, EARsum_endpoint_nofilter, sites_info = sites)
+    
+  top_endpoints:
+    command: calc_top_endpoints(top_mixes_all)
+    
+  gene_info:
+    command: extract_gene_info(I('10_load_data/raw/gene_info.rda'))
+    
+  top_endpoints_aops:
+    command: merge_with_aops(top_ends = top_endpoints, genes = gene_info, top_mix = top_mixes_all, sites, site_threshold = I(4), sample_threshold = I(20), aop = AOP)

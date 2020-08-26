@@ -98,7 +98,7 @@ targets:
     command: process_hsbls(in_pesticides = '10_load_data/raw/20180312_hbsl_data_pesticides.csv', in_degradates = '10_load_data/raw/20180312_hbsl_data_pesticide_degradates.csv', out_file = target_name)
   
   benchmarks:
-    command: get_csv("10_load_data/benchmarks.csv")
+    command: get_benches("10_load_data/benchmarks.csv")
     
   benchmarks_hbs:
     command: get_csv("10_load_data/hbs_levels.csv")
@@ -107,4 +107,4 @@ targets:
     command: get_pCode(NWIS)
     
   exclusions:
-    command: get_csv("10_load_data/exclusions.csv")
+    command: get_csv("10_load_data/raw/exclusions_v32.csv")
