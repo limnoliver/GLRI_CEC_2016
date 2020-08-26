@@ -147,23 +147,65 @@ calc_top_mixtures <- function(EAR_sum_endpoint, max_only = TRUE) {
 # calculate the number of times a chemical was in a mixture
 # exclude 1-compound mixtures first
 
-calc_chem_mix_metrics <- function(top_mixtures, summed_EARs, out_file) {
+get_uniques <- function(ears) {
+  parents_ears <- ears %>%
+    select(parent_pesticide) %>%
+    distinct()
   
-top_mixes_2plus <- filter(top_mixtures, n_contr_chems >1)
+  return(parents_ears)
+}
 
-top_mix_chems <- summed_EARs %>%
-  left_join(select(top_mixes_2plus, site, shortName, date, endPoint = endPoint_top, prop_ind_contr)) %>%
-  filter(!is.na(prop_ind_contr)) %>%
-  group_by(site, shortName, date, endPoint, sum_ear_endpoint, prop_ind_contr, parent_pesticide) %>%
-  summarize(chem_mix_contribution = sum(chem_mix_contribution)) %>%
-  group_by(parent_pesticide) %>%
-  summarize(times_in_mixes = n(),
-            contribution_median = median(chem_mix_contribution),
-            n_endpoints = length(unique(endPoint)),
-            n_sites = length(unique(site))) %>%
-  arrange(-times_in_mixes)
+summarize_parent_samples <- function(conc, metadata) {
+  
+  dat <- left_join(conc, select(metadata, CAS, parent_pesticide)) %>%
+    mutate(parent_pesticide = ifelse(grepl('Acetochlor/Metolachlor', parent_pesticide), 'Meolachlor', parent_pesticide)) %>%
+    group_by(parent_pesticide) %>%
+    summarize(n_sites = length(unique(SiteID)),
+              n_samples = length(unique(paste(SiteID, `Sample Date`))))
+  
+  return(dat)
+}
+calc_chem_mix_metrics <- function(top_mixtures, summed_EARs, out_file, all_parents, parent_samples) {
+  
+  top_mixes_2plus <- filter(top_mixtures, n_contr_chems >1)
+  
+  top_mix_chems <- summed_EARs %>%
+    left_join(select(top_mixes_2plus, site, shortName, date, endPoint = endPoint_top, prop_ind_contr)) %>%
+    filter(!is.na(prop_ind_contr)) %>%
+    group_by(site, shortName, date, endPoint, sum_ear_endpoint, prop_ind_contr, parent_pesticide) %>%
+    summarize(chem_mix_contribution = sum(chem_mix_contribution)) %>%
+    mutate(chem_essential = sum_ear_endpoint - (sum_ear_endpoint*(chem_mix_contribution/100)) <= 0.001) %>%
+    group_by(parent_pesticide) %>%
+    summarize(times_essential_to_mix = sum(chem_essential),
+              n_endpoints = length(unique(endPoint)),
+              n_sites = length(unique(site)),
+              n_samples = length(unique(paste(site, date))),
+              n_sites_essential = length(unique(site[chem_essential])),
+              n_samples_essential = length(unique(paste(site, date)[chem_essential])))
+  
+  
+  all_parents_add <- all_parents %>%
+    filter(!parent_pesticide %in% top_mix_chems$parent_pesticide) %>%
+    mutate(times_essential_to_mix = 0,
+           n_endpoints = 0,
+           n_sites = 0,
+           n_samples = 0,
+           n_sites_essential = 0,
+           n_samples_essential = 0)
 
-return(top_mix_chems)
+  top_mix_chems <- top_mix_chems %>%
+    bind_rows(all_parents_add) %>%
+    left_join(select(parent_samples, parent_pesticide, n_sites_all = n_sites, n_samples_all = n_samples)) %>%
+    mutate(mixes_hit_prob = round(n_samples/n_samples_all, 2),
+           mixes_hit_sites_prob = round(n_sites/n_sites_all, 2),
+           mixes_essential_hit_prob = round(n_samples_essential/n_samples_all, 2),
+           mixes_essential_hit_sites_prob = round(n_sites_essential/n_sites_all, 2)) %>%
+    select(parent_pesticide, mixes_essential_hit = times_essential_to_mix,
+           mixes_n_endpoints = n_endpoints, 
+           mixes_hit_prob, mixes_hit_sites_prob, mixes_essential_hit_sites_prob,
+           mixes_essential_hit_prob)
+  
+  return(top_mix_chems)
 }
 
 summarize_mixtures <- function(top_mixtures) {
@@ -236,12 +278,12 @@ plot_mix_summary <- function(n_summary, mix_summary, top_mixtures, ear_sum, chem
     mutate(Class = gsub('Deg - ', '', Class)) %>%
     distinct() %>%
     arrange(Class, parent_pesticide, -MlWt) %>% pull(chnm)
-  
+
   # chem colors
   # adjust alpha for degradates
-  colors <- rev(c(RColorBrewer::brewer.pal(8, 'Dark2'), RColorBrewer::brewer.pal(3, 'Set1')[1]))
+  colors <- rev(c(RColorBrewer::brewer.pal(8, 'Dark2')))
 
-  colors2 <- c(colors[1:5], colors[6], ggplot2::alpha(colors[6], c(.8, .6, .4, .2)), colors[7], colors[8], ggplot2::alpha(colors[8], c(0.7, 0.4, 0.1)), colors[9])
+  colors2 <- c(colors[1:5], ggplot2::alpha(colors[5], c(.8, .6, .4, .2)), colors[6:7], ggplot2::alpha(colors[7], c(0.7, 0.4, 0.1)), colors[8])
   plot_summary$chnm <- factor(plot_summary$chnm, levels = chem_order)
   plot_summary$is_parent <- ifelse(plot_summary$chnm == plot_summary$parent_pesticide, 'yes', 'no')
 
@@ -323,8 +365,6 @@ calc_top_endpoints <- function(top_mixes) {
               parents = paste(unique(unlist(strsplit(contr_parents, split = ', '))), collapse = ', '),
               max_contr_chems = max(n_contr_chems)) %>%
     arrange(-n_hits)
-  
-  # explore some top mixes
-  sub <- filter(top_mixes, endPoint %in% 'NVS_ENZ_hPDE4A1')
-  unique(sub$contr_parents)
+
+  return(top_ends)
 }

@@ -151,7 +151,7 @@ get_bench_sites <- function(chemicalSummary_bench, all_samples) {
   parent_sum_bench <- chem_max_bench %>%
     group_by(site, date, parent_pesticide) %>%
     summarize(sum_max_bench = sum(max_bench))
-  
+ 
   site_sum_ear <- all_samples %>%
     mutate(date = as.POSIXct(date)) %>%
     left_join(parent_sum_bench) %>%
@@ -241,10 +241,10 @@ plot_avg_rankings <- function(outfile, ranking_dat, sites, site_meta) {
   
   dat <- left_join(ranking_dat, sites, by = c('site' = 'SiteID')) %>%
     left_join(site_meta, by = c('site' = 'site_no')) %>%
-    mutate(disturbance_index = `Ag..crops` + Urban, 
+    mutate(disturbance_index = `Ag..total` + Urban, 
            natural_index = Forest + `Water..wetland`) %>%
     mutate(dist_diff_index = disturbance_index - natural_index)
-  
+
   dat2 <- filter(dat, metric %in% 'final_rel_val_321')
   dat3 <- filter(dat, metric %in% 'bench_mean_rel')
   dat4 <- filter(dat, metric %in% 'earmix_mean_rel')
@@ -261,7 +261,7 @@ plot_avg_rankings <- function(outfile, ranking_dat, sites, site_meta) {
                                show.legend = F, size = 2, label.size = NA) +
     theme_bw() +
     theme(panel.grid = element_blank()) +
-    labs(x = "Watershed Disturbance Index (% Crop + % Urban)", 
+    labs(x = "Watershed Disturbance Index (% Ag + % Urban)", 
          y = 'Relative Risk Index\n(1 = most impacted across all metrics)',
          color = "Dominant land use") +
     scale_x_continuous(limits = c(0,100))
