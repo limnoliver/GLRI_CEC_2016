@@ -14,4 +14,9 @@ figure
 figures
 reports
 *.md
-.remake
+*.remake
+*.png
+*.csv
+*.xlsx
+*.rds
+*.pdf
