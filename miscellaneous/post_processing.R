@@ -13,7 +13,7 @@ chem_info <- make("chem_info")
 chem_site <- make("site_info")
 
 ACClong <- get_ACC(chem_info$CAS)
-ACClong <- remove_flags(ACClong)
+ACClong <- remove_flags(ACClong, flagsShort = c("Borderline", "OnlyHighest", "GainAC50", "Biochemical", 'ACCLessThan'))
 
 cleaned_ep <- clean_endPoint_info(end_point_info)
 filtered_ep <- filter_groups(cleaned_ep, 
