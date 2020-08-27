@@ -43,7 +43,6 @@ get_chem_sum_deg <- function(data_file, missing_chems, parents, metolachlor, che
   # three chemicals were not matched because parent was not measured in this study
   # see if the parent is in toxCast
   # all three are. Maybe put this content elsewhere?
-  
   missing_chem_parents <- left_join(missing_chems, parents) %>%
     filter(!(`Chemical Name` == parent_pesticide | compound == parent_pesticide))
 
@@ -71,10 +70,26 @@ get_chem_sum_deg <- function(data_file, missing_chems, parents, metolachlor, che
     fixed_deg <- bind_rows(fixed_deg, replace_data)
   }
   
+  
   # ACC vals for all other compounds
   tox_list <- create_toxEval(data_file)
   ACClong <- get_ACC(unique(tox_list$chem_info$CAS))
   ACClong <- remove_flags(ACClong, flagsShort = c("Borderline", "OnlyHighest", "GainAC50", "Biochemical", 'ACCLessThan'))
+  
+  # have to carry exclusions for the degradates through, 
+  # given parent exclusions
+  exclude <- tox_list$exclusions %>%
+    filter(CAS %in% missing_chem_parents$parent_CAS) %>%
+    rename(parent_CAS = CAS)
+  
+  missing_exclude <- select(missing_chem_parents, CAS, parent_CAS) %>%
+    filter(parent_CAS %in% unique(exclude$parent_CAS)) %>%
+    left_join(exclude) %>% select(-parent_CAS)
+  
+  tox_list$exclusions <- bind_rows(tox_list$exclusions, missing_exclude)
+    
+    
+  
   
   # verify there is no overlap between replacement data and original data
   all(!unique(fixed_deg$CAS) %in% unique(ACClong$CAS))
@@ -84,8 +99,9 @@ get_chem_sum_deg <- function(data_file, missing_chems, parents, metolachlor, che
   
   cleaned_ep <- clean_endPoint_info(toxEval::end_point_info)
   filtered_ep <- filter_groups(cleaned_ep)
-  
+
   chemicalSummary <- get_chemical_summary(tox_list, ACClong, filtered_ep)
+  
   
   chemicalSummary <- left_join(chemicalSummary, select(chem_master, CAS, parent_pesticide))
   

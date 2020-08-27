@@ -131,7 +131,6 @@ make_site_tile <- function(file_name, site_rankings, sites) {
   
   plot_dat <- left_join(plot_dat, site_dat)
   
-  
   plot_dat_min <- plot_dat %>%
     group_by(metric, metric_type) %>%
     summarize(metric_value = metric_value[which.min(metric_value)]) %>%
@@ -148,7 +147,7 @@ make_site_tile <- function(file_name, site_rankings, sites) {
   
   p <- ggplot(plot_dat, aes(y = shortName, x = metric)) +
     geom_tile(aes(fill = relative_value), color = 'black') +
-    geom_text(aes(label = round(print_max, 1)), color = 'white') +
+    geom_text(aes(label = ifelse(print_max < 1, round(print_max, 2), round(print_max, 1))), color = 'white') +
     geom_text(aes(label = print_min), color = 'black') +
     scale_fill_viridis(option = 'viridis', direction = -1, begin = 0.1,
                        guide = guide_legend(direction = 'horizontal', 
@@ -174,7 +173,7 @@ make_site_tile <- function(file_name, site_rankings, sites) {
           legend.spacing.x = unit(0.1, 'cm'), strip.background = element_blank())
 
   
-  ggsave(file_name, p, height = 7, width = 10)
+  ggsave(file_name, p, height = 7, width = 8, scale = 0.9)
 }
 add_final_rank <- function(site_rankings, sites) {
   # create wide version of site rank data
