@@ -117,6 +117,8 @@ merge_with_aops <- function(top_ends, genes, top_mix, sites, site_threshold, sam
               c_all_chems = paste(unique(unlist(strsplit(contr_chems, ', '))), collapse = ', '),
               n = n())
   
+  top_mixes_all <- bind_rows(agmix, crops, urban)
+  
   
   lu_worst <- lu_top_ends %>%
     group_by(site, shortName, dominant_lu) %>%

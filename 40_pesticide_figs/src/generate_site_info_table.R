@@ -42,6 +42,52 @@ gather_site_info <- function(target_name, sites, neonics) {
   write.csv(site_table, target_name, row.names = F)
 }
 
+lulc_figure <- function(target_name, sites) {
+  site_dat <- sites %>%
+    select(shortName,
+           perc_crop = `Ag..crops`, perc_pasture = `Ag..pasture..hay.`, perc_urban = Urban, 
+           perc_forest = Forest, perc_wetland = `Water..wetland`,
+           dominant_lulc = `Dominant.land.use.`)
+  
+  # add other category to sum to 100%
+  other <-  group_by(site_dat, shortName, dominant_lulc) %>%
+    summarize(other = 100-sum(c(perc_crop, perc_pasture, perc_urban, perc_forest, perc_wetland)))
+  
+  site_dat <- left_join(site_dat, other)
+  site_table <- site_dat %>%
+    select(shortName, 
+           `% Crops` = perc_crop, `% Pasture` = perc_pasture, `% Urban` = perc_urban, 
+           `% Forest` = perc_forest, `% Wetland` = perc_wetland, `% Other` = other,
+           `Dominant LULC` = dominant_lulc) %>%
+    tidyr::gather(key = 'LULC', value = `% LULC`, -shortName, -`Dominant LULC`) %>%
+    mutate(LULC = gsub('% ', '', LULC)) %>%
+    mutate(`Dominant LULC` = ifelse(`Dominant LULC` %in% c('Wetland', 'Forest'), 'Natural', `Dominant LULC`))
+  
+  site_table$LULC <- factor(site_table$LULC, levels = c('Urban', 'Crops', 'Pasture', 'Wetland', 'Forest', 'Other'))
+  site_order <- site_dat %>%
+    rowwise() %>%
+    mutate(disturbed = sum(c(perc_urban, perc_crop, perc_pasture))) %>%
+    arrange(disturbed) %>%
+    pull(shortName)
+  
+  site_table$shortName <- factor(site_table$shortName, levels = site_order)
+  site_table$`Dominant LULC` <- factor(site_table$`Dominant LULC`, levels = c('Urban', 'Crops', 'AgMix', 'Natural'))
+  p_cov <- ggplot(site_table, aes(x = `% LULC`, y = shortName)) +
+    geom_bar(aes(fill = LULC), stat = 'identity') +
+    guides(fill = guide_legend(ncol = 2)) +
+    facet_grid(rows = vars(`Dominant LULC`), scales = 'free_y', space = 'free') +
+    theme_bw() +
+    theme(legend.position = 'bottom', strip.background = element_blank(),
+          axis.text.y = element_blank(),
+          axis.ticks.y = element_blank(),
+          legend.margin=margin(0,0,0,0), 
+          legend.box.margin=margin(-5,-10,-5,-10)) +
+    labs(y = '', fill = '') +
+    scale_x_continuous(expand = c(0,0), limits = c(0,100)) +
+    scale_fill_manual(values = c('#554971', '#DDB771', '#4C2E05', '#4A8FE7', '#439775', 'gray'))
+  ggsave('figures/ms_figures/lulc.png', height = 4.28, width = 3.5)
+  }
+
 gather_chem_info <- function(out_file, chem_dls, reduced_dat, chem_crosswalk, chem_info_all) {
   
   # chemical table for supplement
