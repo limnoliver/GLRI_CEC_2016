@@ -250,9 +250,14 @@ plot_avg_rankings <- function(outfile, ranking_dat, sites, site_meta) {
   dat4 <- filter(dat, metric %in% 'earmix_mean_rel')
   dat5 <- filter(dat, metric %in% 'occurance_mean_rel')
   
- 
+  dat2$Dominant.land.use. <- as.factor(dat2$Dominant.land.use.)
+  levels(dat2$Dominant.land.use.)[1] <- "Mixed Ag."
+  dat2$Dominant.land.use. <- factor(dat2$Dominant.land.use., levels = c('Urban', 'Crops', 'Mixed Ag.', 'Wetland', 'Forest'))
+
+    #'#554971', '#DDB771', '#6e655a', '#4A8FE7', '#439775'
    p <- ggplot(dat2, aes(y = relative_value, x = disturbance_index, label = shortName)) +
     geom_point(aes(color = `Dominant.land.use.`), size = 2) + 
+     scale_color_manual(values = c('#554971', '#DDB771', '#ad6205', '#4A8FE7', '#439775')) +
     #geom_errorbar(aes(ymin = avg_rank - sd_rank, 
     #                  ymax = avg_rank + sd_rank, 
     #                  color = `Dominant.land.use.`), width = 1.5) +
@@ -262,7 +267,7 @@ plot_avg_rankings <- function(outfile, ranking_dat, sites, site_meta) {
     theme_bw() +
     theme(panel.grid = element_blank()) +
     labs(x = "Watershed Disturbance Index (% Ag + % Urban)", 
-         y = 'Relative Risk Index\n(1 = most impacted across all metrics)',
+         y = 'Hazard Index\n(1 = most impacted across all metrics)',
          color = "Dominant land use") +
     scale_x_continuous(limits = c(0,100))
   

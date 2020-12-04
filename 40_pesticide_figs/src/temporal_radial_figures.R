@@ -37,7 +37,8 @@ sites2 <- make('sites') %>%
 graph_dat <- left_join(graph_dat, sites) %>%
   add_row(day = c(1, 365), Class = rep('Herbicide', 2), dominant_lu = rep('Crops', 2)) %>%
   filter(!dominant_lu == 'Wetland')
-
+graph_dat$dominant_lu <- factor(graph_dat$dominant_lu, levels = c('Urban', 'Crops', 'AgMix'))
+levels(graph_dat$dominant_lu)[3] <- 'Mixed Ag.'
 p <- ggplot(data = graph_dat, aes(x = day, y = max_ear)) +
   geom_hline(yintercept = c(0.001, 0.01, 0.1, 1), color = 'gray50') +
   geom_vline(xintercept = c(1,32,61, 92,122,153,183,214,245,275, 306, 336), color = 'gray80') +

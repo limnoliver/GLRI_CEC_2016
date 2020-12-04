@@ -272,6 +272,7 @@ determine_priorities <- function(metrics,
     filter(n_missing > 1)
 
   # which of these missing compounds is also detected at high frequency? 
+  browser()
   occur_stats <- occurrence %>%
     filter(CAS %in% unique(missing$CAS)) %>%
     group_by(CAS) %>%
